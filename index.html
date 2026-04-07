@@ -120,7 +120,7 @@ const H={'apikey':K,'Authorization':'Bearer '+K};
 const CC={IP3:'#2563eb',IR2:'#6366f1',Metode:'#16a34a','Økonomi':'#d97706'};
 const CE={IP3:'4 Jun','Økonomi':'9 Jun',Metode:'26 May',IR2:''};
 fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(d=>{
-  const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,d:0};c[n].t++;if(r.status==='faerdig')c[n].d++});
+  const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,d:0};c[n].t++;if(r.status==='læst')c[n].d++});
   const o=['Økonomi','IP3','Metode','IR2'].filter(x=>c[x]);
   document.getElementById('progressPanel').innerHTML=o.map(n=>{const v=c[n],p=Math.round(100*v.d/v.t),col=CC[n]||'#a8a29e';return'<div class="cr"><span class="cl" style="color:'+col+'">'+n+'</span><div class="cb"><div style="width:'+Math.max(p,2)+'%;background:'+col+'"></div></div><span class="cp">'+v.d+'/'+v.t+'</span><span class="ce">'+(CE[n]||'')+'</span></div>'}).join('');
 }).catch(()=>{document.getElementById('progressPanel').innerHTML='<div class="loading">Could not load</div>'});

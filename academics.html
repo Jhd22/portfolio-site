@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#fafaf9">
 <title>Academics — System</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-:root{--bg:#fafaf9;--surface:#fff;--s2:#f5f5f4;--border:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--t4:#d6d3d1;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{--bg:#fafaf9;--surface:#fff;--s2:#f5f5f4;--border:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--t4:#d6d3d1;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--indigo:#6366f1;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
 header{padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:rgba(250,250,249,.92);backdrop-filter:blur(20px)}
@@ -16,14 +16,87 @@ nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decora
 .nt{display:none;background:none;border:none;cursor:pointer;padding:.5rem}.nt svg{width:20px;height:20px;stroke:var(--t2);fill:none;stroke-width:1.5}
 @media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
 .main{max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 1.5rem}@media(max-width:640px){.main{padding:1.5rem 1rem}}
-.page-title{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
-.page-sub{font-size:.875rem;color:var(--t2);margin-bottom:.75rem}
+.page-title{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.125rem}
+.page-sub{font-size:.8125rem;color:var(--t2);margin-bottom:1.5rem}
 .sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem}.sh:first-of-type{margin-top:0}
-.pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
-.pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;text-decoration:none;padding:.4rem .875rem;border:1px solid var(--border);border-radius:100px;font-weight:500;background:var(--surface);box-shadow:var(--shadow);color:var(--t2);transition:all .15s}
-.pill:hover{border-color:var(--b2);box-shadow:var(--shadow-md);color:var(--t1)}
-.pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.course-grid{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-bottom:2rem}@media(min-width:960px){.course-grid{grid-template-columns:repeat(3,1fr)}}
+.sh span{font-weight:400;text-transform:none;letter-spacing:0}
+.loading{color:var(--t3);font-size:.75rem;padding:.75rem}
+footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
+
+/* Læseplan tabs */
+.lp-tabs{display:flex;gap:.25rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.lp-tab{padding:.4rem .875rem;border-radius:8px;font-size:.8125rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--t2);transition:all .15s;font-family:inherit}
+.lp-tab.active{background:var(--t1);color:#fff;border-color:var(--t1)}
+.lp-tab:hover:not(.active){background:var(--s2);color:var(--t1)}
+.lp-toggle{padding:.35rem .75rem;border-radius:6px;font-size:.6875rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--t3);transition:all .15s;font-family:inherit;margin-left:auto}
+.lp-toggle.on{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+
+/* Stat cards */
+.lp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.625rem;margin-bottom:1.25rem}
+.lp-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.875rem .75rem;text-align:center;box-shadow:var(--shadow)}
+.lp-stat-val{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700}
+.lp-stat-label{font-size:.6875rem;color:var(--t2);margin-top:.125rem}
+.lp-stat-sub{font-size:.625rem;color:var(--t3);margin-top:.125rem}
+
+/* Progress bars */
+.lp-prog-wrap{display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem}
+.lp-prog-label{display:flex;align-items:center;gap:.375rem}
+.lp-pbar-outer{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden}
+.lp-pbar{height:100%;border-radius:4px;transition:width .5s ease}
+.lp-pbar-pct{font-size:.75rem;color:var(--t2);font-variant-numeric:tabular-nums;width:36px;text-align:right;font-weight:600}
+
+/* Panel */
+.lp-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:1rem}
+.lp-panel-hd{padding:.875rem 1.125rem;font-size:.8125rem;font-weight:600;border-bottom:1px solid var(--s2)}
+.lp-panel-bd{padding:.875rem 1.125rem}
+
+/* Depth distribution */
+.depth-grid{display:flex;gap:.5rem;flex-wrap:wrap}
+.depth-chip{display:flex;align-items:center;gap:.375rem;background:var(--s2);border-radius:6px;padding:.35rem .75rem}
+.depth-chip .dc{width:10px;height:10px;border-radius:3px}
+.depth-chip .dn{font-size:.6875rem;color:var(--t2)}
+.depth-chip .dv{font-family:'JetBrains Mono',monospace;font-size:.8125rem;font-weight:700}
+
+/* Reading rows */
+.reading{display:flex;align-items:flex-start;gap:.75rem;padding:.875rem 1.125rem;border-bottom:1px solid var(--s2);transition:background .15s}
+.reading:last-child{border-bottom:none}
+.reading.done{background:#fafaf9}
+.reading-title{font-size:.8125rem;font-weight:500;line-height:1.4}
+.reading.done .reading-title{color:var(--t3);text-decoration:line-through}
+.reading-meta{font-size:.6875rem;color:var(--t3);margin-top:.125rem}
+.reading-tags{display:flex;gap:.375rem;margin-top:.375rem;flex-wrap:wrap;align-items:center}
+.reading-week{font-size:.625rem;color:var(--t3);flex-shrink:0;text-align:right;min-width:44px}
+
+/* Check button */
+.check{width:24px;height:24px;border-radius:50%;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:2px solid var(--b2);background:transparent;transition:all .15s}
+.check.checked{border:none}
+
+/* Badges */
+.badge{border-radius:4px;padding:.175rem .5rem;font-size:.625rem;font-weight:600;display:inline-block}
+.depth-btn{border:none;cursor:pointer;border-radius:4px;padding:.175rem .5rem;font-size:.625rem;font-weight:600;color:#fff;transition:transform .1s;font-family:inherit}
+.depth-btn:active{transform:scale(.93)}
+
+/* Filters */
+.lp-filters{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.lp-filters select{padding:.375rem .625rem;border-radius:6px;border:1px solid var(--border);font-size:.75rem;color:var(--t2);background:var(--surface);cursor:pointer;font-family:inherit}
+.lp-count{font-size:.6875rem;color:var(--t3)}
+
+/* Week selector */
+.week-btns{display:flex;gap:.375rem;flex-wrap:wrap}
+.week-btn{padding:.375rem .75rem;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--t2);transition:all .15s;font-family:inherit}
+.week-btn.active{background:var(--t1);color:#fff;border-color:var(--t1)}
+.week-btn:hover:not(.active){background:var(--s2)}
+.week-btn.easter{outline:2px solid var(--red);outline-offset:1px}
+.week-btn.readweek{outline:2px solid var(--amber);outline-offset:1px}
+
+/* Events */
+.event-row{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1.125rem;border-bottom:1px solid var(--s2)}
+.event-row:last-child{border-bottom:none}
+.event-tag{font-size:.625rem;padding:.175rem .5rem;border-radius:4px;font-weight:600;min-width:52px;text-align:center}
+.event-date{font-family:'JetBrains Mono',monospace;font-size:.6875rem;color:var(--t3)}
+
+/* Course panels */
+.course-grid{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-bottom:1.5rem}@media(min-width:960px){.course-grid{grid-template-columns:repeat(3,1fr)}}
 .course-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 .course-header{padding:1rem 1.25rem;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:flex-start}
 .course-name{font-size:1.125rem;font-weight:700}.course-full{font-size:.75rem;color:var(--t2);margin-top:.125rem}
@@ -38,12 +111,16 @@ nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decora
 .detail{font-size:.8125rem;color:var(--t2);line-height:1.7;margin-bottom:.375rem}.detail strong{color:var(--t1);font-weight:500}
 .detail-row{display:flex;justify-content:space-between;padding:.375rem 0;border-bottom:1px solid var(--s2);font-size:.75rem}.detail-row:last-child{border-bottom:none}.detail-row .k{color:var(--t3)}.detail-row .v{color:var(--t2);text-align:right}
 .sub-sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.375rem;margin-top:.75rem}
-.tools-grid{display:grid;grid-template-columns:1fr;gap:.875rem}@media(min-width:769px){.tools-grid{grid-template-columns:repeat(3,1fr)}}
+
+/* Tools */
+.tools-grid{display:grid;grid-template-columns:1fr;gap:.875rem;margin-bottom:2rem}@media(min-width:769px){.tools-grid{grid-template-columns:repeat(3,1fr)}}
 .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;box-shadow:var(--shadow)}
 .tool-card h3{font-size:.9375rem;font-weight:600;margin-bottom:.25rem}.tool-card p{font-size:.75rem;color:var(--t2);line-height:1.5}
 .tool-tag{display:inline-block;font-size:.5625rem;padding:.175rem .5rem;border:1px solid var(--border);border-radius:100px;color:var(--t3);margin-top:.625rem;margin-right:.25rem;font-weight:500}
-.loading{color:var(--t3);font-size:.75rem;padding:.75rem}
-footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
+
+/* Deadline alert badge */
+.dl-tag{font-size:.625rem;padding:.175rem .5rem;border-radius:100px;font-weight:600}
+.course-alert{font-size:.75rem;color:var(--red);font-weight:600;margin-bottom:.75rem;padding:.5rem .75rem;background:#fef2f2;border:1px solid #fecaca;border-radius:6px}
 </style>
 </head>
 <body>
@@ -54,43 +131,369 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
 </header>
 <div class="main">
   <div class="page-title">Academics</div>
-  <div class="page-sub">3 current courses · per-course agents · live reading tracker</div>
-  <div class="pills">
-    <a href="http://100.78.65.85:8080/" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Læseplan — tick off readings</a>
-    <a href="http://100.78.65.85:8080/briefing.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Weekly briefing</a>
+  <div class="page-sub" id="lp-sub">Loading data…</div>
+
+  <!-- LÆSEPLAN TABS -->
+  <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem">
+    <div class="lp-tabs" id="lp-tabs" style="margin-bottom:0"></div>
+    <button class="lp-toggle" id="ir2-toggle" onclick="toggleIR2()" title="Vis/skjul IR2 (afsluttet fag)">IR2</button>
   </div>
-  <div class="course-grid" id="courseGrid"><div class="loading">Loading courses from Supabase...</div></div>
+  <div id="lp-content"><div class="loading">Henter data…</div></div>
+
+  <!-- COURSE PANELS -->
+  <div class="sh">Kurser</div>
+  <div class="course-grid" id="courseGrid"><div class="loading">Loading...</div></div>
+
+  <!-- TOOLS -->
   <div class="sh">Tools</div>
   <div class="tools-grid">
-    <div class="tool-card"><h3>📊 Læseplan</h3><p>Live reading tracker with check-off. Connected to Supabase. Served via Tailscale.</p><span class="tool-tag">Live</span><span class="tool-tag">Tailscale</span></div>
-    <div class="tool-card"><h3>📋 Briefing</h3><p>Weekly AI briefing across all courses, deadlines, events. Requires Anthropic API key.</p><span class="tool-tag">Live</span><span class="tool-tag">API key required</span></div>
+    <div class="tool-card"><h3>📊 Læseplan</h3><p>Embedded reading tracker with check-off and depth tracking. Works directly from GitHub Pages — connected to Supabase.</p><span class="tool-tag">Live</span><span class="tool-tag">Embedded</span></div>
+    <div class="tool-card"><h3>📋 Briefing</h3><p>Weekly AI briefing across all courses, deadlines, events. Served via Tailscale.</p><span class="tool-tag">Tailscale</span><span class="tool-tag">API key</span></div>
     <div class="tool-card"><h3>🎛️ Command Center</h3><p>Cross-domain risk alerts and priority allocation. Where to focus this week.</p><span class="tool-tag">Claude Project</span></div>
   </div>
 </div>
 <footer>Personal AI System · Academics · F26</footer>
+
 <script>
-const S='https://kgiepplwarutwmzvvezc.supabase.co/rest/v1';
-const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
-const H={'apikey':K,'Authorization':'Bearer '+K};
-const CC={IP3:{color:'#2563eb',full:'International Politics 3',exam:'4 Jun kl. 12',format:'Fri hjemmeopgave',approach:'Comparative theory mapping — realism vs. liberalism vs. constructivism. Raw sources first.',sched:[['Mon','08–10 FL'],['Thu','13–15 FL'],['Fri','08–10 Hold']]},
-'Økonomi':{color:'#d97706',full:'Macroeconomics',exam:'9 Jun kl. 9–13',format:'4-hour written',approach:'Model-based graphical reasoning. IS-LM, AS-AD, Mundell-Fleming, Phillips curve.',sched:[['Thu','08–10 FL'],['Thu','15–17 Café'],['Fri','10–12 Hold']],alert:'Skriveøvelse 22 Apr — BLOCKING'},
-Metode:{color:'#16a34a',full:'Qualitative Methods',exam:'26 May kl. 12',format:'Fri hjemmeopgave',approach:'Does not read pensum. Agent delivers summaries before + after lectures.',sched:[['Mon','13–15 FL'],['Thu','10–12 Hold']]}};
-fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(data=>{
-  const courses={};data.forEach(r=>{const c=r.course;if(!courses[c])courses[c]={t:0,d:0,ip:0};courses[c].t++;if(r.status==='faerdig')courses[c].d++;else if(r.status==='i_gang')courses[c].ip++});
-  const order=['Økonomi','IP3','Metode'];
-  document.getElementById('courseGrid').innerHTML=order.filter(c=>courses[c]).map(c=>{
-    const v=courses[c],cfg=CC[c]||{},pct=Math.round(100*v.d/v.t),col=cfg.color||'#a8a29e';
-    return`<div class="course-panel"${c==='Økonomi'?' style="border-color:#fecaca"':''}>
-      <div class="course-header"><div><div class="course-name" style="color:${col}">${c}</div><div class="course-full">${cfg.full||''}</div></div><span class="course-badge" style="background:${col}11;color:${col}">${cfg.exam?.split(' kl')[0]||''}</span></div>
-      <div class="course-body">
-        <div class="stats-row"><div class="stat"><div class="stat-val" style="color:${col}">${v.t}</div><div class="stat-label">Readings</div></div><div class="stat"><div class="stat-val">${v.d}</div><div class="stat-label">Done</div></div><div class="stat"><div class="stat-val">${v.ip}</div><div class="stat-label">In progress</div></div></div>
-        <div class="prog-wrap"><div class="prog-bar-outer"><div class="prog-bar" style="width:${Math.max(pct,2)}%;background:${col}"></div></div><span class="prog-pct">${pct}%</span></div>
-        ${cfg.alert?'<div style="font-size:.75rem;color:var(--red);font-weight:600;margin-bottom:.75rem;padding:.5rem .75rem;background:#fef2f2;border:1px solid #fecaca;border-radius:6px">⚠ '+cfg.alert+'</div>':''}
-        <div class="sub-sh">Exam</div><div class="detail"><strong>Format:</strong> ${cfg.format||''}</div><div class="detail"><strong>Date:</strong> ${cfg.exam||''}</div>
-        <div class="sub-sh">Agent approach</div><div class="detail">${cfg.approach||''}</div>
-        <div class="sub-sh">Schedule</div>${(cfg.sched||[]).map(s=>'<div class="detail-row"><span class="k">'+s[0]+'</span><span class="v">'+s[1]+'</span></div>').join('')}
-      </div></div>`}).join('');
-}).catch(()=>{document.getElementById('courseGrid').innerHTML='<div class="loading">Could not load readings</div>'});
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+const SUPABASE_URL = "https://kgiepplwarutwmzvvezc.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec";
+const API_HEADERS = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", Prefer: "return=representation" };
+
+// ═══════════════════════════════════════
+// LÆSEPLAN CONSTANTS
+// ═══════════════════════════════════════
+const LP_COURSES = {
+  IP3:     { bg: "#2563eb", light: "#dbeafe", text: "#1e40af" },
+  Økonomi: { bg: "#d97706", light: "#fef3c7", text: "#92400e" },
+  Metode:  { bg: "#16a34a", light: "#dcfce7", text: "#166534" },
+  IR2:     { bg: "#6366f1", light: "#e0e7ff", text: "#3730a3" },
+};
+const ACTIVE_COURSES = ["IP3", "Økonomi", "Metode"];
+const DEPTH = ["unread","read","noted","restructured","compared","tested"];
+const DEPTH_DA = { unread:"Ulæst", read:"Læst", noted:"Noteret", restructured:"Omstruktureret", compared:"Sammenlignet", tested:"Testet" };
+const DEPTH_CLR = { unread:"#a8a29e", read:"#60a5fa", noted:"#a78bfa", restructured:"#f59e0b", compared:"#10b981", tested:"#dc2626" };
+const PRIO_STYLE = { høj:{bg:"#fee2e2",c:"#991b1b"}, mellem:{bg:"#fef3c7",c:"#92400e"}, lav:{bg:"#dcfce7",c:"#166534"} };
+const STATUS_DA = { ikke_startet:"Ikke startet", i_gang:"I gang", læst:"Læst" };
+const WEEK_DATES = { 6:"2/2–8/2",7:"9/2–15/2",8:"16/2–22/2",9:"23/2–1/3",10:"2/3–8/3",11:"9/3–15/3",12:"16/3–22/3",13:"23/3–29/3",14:"30/3–5/4",15:"6/4–12/4",16:"13/4–19/4",17:"20/4–26/4",18:"27/4–3/5",19:"4/5–10/5",20:"11/5–17/5",21:"18/5–24/5" };
+const EVT_STYLE = { deadline:{bg:"#fef2f2",c:"#991b1b",l:"Deadline"}, exam:{bg:"#fef3c7",c:"#92400e",l:"Eksamen"}, holiday:{bg:"#ecfdf5",c:"#065f46",l:"Ferie"}, info:{bg:"#f0f9ff",c:"#0c4a6e",l:"Info"} };
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let readings = [], events = [], view = "dashboard";
+let filters = { course:"", priority:"", status:"", week:"" };
+let focusWeek = 15, showIR2 = false;
+
+// ═══════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════
+async function supa(path, opts = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: opts.method || "GET",
+    headers: API_HEADERS,
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (!res.ok) { const t = await res.text().catch(()=>""); throw new Error(`${res.status}: ${t}`); }
+  return res.json();
+}
+
+async function loadLPData() {
+  [readings, events] = await Promise.all([
+    supa("readings?order=week.asc,id.asc"),
+    supa("events?order=week.asc"),
+  ]);
+}
+
+async function patchReading(id, patch) {
+  await supa(`readings?id=eq.${id}`, { method: "PATCH", body: patch });
+}
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+function esc(s) { const d = document.createElement("div"); d.textContent = s||""; return d.innerHTML; }
+
+function visibleCourses() {
+  return showIR2 ? Object.keys(LP_COURSES) : ACTIVE_COURSES;
+}
+
+function stats() {
+  const vis = visibleCourses();
+  const subset = readings.filter(r => vis.includes(r.course));
+  const total = subset.length, done = subset.filter(r=>r.status==="læst").length;
+  const ip = subset.filter(r=>r.status==="i_gang").length;
+  const tp = subset.reduce((s,r)=>s+(r.pages||0),0);
+  const dp = subset.filter(r=>r.status==="læst").reduce((s,r)=>s+(r.pages||0),0);
+  const bc = {};
+  for (const c of vis) {
+    const ct = readings.filter(r=>r.course===c), cd = ct.filter(r=>r.status==="læst").length;
+    bc[c] = { total:ct.length, done:cd, pct: ct.length ? Math.round(100*cd/ct.length) : 0 };
+  }
+  return { total, done, ip, tp, dp, bc };
+}
+
+// ═══════════════════════════════════════
+// RENDER — TABS
+// ═══════════════════════════════════════
+function renderTabs() {
+  const tabs = [["dashboard","Overblik"],["list","Alle tekster"],["focus","Fokus"],["deadlines","Deadlines"]];
+  document.getElementById("lp-tabs").innerHTML = tabs.map(([id,label]) =>
+    `<button class="lp-tab${view===id?' active':''}" onclick="setView('${id}')">${label}</button>`
+  ).join("");
+  const tog = document.getElementById("ir2-toggle");
+  tog.classList.toggle("on", showIR2);
+}
+
+function renderSubtitle() {
+  const s = stats();
+  document.getElementById("lp-sub").innerHTML =
+    `${s.done}/${s.total} tekster læst · Forår 2026`;
+}
+
+// ═══════════════════════════════════════
+// RENDER — DASHBOARD
+// ═══════════════════════════════════════
+function renderDashboard(el) {
+  const s = stats();
+  const vis = visibleCourses();
+
+  let h = `<div class="lp-stats">
+    <div class="lp-stat" style="border-top:3px solid var(--green)"><div class="lp-stat-val" style="color:var(--green)">${s.done}</div><div class="lp-stat-label">Tekster læst</div><div class="lp-stat-sub">af ${s.total}</div></div>
+    <div class="lp-stat" style="border-top:3px solid var(--blue)"><div class="lp-stat-val" style="color:var(--blue)">${s.ip}</div><div class="lp-stat-label">I gang</div></div>
+    <div class="lp-stat" style="border-top:3px solid var(--purple)"><div class="lp-stat-val" style="color:var(--purple)">${s.dp}</div><div class="lp-stat-label">Sider læst</div><div class="lp-stat-sub">af ${s.tp} s.</div></div>
+  </div>`;
+
+  // Course progress
+  h += `<div class="lp-panel"><div class="lp-panel-hd">Fremgang per fag</div><div class="lp-panel-bd">`;
+  for (const c of vis) {
+    const cs = s.bc[c], cc = LP_COURSES[c];
+    h += `<div class="lp-prog-wrap">
+      <div class="lp-prog-label" style="width:90px">
+        <span class="badge" style="background:${cc.bg};color:#fff">${c}</span>
+        <span style="font-size:.6875rem;color:var(--t3)">${cs.done}/${cs.total}</span>
+      </div>
+      <div class="lp-pbar-outer"><div class="lp-pbar" style="width:${Math.max(cs.pct,1)}%;background:${cc.bg}"></div></div>
+      <span class="lp-pbar-pct">${cs.pct}%</span>
+    </div>`;
+  }
+  h += `</div></div>`;
+
+  // Depth distribution
+  h += `<div class="lp-panel"><div class="lp-panel-hd">Dybdefordeling</div><div class="lp-panel-bd"><div class="depth-grid">`;
+  for (const d of DEPTH) {
+    const n = readings.filter(r=>r.depth===d && vis.includes(r.course)).length;
+    h += `<div class="depth-chip"><div class="dc" style="background:${DEPTH_CLR[d]}"></div><span class="dn">${DEPTH_DA[d]}</span><span class="dv">${n}</span></div>`;
+  }
+  h += `</div></div></div>`;
+
+  // Upcoming deadlines
+  const dls = events.filter(e => e.type==="deadline" || e.type==="exam");
+  if (dls.length) {
+    h += `<div class="lp-panel"><div class="lp-panel-hd">Kommende deadlines</div>`;
+    dls.forEach(e => {
+      const cc = e.course ? LP_COURSES[e.course] : null;
+      const es = EVT_STYLE[e.type] || EVT_STYLE.info;
+      h += `<div class="event-row">
+        <div style="display:flex;align-items:center;gap:.625rem">
+          <span class="event-tag" style="background:${es.bg};color:${es.c}">${es.l}</span>
+          <div>
+            <div style="font-size:.8125rem;font-weight:500">${esc(e.label)}</div>
+            ${cc ? `<span class="badge" style="background:${cc.light};color:${cc.text};margin-top:2px">${e.course}</span>` : ""}
+          </div>
+        </div>
+        <span class="event-date">${e.date ? e.date.slice(5) : `Uge ${e.week}`}</span>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+  el.innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+// RENDER — READING ROW
+// ═══════════════════════════════════════
+function readingHTML(r) {
+  const cc = LP_COURSES[r.course] || LP_COURSES.IP3;
+  const done = r.status === "læst";
+  const ps = PRIO_STYLE[r.priority] || PRIO_STYLE.mellem;
+  return `<div class="reading${done?' done':''}" id="r-${r.id}">
+    <button class="check${done?' checked':''}" style="${done?`background:${cc.bg};border:none`:''}" onclick="toggleStatus(${r.id})">
+      ${done ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
+    </button>
+    <div style="flex:1;min-width:0">
+      <div class="reading-title">${esc(r.title)}</div>
+      <div class="reading-meta">${esc(r.author)}${r.pages>0?` · ${r.pages} s.`:''}</div>
+      <div class="reading-tags">
+        <span class="badge" style="background:${cc.bg};color:#fff">${r.course}</span>
+        <span class="badge" style="background:${ps.bg};color:${ps.c}">${r.priority}</span>
+        <button class="depth-btn" style="background:${DEPTH_CLR[r.depth]}" onclick="cycleDepth(${r.id})">${DEPTH_DA[r.depth]}</button>
+        ${r.notes ? `<span style="font-size:.625rem;color:var(--t3);font-style:italic">${esc(r.notes)}</span>` : ''}
+      </div>
+    </div>
+    <div class="reading-week">Uge ${r.week}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+// RENDER — ALLE TEKSTER
+// ═══════════════════════════════════════
+function renderList(el) {
+  const vis = visibleCourses();
+  let f = readings.filter(r => {
+    if (!vis.includes(r.course)) return false;
+    if (filters.course && r.course !== filters.course) return false;
+    if (filters.priority && r.priority !== filters.priority) return false;
+    if (filters.status && r.status !== filters.status) return false;
+    if (filters.week && r.week !== parseInt(filters.week)) return false;
+    return true;
+  });
+  const wOpts = Array.from({length:16},(_,i)=>i+6).map(w=>`<option value="${w}" ${filters.week==w?'selected':''}>Uge ${w}</option>`).join("");
+  const courseOpts = vis.map(c=>`<option value="${c}" ${filters.course===c?'selected':''}>${c}</option>`).join("");
+  let h = `<div class="lp-filters">
+    <select onchange="setFilter('course',this.value)"><option value="">Alle fag</option>${courseOpts}</select>
+    <select onchange="setFilter('priority',this.value)"><option value="">Alle prioriteter</option>${["høj","mellem","lav"].map(p=>`<option value="${p}" ${filters.priority===p?'selected':''}>${p}</option>`).join("")}</select>
+    <select onchange="setFilter('status',this.value)"><option value="">Alle status</option>${["ikke_startet","i_gang","læst"].map(s=>`<option value="${s}" ${filters.status===s?'selected':''}>${STATUS_DA[s]}</option>`).join("")}</select>
+    <select onchange="setFilter('week',this.value)"><option value="">Alle uger</option>${wOpts}</select>
+    <span class="lp-count">${f.length} tekster</span>
+  </div>`;
+  h += `<div class="lp-panel">${f.length ? f.map(readingHTML).join("") : '<div class="loading">Ingen tekster matcher filtrene</div>'}</div>`;
+  el.innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+// RENDER — FOKUS
+// ═══════════════════════════════════════
+function renderFocus(el) {
+  const vis = visibleCourses();
+  const backlog = readings
+    .filter(r => vis.includes(r.course) && r.week <= focusWeek && r.status !== "læst")
+    .sort((a,b) => { const p={høj:0,mellem:1,lav:2}; return (p[a.priority]||1)-(p[b.priority]||1) || a.week-b.week; });
+  const wBtns = Array.from({length:16},(_,i)=>i+6).map(w => {
+    const cls = [w===focusWeek?'active':'', w===14?'easter':'', w===7?'readweek':''].filter(Boolean).join(' ');
+    return `<button class="week-btn ${cls}" onclick="setFocusWeek(${w})">${w}</button>`;
+  }).join("");
+  let h = `<div class="lp-panel" style="margin-bottom:1rem"><div class="lp-panel-hd">Vælg uge</div><div class="lp-panel-bd">
+    <div class="week-btns">${wBtns}</div>
+    <div style="font-size:.6875rem;color:var(--t3);margin-top:.625rem">${WEEK_DATES[focusWeek]||""} · ${backlog.length} ulæste tekster op til uge ${focusWeek}</div>
+  </div></div>`;
+  h += `<div class="lp-panel">${backlog.length ? backlog.map(readingHTML).join("") : `<div style="padding:2rem;text-align:center;color:var(--green);font-weight:600;font-size:.875rem">✓ Alle tekster op til uge ${focusWeek} er læst!</div>`}</div>`;
+  el.innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+// RENDER — DEADLINES
+// ═══════════════════════════════════════
+function renderDeadlines(el) {
+  let h = `<div class="lp-panel"><div class="lp-panel-hd">Alle begivenheder</div>`;
+  if (!events.length) { h += `<div class="loading">Ingen begivenheder fundet</div>`; }
+  events.forEach(e => {
+    const es = EVT_STYLE[e.type] || EVT_STYLE.info;
+    const cc = e.course ? LP_COURSES[e.course] : null;
+    h += `<div class="event-row">
+      <div style="display:flex;align-items:center;gap:.625rem">
+        <span class="event-tag" style="background:${es.bg};color:${es.c}">${es.l}</span>
+        <div>
+          <div style="font-size:.8125rem;font-weight:500">${esc(e.label)}</div>
+          ${cc ? `<span style="font-size:.625rem;color:var(--t3)">${e.course}</span>` : ""}
+        </div>
+      </div>
+      <span class="event-date">Uge ${e.week}${e.date ? ' · '+e.date.slice(5) : ''}</span>
+    </div>`;
+  });
+  h += `</div>`;
+  el.innerHTML = h;
+}
+
+// ═══════════════════════════════════════
+// RENDER MAIN
+// ═══════════════════════════════════════
+function render() {
+  renderTabs();
+  renderSubtitle();
+  const el = document.getElementById("lp-content");
+  if (view === "dashboard") renderDashboard(el);
+  else if (view === "list") renderList(el);
+  else if (view === "focus") renderFocus(el);
+  else if (view === "deadlines") renderDeadlines(el);
+}
+
+// ═══════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════
+window.setView = function(v) { view = v; render(); };
+window.setFilter = function(k, v) { filters[k] = v; render(); };
+window.setFocusWeek = function(w) { focusWeek = w; render(); };
+window.toggleIR2 = function() { showIR2 = !showIR2; render(); };
+
+window.toggleStatus = async function(id) {
+  const r = readings.find(x => x.id === id); if (!r) return;
+  const newStatus = r.status === "læst" ? "ikke_startet" : "læst";
+  const newDepth = newStatus === "læst" && r.depth === "unread" ? "read" : r.depth;
+  const now = new Date().toISOString();
+  const patch = { status: newStatus, depth: newDepth,
+    completed_at: newStatus === "læst" ? now : null,
+    started_at: r.started_at || (newStatus === "læst" ? now : null) };
+  Object.assign(r, patch); render();
+  try { await patchReading(id, patch); }
+  catch (e) { console.error("Update failed:", e); r.status = r.status === "læst" ? "ikke_startet" : "læst"; render(); }
+};
+
+window.cycleDepth = async function(id) {
+  const r = readings.find(x => x.id === id); if (!r) return;
+  const idx = DEPTH.indexOf(r.depth), newDepth = DEPTH[(idx + 1) % DEPTH.length], old = r.depth;
+  r.depth = newDepth; render();
+  try { await patchReading(id, { depth: newDepth }); }
+  catch (e) { console.error("Depth failed:", e); r.depth = old; render(); }
+};
+
+// ═══════════════════════════════════════
+// COURSE PANELS (existing academics content)
+// ═══════════════════════════════════════
+const CC = {
+  IP3:{color:'#2563eb',full:'International Politics 3',exam:'4 Jun kl. 12',format:'Fri hjemmeopgave',approach:'Comparative theory mapping — realism vs. liberalism vs. constructivism. Raw sources first.',sched:[['Mon','08–10 FL'],['Thu','13–15 FL'],['Fri','08–10 Hold']]},
+  'Økonomi':{color:'#d97706',full:'Macroeconomics',exam:'9 Jun kl. 9–13',format:'4-hour written',approach:'Model-based graphical reasoning. IS-LM, AS-AD, Mundell-Fleming, Phillips curve.',sched:[['Thu','08–10 FL'],['Thu','15–17 Café'],['Fri','10–12 Hold']],alert:'Skriveøvelse 22 Apr — BLOCKING'},
+  Metode:{color:'#16a34a',full:'Qualitative Methods',exam:'26 May kl. 12',format:'Fri hjemmeopgave',approach:'Does not read pensum. Agent delivers summaries before + after lectures.',sched:[['Mon','13–15 FL'],['Thu','10–12 Hold']]}
+};
+
+function loadCoursePanels() {
+  const S = SUPABASE_URL + '/rest/v1';
+  const H = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
+  fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(data=>{
+    const courses={};
+    data.forEach(r=>{const c=r.course;if(!courses[c])courses[c]={t:0,d:0,ip:0};courses[c].t++;if(r.status==='læst')courses[c].d++;else if(r.status==='i_gang')courses[c].ip++});
+    const order=['Økonomi','IP3','Metode'];
+    document.getElementById('courseGrid').innerHTML=order.filter(c=>courses[c]).map(c=>{
+      const v=courses[c],cfg=CC[c]||{},pct=Math.round(100*v.d/v.t),col=cfg.color||'#a8a29e';
+      return`<div class="course-panel"${c==='Økonomi'?' style="border-color:#fecaca"':''}>
+        <div class="course-header"><div><div class="course-name" style="color:${col}">${c}</div><div class="course-full">${cfg.full||''}</div></div><span class="course-badge" style="background:${col}15;color:${col}">${cfg.exam?.split(' kl')[0]||''}</span></div>
+        <div class="course-body">
+          <div class="stats-row"><div class="stat"><div class="stat-val" style="color:${col}">${v.t}</div><div class="stat-label">Readings</div></div><div class="stat"><div class="stat-val">${v.d}</div><div class="stat-label">Done</div></div><div class="stat"><div class="stat-val">${v.ip}</div><div class="stat-label">In progress</div></div></div>
+          <div class="prog-wrap"><div class="prog-bar-outer"><div class="prog-bar" style="width:${Math.max(pct,2)}%;background:${col}"></div></div><span class="prog-pct">${pct}%</span></div>
+          ${cfg.alert?`<div class="course-alert">⚠ ${cfg.alert}</div>`:''}
+          <div class="sub-sh">Exam</div><div class="detail"><strong>Format:</strong> ${cfg.format||''}</div><div class="detail"><strong>Date:</strong> ${cfg.exam||''}</div>
+          <div class="sub-sh">Agent approach</div><div class="detail">${cfg.approach||''}</div>
+          <div class="sub-sh">Schedule</div>${(cfg.sched||[]).map(s=>'<div class="detail-row"><span class="k">'+s[0]+'</span><span class="v">'+s[1]+'</span></div>').join('')}
+        </div></div>`;
+    }).join('');
+  }).catch(()=>{document.getElementById('courseGrid').innerHTML='<div class="loading">Could not load</div>'});
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+(async function() {
+  try {
+    await loadLPData();
+    render();
+  } catch(e) {
+    document.getElementById("lp-content").innerHTML = `<div class="lp-panel"><div class="lp-panel-bd" style="color:var(--red)">Kunne ikke hente data: ${esc(e.message)}</div></div>`;
+    renderTabs();
+  }
+  loadCoursePanels();
+})();
 </script>
 </body>
 </html>
