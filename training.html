@@ -147,7 +147,13 @@ td.hit{color:var(--green)}td.miss{color:var(--red)}td.ok{color:var(--amber)}
 <div class="site-header">
   <div class="site-logo">System <span>/ Training</span></div>
   <button class="site-nt" onclick="document.querySelector('.site-nav').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
-  <div class="site-nav"><a href="index.html">Home</a><a href="academics.html">Academics</a><a href="training.html" class="active">Training</a></div>
+  <div class="site-nav">
+    <a href="index.html">Home</a>
+    <a href="academics.html">Academics</a>
+    <a href="training.html" class="active">Training</a>
+    <a href="strength.html">Styrke</a>
+    <a href="running.html">Løb</a>
+  </div>
 </div>
 <div class="p">
 
@@ -156,23 +162,20 @@ td.hit{color:var(--green)}td.miss{color:var(--red)}td.ok{color:var(--amber)}
   <h1>Training <em>Intelligence</em></h1>
   <div class="tl" id="subtitle">Loading data…</div>
   <div class="hdr-btns">
-    <button class="hdr-btn" onclick="document.body.classList.toggle('eink')">📖 E-ink</button>
-    <button class="hdr-btn" onclick="scrollTo(document.getElementById('upload'))">📤 Upload data</button>
+    <button class="hdr-btn" onclick="document.body.classList.toggle('eink')">E-ink</button>
+    <button class="hdr-btn" onclick="document.getElementById('upload').scrollIntoView({behavior:'smooth'})">Upload data</button>
+    <a href="strength.html" class="hdr-btn" style="text-decoration:none">Styrke</a>
+    <a href="running.html" class="hdr-btn" style="text-decoration:none">Løb</a>
   </div>
 </div>
 
 <nav>
-  <a href="#status">📊 Status</a>
-  <a href="#week">✅ Uge</a>
-  <a href="#recovery">❤️ Recovery</a>
-  <a href="#styrke">💪 Styrke</a>
-  <a href="#kroppen">⚖️ Kroppen</a>
-  <a href="#cardio">🏃 Cardio</a>
-  <a href="#cykel">🚴 Cykling</a>
-  <a href="#findings">🔬 Findings</a>
-  <a href="#skip">🚨 Skip-day</a>
-  <a href="#program">📋 Program</a>
-  <a href="#upload">📤 Data</a>
+  <a href="#status">Status</a>
+  <a href="#week">Tracking</a>
+  <a href="#recovery">Recovery</a>
+  <a href="#skip">Skip-dag</a>
+  <a href="#program">Program</a>
+  <a href="#upload">Data</a>
 </nav>
 
 <!-- ===== STATUS (live from Supabase) ===== -->
@@ -220,61 +223,6 @@ td.hit{color:var(--green)}td.miss{color:var(--red)}td.ok{color:var(--amber)}
     <tr style="color:var(--green)"><td>✅ Grøn</td><td>≥ 57 ms</td><td>≤ 62</td><td>≥ 8.0h</td><td style="font-family:'Inter';font-size:.54rem">Push hårdt, ny PR</td></tr>
     <tr style="color:var(--amber)"><td>🟡 Gul</td><td>40–56</td><td>63–72</td><td>5–7.9h</td><td style="font-family:'Inter';font-size:.54rem">Normal træning</td></tr>
     <tr style="color:var(--red)"><td>🔴 Rød</td><td>&lt; 40</td><td>&gt; 72</td><td>&lt; 5h</td><td style="font-family:'Inter';font-size:.54rem">Kun mobility/hvile</td></tr>
-  </table></div>
-</div>
-
-<!-- ===== STYRKE ===== -->
-<div class="sc" id="styrke">
-  <div class="sl"><span class="d" style="background:var(--green)"></span>STYRKE</div>
-  <h2>Progression og volumen</h2>
-  <div class="sts" id="strength-stats"></div>
-  <div class="cw"><div class="cl">Bench Press e1RM — stiplet linje = 100kg mål</div><div class="chart-container" id="chart-bench"></div></div>
-
-  <div class="c"><h3>Seneste workouts</h3><div id="workout-list" style="max-height:280px;overflow-y:auto"></div></div>
-
-  <div class="f g"><h4>September = guldmåned: alt steg (LBM↑ VO2↑ RHR↓)</h4><p>Bedste resultater kom måneden EFTER hårdeste måned. Kroppen tilpasser sig under hvile — <strong>supercompensation er reel</strong>.</p></div>
-  <div class="f b"><h4>Pull-ups tabte 46% efter 2 mdr. uden rygtræning (×13→×7)</h4><p>Reagerer hurtigst på fravær. Aldrig spring pull-dag over — selv 5×max i dørkarmsbar bevarer styrken.</p></div>
-  <div class="f w"><h4>Fremmøde > volumen</h4><p>Bedre at lave <strong>8 sæt konsekvent</strong> end at programmere 16 og lave 8. Dit mønster: ~50% gennemførelse. Fokusér på at møde op.</p></div>
-</div>
-
-<!-- ===== KROPPEN ===== -->
-<div class="sc" id="kroppen">
-  <div class="sl"><span class="d" style="background:var(--cyan)"></span>KROPPEN</div>
-  <h2>Muskelmasse, vægt og body composition</h2>
-  <div class="sts" id="body-stats"></div>
-  <div class="fr">
-    <div class="cw"><div class="cl">Fedtfri masse (kg) — lean body mass</div><div class="chart-container" id="chart-lbm"></div></div>
-    <div class="cw"><div class="cl">Kropsvægt (kg)</div><div class="chart-container" id="chart-weight"></div></div>
-  </div>
-  <div class="f g"><h4>Styrke → muskelmasse: r = +0.61</h4><p>Op til ~6 løbeture/md er "gratis" for muskelmassen med 10+ styrke-sessioner. Mere løb = LBM falder (r = -0.71).</p></div>
-  <div class="f w"><h4>36% af VO2max-stigning var vægttab, ikke reel fitness</h4><p>VO2max måles pr. kg. Vægttab øger VO2 automatisk. September: absolut VO2 peaked (3.308) — reel forbedring.</p></div>
-</div>
-
-<!-- ===== CARDIO ===== -->
-<div class="sc" id="cardio">
-  <div class="sl"><span class="d" style="background:var(--red)"></span>CARDIO · VO2MAX</div>
-  <h2>VO2max, løb og kondition</h2>
-  <div class="sts" id="cardio-stats"></div>
-  <div class="cw"><div class="cl">VO2max trend — stiplet linje = 48 mål</div><div class="chart-container" id="chart-vo2"></div></div>
-  <div class="f g"><h4>Søvn-pace korrelation: 8-9h søvn = 50 sek/km hurtigere</h4><p>Prioriter 8h søvn før løbedage. Største single-faktor for løbepræstation.</p></div>
-  <div class="f b"><h4>Boom-bust mønster: 16 volumenspikes i 30 uger</h4><p>Spikes på +199%, +259%, +649% uge-til-uge. Sener tilpasser sig over 6-12 uger. <strong>10%-reglen gælder.</strong> Konsistens > sporadiske lange ture.</p></div>
-</div>
-
-<!-- ===== CYKLING ===== -->
-<div class="sc" id="cykel">
-  <div class="sl"><span class="d" style="background:var(--cyan)"></span>CYKLING · DIN SKJULTE MOTOR</div>
-  <h2>Transport-cykling er din primære kardio</h2>
-  <div class="sts" id="cycling-stats"></div>
-  <div class="cw"><div class="cl">Månedlig cykelvolumen (km)</div><div class="chart-container" id="chart-cycling"></div></div>
-  <div class="f g"><h4>Transport-cykling = primær kardio-træning</h4><p>Cyklen giver zone 2-timer du aldrig får fra løb alene. Puls faldende over tid: <strong>-17 bpm</strong> ved sammenlignelig tur-type. Behold og værdsæt den.</p></div>
-</div>
-
-<!-- ===== FINDINGS ===== -->
-<div class="sc" id="findings">
-  <div class="sl"><span class="d" style="background:var(--violet)"></span>ALLE FINDINGS</div>
-  <h2>Nøgleindsigter fra 474 dages data</h2>
-  <div class="c"><table id="findings-table">
-    <tr><th>#</th><th>Finding</th><th>Handling</th></tr>
   </table></div>
 </div>
 
@@ -762,17 +710,14 @@ async function loadRecovery() {
     const avgHRV = (hrvVals.reduce((s, d) => s + d.hrv, 0) / hrvVals.length).toFixed(0);
     const greenDays = data.filter(d => d.recovery_zone === 'green').length;
     const redDays = data.filter(d => d.recovery_zone === 'red').length;
-    const latestVO2 = VO2DATA.length ? VO2DATA[VO2DATA.length-1].v : '—';
-    const latestBench = WORKOUTS.filter(w=>w.bench).slice(-1)[0]?.bench || '—';
-
-    document.getElementById('status-title').textContent = `${data.length} dage tracket · ${WORKOUTS.length} workouts logget`;
+    document.getElementById('status-title').textContent = `${data.length} dage tracket`;
     document.getElementById('stats-grid').innerHTML = `
-      <div class="st"><div class="l">VO2max</div><div class="v" style="color:var(--amber)">${latestVO2}</div><div class="n">→ 48+</div></div>
-      <div class="st"><div class="l">Bench e1RM</div><div class="v" style="color:var(--violet)">${latestBench}kg</div><div class="n">→ 100kg</div></div>
       <div class="st"><div class="l">HRV gns</div><div class="v">${avgHRV}</div><div class="n">ms · threshold 57</div></div>
       <div class="st"><div class="l">Grønne dage</div><div class="v" style="color:var(--green)">${greenDays}</div><div class="n">af ${data.length}</div></div>
       <div class="st"><div class="l">Røde dage</div><div class="v" style="color:var(--red)">${redDays}</div></div>
-      <div class="st"><div class="l">I dag</div><div class="v" style="color:var(${today.recovery_zone==='green'?'--green':today.recovery_zone==='red'?'--red':'--amber'})">${today.recovery_zone?.toUpperCase()||'—'}</div></div>`;
+      <div class="st"><div class="l">I dag</div><div class="v" style="color:var(${today.recovery_zone==='green'?'--green':today.recovery_zone==='red'?'--red':'--amber'})">${today.recovery_zone?.toUpperCase()||'—'}</div></div>
+      <div class="st"><div class="l">Styrke</div><div class="v" style="color:var(--violet)"><a href="strength.html" style="color:inherit;text-decoration:none">78 kg</a></div><div class="n">bench e1RM</div></div>
+      <div class="st"><div class="l">Kondition</div><div class="v" style="color:var(--amber)"><a href="running.html" style="color:inherit;text-decoration:none">43.9</a></div><div class="n">VO2max</div></div>`;
 
 
     // Recovery stats
@@ -811,8 +756,8 @@ async function loadRecovery() {
       </div>`;
 
     // Subtitle
-    document.getElementById('subtitle').textContent = `${data.length} recovery-dage · ${WORKOUTS.length} workouts · ${VO2DATA.length} VO2-målinger · ${LBM.length} LBM-målinger · ${CYCLING_M.reduce((s,d)=>s+d.v,0)} cykelture`;
-    document.getElementById('foot').textContent = `${data.length} recovery-dage · ${WORKOUTS.length} workouts · VO2 ${VO2DATA.length?VO2DATA[0].v+'→'+VO2DATA[VO2DATA.length-1].v:'-'} · LBM ${LBM.length?LBM[0].v+'→'+LBM[LBM.length-1].v:'-'} kg · ${Math.round(CYCLING_M.reduce((s,d)=>s+(d.total||0),0))} km cykling`;
+    document.getElementById('subtitle').textContent = `${data.length} recovery-dage tracket · grøn ${Math.round(greenDays/data.length*100)}% · HRV gns ${avgHRV} ms`;
+    document.getElementById('foot').textContent = `${data.length} recovery-dage · seneste: ${data[data.length-1].date}`;
 
   } catch (e) {
     console.error('Recovery load error:', e);
@@ -838,9 +783,7 @@ function uploadHevy() {
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
-populateEmbedded();
 renderWeek();
-renderFindings();
 loadRecovery();
 </script>
 </body>
