@@ -1,218 +1,814 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#fafaf9">
-<title>Training — System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Intelligence</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-:root{--bg:#fafaf9;--surface:#fff;--s2:#f5f5f4;--border:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--t4:#d6d3d1;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--cyan:#0891b2;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
+:root{--bg:#08090c;--s1:#0f1117;--s2:#161820;--s3:#1e2029;--bd:#262a36;--t1:#e4e8f1;--t2:#868da5;--t3:#4e5470;--blue:#4d8eff;--green:#2dd4a0;--red:#f06060;--amber:#f0a040;--violet:#8b7cf0;--pink:#e86caa;--cyan:#40d0d8;--lime:#a0e040}
+body.eink{--bg:#fff;--s1:#f5f5f5;--s2:#eee;--s3:#ddd;--bd:#aaa;--t1:#000;--t2:#444;--t3:#666;--blue:#0044cc;--green:#007700;--red:#cc0000;--amber:#aa6600;--violet:#5533aa;--pink:#aa3377;--cyan:#007788;--lime:#448800}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-header{padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:rgba(250,250,249,.92);backdrop-filter:blur(20px)}
-.logo{font-size:.9375rem;font-weight:700;letter-spacing:-.02em}.logo span{color:var(--t3);font-weight:400}
-nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decoration:none;padding:.4rem .875rem;border-radius:8px;transition:all .15s;font-weight:500}nav a:hover{color:var(--t1);background:var(--s2)}nav a.active{color:var(--t1);background:var(--s2)}
-.nt{display:none;background:none;border:none;cursor:pointer;padding:.5rem}.nt svg{width:20px;height:20px;stroke:var(--t2);fill:none;stroke-width:1.5}
-@media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
-.main{max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 1.5rem}@media(max-width:640px){.main{padding:1.5rem 1rem}}
-.page-title{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
-.page-sub{font-size:.875rem;color:var(--t2);margin-bottom:.75rem}
-.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem}.sh:first-of-type{margin-top:0}
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:2rem}
-@media(min-width:769px){.metrics{grid-template-columns:repeat(6,1fr)}}
-.m{padding:1rem;border-right:1px solid var(--s2);border-bottom:1px solid var(--s2)}.m:nth-child(3n){border-right:none}@media(min-width:769px){.m{border-bottom:none}.m:nth-child(3n){border-right:1px solid var(--s2)}.m:last-child{border-right:none}}
-.m-val{font-family:'JetBrains Mono',monospace;font-size:1.375rem;font-weight:600;line-height:1}
-.m-label{font-size:.5625rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:.375rem}
-.m-sub{font-size:.625rem;color:var(--t3);font-family:'JetBrains Mono',monospace}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:1rem}
-.ph{padding:.75rem 1rem;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:center}
-.ph .l{font-size:.75rem;font-weight:600}.ph .t{font-size:.625rem;color:var(--t3)}
-.pb{padding:1rem}
-.grid2{display:grid;grid-template-columns:1fr;gap:1rem}@media(min-width:860px){.grid2{grid-template-columns:1fr 1fr}}
-.chart svg{width:100%;height:auto;display:block}
-.zone-strip{display:flex;gap:1px;height:20px;border-radius:3px;overflow:hidden;margin-bottom:.5rem}
-.zone-day{flex:1;min-width:1px}
-.dr{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--s2);font-size:.8125rem}.dr:last-child{border-bottom:none}.dr .k{color:var(--t3)}.dr .v{color:var(--t2);text-align:right}
-.wk-row{display:grid;grid-template-columns:70px 1fr auto;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--s2);font-size:.8125rem}.wk-row:last-child{border-bottom:none}
-.wk-date{font-family:'JetBrains Mono',monospace;font-size:.6875rem;color:var(--t3)}
-.wk-title{font-weight:500}
-.wk-meta{font-size:.6875rem;color:var(--t3);margin-top:.125rem}
-.wk-badge{font-size:.5625rem;font-weight:600;padding:.2rem .5rem;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
-.wk-badge.push{background:#ede9fe;color:var(--purple)}
-.wk-badge.pull{background:#e0f2fe;color:var(--cyan)}
-.wk-badge.legs{background:#fef3c7;color:var(--amber)}
-.coach-grid{display:grid;grid-template-columns:1fr;gap:1rem}@media(min-width:860px){.coach-grid{grid-template-columns:1fr 1fr}}
-.warn{display:flex;align-items:flex-start;gap:.625rem;padding:.875rem;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--rs);font-size:.75rem;color:var(--t2);margin:.75rem 0}
-.warn strong{color:var(--amber);font-weight:600}
-.prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-@media(max-width:640px){.prog-grid{grid-template-columns:1fr}}
-.prog-day{padding:1rem;border-right:1px solid var(--s2)}.prog-day:last-child{border-right:none}
-@media(max-width:640px){.prog-day{border-right:none;border-bottom:1px solid var(--s2)}.prog-day:last-child{border-bottom:none}}
-.prog-day-name{font-size:.625rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.625rem}
-.prog-ex{font-size:.75rem;padding:.3rem 0;border-top:1px solid var(--s2);color:var(--t2);display:flex;justify-content:space-between}.prog-ex:first-of-type{border-top:none}
-.prog-ex .n{color:var(--t1);font-weight:500}.prog-ex .s{color:var(--t3);font-size:.6875rem}
-footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
+body{background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+.p{max-width:900px;margin:0 auto;padding:2rem 1.5rem 5rem}
+@media(max-width:640px){.p{padding:1rem .75rem 4rem}}
+
+/* Header */
+.mh{margin-bottom:1.5rem}.mh::after{content:'';display:block;width:100%;height:1px;background:linear-gradient(90deg,var(--blue),var(--violet),var(--pink),transparent);margin-top:1rem}
+h1{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;line-height:1.2}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tl{color:var(--t2);font-size:.7rem;font-weight:300;margin-top:.25rem}
+.hdr-btns{display:flex;gap:.5rem;margin-top:.5rem}
+.hdr-btn{background:var(--s2);border:1px solid var(--bd);border-radius:6px;color:var(--t2);padding:4px 10px;font-size:.6rem;cursor:pointer;font-family:inherit;font-weight:500;transition:all .15s}
+.hdr-btn:hover{color:var(--t1);border-color:var(--t3)}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:100;background:rgba(8,9,12,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd);margin:0 -1.5rem;padding:.35rem 1.5rem;display:flex;gap:.2rem;flex-wrap:wrap;font-size:.55rem}
+@media(max-width:640px){nav{margin:0 -.75rem;padding:.25rem .75rem;gap:.15rem;font-size:.5rem}}
+nav a{color:var(--t3);text-decoration:none;padding:.15rem .4rem;border-radius:4px;transition:all .15s;font-weight:500;white-space:nowrap}
+nav a:hover{color:var(--t1);background:var(--s2)}
+
+/* Sections */
+.sc{margin-top:2rem;scroll-margin-top:3rem}
+.sl{font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:.35rem;display:flex;align-items:center;gap:.3rem}
+.sl .d{width:6px;height:6px;border-radius:50%}
+.sc>h2{font-size:1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.6rem}
+
+/* Cards */
+.c{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:.85rem .9rem;margin-bottom:.5rem}
+.c h3{font-size:.78rem;font-weight:600;margin-bottom:.2rem}
+.c p,.c li{font-size:.68rem;color:var(--t2);line-height:1.65;font-weight:300}
+.c p strong,.c li strong{color:var(--t1);font-weight:500}
+.c p em,.c li em{color:var(--cyan);font-style:normal;font-weight:400}
+
+/* Stats grid */
+.sts{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:.4rem;margin-bottom:.6rem}
+.st{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:.45rem;text-align:center}
+.st .l{font-size:.45rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);font-weight:500;margin-bottom:.05rem}
+.st .v{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600}
+.st .n{font-size:.42rem;color:var(--t3);margin-top:.03rem}
+
+/* Findings */
+.f{background:var(--s2);border-radius:9px;padding:.7rem .8rem;margin-bottom:.4rem;border-left:3px solid var(--blue)}
+.f.w{border-left-color:var(--amber)}.f.b{border-left-color:var(--red)}.f.g{border-left-color:var(--green)}.f.i{border-left-color:var(--violet)}
+.f h4{font-size:.72rem;font-weight:600;margin-bottom:.1rem}.f p{font-size:.65rem;color:var(--t2);line-height:1.6;font-weight:300}.f p strong{color:var(--t1);font-weight:500}
+
+/* Highlight box */
+.hl{background:linear-gradient(135deg,rgba(77,142,255,.06),rgba(139,124,240,.04));border:1px solid rgba(77,142,255,.15);border-radius:10px;padding:.8rem .85rem;margin:.5rem 0}
+.hl h4{font-size:.75rem;font-weight:600;color:var(--blue);margin-bottom:.15rem}
+.hl p{font-size:.65rem;color:var(--t2);line-height:1.6}.hl strong{color:var(--t1)}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:.62rem;margin:.3rem 0}
+th{text-align:left;color:var(--t3);font-weight:500;font-size:.52rem;text-transform:uppercase;letter-spacing:.04em;padding:.3rem;border-bottom:1px solid var(--bd)}
+td{padding:.3rem;border-bottom:1px solid rgba(38,42,54,.4);font-family:'JetBrains Mono';font-size:.58rem}
+
+/* Charts */
+.cw{background:var(--s2);border-radius:9px;padding:.5rem;margin:.4rem 0}
+.cl{font-size:.5rem;color:var(--t3);font-weight:500;margin-bottom:.15rem}
+svg text{font-family:'JetBrains Mono',monospace}
+.chart-container{position:relative;cursor:crosshair}
+.tooltip{position:absolute;background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:4px 8px;font-size:.55rem;color:var(--t1);pointer-events:none;opacity:0;transition:opacity .1s;z-index:10;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+
+/* Weekly tick-off */
+.week-grid{display:flex;flex-direction:column;gap:6px}
+.wo-row{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:.65rem .75rem;display:flex;align-items:center;gap:.65rem;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.wo-row:active{transform:scale(.98)}
+.wo-row.done-full{border-color:var(--green);background:rgba(45,212,160,.04)}
+.wo-row.done-short{border-color:var(--amber);background:rgba(240,160,64,.04)}
+.wo-row.done-other{border-color:var(--t3);background:var(--s2)}
+.wo-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s}
+.wo-row.done-full .wo-check{background:var(--green);border-color:var(--green);color:#000}
+.wo-row.done-short .wo-check{background:var(--amber);border-color:var(--amber);color:#000}
+.wo-row.done-other .wo-check{background:var(--t3);border-color:var(--t3);color:#000}
+.wo-name{font-size:.72rem;font-weight:600}.wo-detail{font-size:.55rem;color:var(--t2);margin-top:1px}
+.wo-day{font-size:.5rem;color:var(--t3);margin-left:auto;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.compliance-bar{height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin-top:.5rem}
+.compliance-fill{height:100%;border-radius:3px;transition:width .4s ease}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--bd);border-radius:16px 16px 0 0;width:100%;max-width:480px;padding:1.25rem;max-height:70vh;overflow-y:auto}
+.modal h3{font-size:.85rem;font-weight:700;margin-bottom:.75rem}
+.modal-opts{display:flex;flex-direction:column;gap:.5rem}
+.modal-opt{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:.75rem;cursor:pointer;transition:all .15s}
+.modal-opt:hover{border-color:var(--blue)}
+.modal-opt h4{font-size:.72rem;font-weight:600;margin-bottom:.15rem}
+.modal-opt p{font-size:.6rem;color:var(--t2);line-height:1.5}
+.modal-opt .time{font-size:.5rem;color:var(--t3);margin-top:.2rem}
+.modal-close{width:100%;background:none;border:1px solid var(--bd);border-radius:10px;color:var(--t2);padding:10px;font-size:.7rem;cursor:pointer;font-family:inherit;margin-top:.75rem}
+
+/* Skip-day cards */
+.sk{background:var(--s1);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:.5rem}
+.skh{padding:.4rem .7rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd)}
+.skh h4{font-size:.72rem;font-weight:600}
+.skh .badge{font-size:.45rem;padding:.1rem .25rem;border-radius:3px;font-weight:600}
+.sko{padding:.4rem .7rem}
+.so{display:grid;grid-template-columns:auto 1fr auto;gap:.35rem;align-items:start;padding:.3rem 0;border-bottom:1px solid rgba(38,42,54,.5)}
+.so:last-child{border-bottom:none}
+.so .tier{font-family:'JetBrains Mono';font-size:.5rem;font-weight:600;padding:.08rem .2rem;border-radius:3px;text-align:center;min-width:20px}
+.so .tier.a{background:rgba(45,212,160,.12);color:var(--green)}
+.so .tier.b{background:rgba(240,160,64,.12);color:var(--amber)}
+.so .tier.c{background:rgba(240,96,96,.12);color:var(--red)}
+.so .desc{font-size:.6rem;color:var(--t2);line-height:1.5}.so .desc strong{color:var(--t1)}
+.so .tm{font-family:'JetBrains Mono';font-size:.5rem;color:var(--t3);white-space:nowrap}
+
+/* Data upload */
+.upload-area{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:.85rem}
+.upload-area textarea{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;color:var(--t1);padding:.6rem;font-size:.65rem;font-family:'JetBrains Mono',monospace;resize:vertical;min-height:80px}
+.upload-btn{background:var(--blue);border:none;border-radius:8px;color:#fff;padding:8px 16px;font-size:.65rem;font-weight:600;cursor:pointer;font-family:inherit;margin-top:.5rem;transition:opacity .15s}
+.upload-btn:hover{opacity:.85}
+.upload-btn:disabled{opacity:.4}
+.upload-status{font-size:.55rem;color:var(--t2);margin-top:.35rem;min-height:1rem}
+.upload-status.ok{color:var(--green)}.upload-status.err{color:var(--red)}
+
+/* Two column */
+.fr{display:flex;gap:.6rem;flex-wrap:wrap}.fr>*{flex:1;min-width:220px}
+
+/* Volume table highlights */
+td.hit{color:var(--green)}td.miss{color:var(--red)}td.ok{color:var(--amber)}
+
+/* Footer */
+.foot{text-align:center;padding:1.2rem 0 0;color:var(--t3);font-size:.48rem;border-top:1px solid var(--bd);margin-top:2rem}
+
+@media(max-width:640px){.sts{grid-template-columns:repeat(3,1fr)}.fr{flex-direction:column}nav{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">System <span>/ Training</span></div>
-  <button class="nt" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
-  <nav><a href="index.html">Home</a><a href="academics.html">Academics</a><a href="training.html" class="active">Training</a></nav>
-</header>
-<div class="main">
-  <div class="page-title">Training</div>
-  <div class="page-sub">77 workouts logged · 474 days recovery data · evidence-based coaching</div>
+<div class="p">
 
-  <div class="metrics">
-    <div class="m"><div class="m-val" style="color:var(--purple)" id="benchE1rm">77.1</div><div class="m-label">Bench e1RM</div><div class="m-sub">→ 100 kg</div></div>
-    <div class="m"><div class="m-val">77</div><div class="m-label">Workouts</div><div class="m-sub">Jun '25 – Mar '26</div></div>
-    <div class="m"><div class="m-val" id="todayZone" style="color:var(--amber)">—</div><div class="m-label">Today</div><div class="m-sub" id="todayDetail">loading...</div></div>
-    <div class="m"><div class="m-val" id="avgSleep">—</div><div class="m-label">Avg sleep</div><div class="m-sub">last 14d</div></div>
-    <div class="m"><div class="m-val" id="avgHrv">—</div><div class="m-label">Avg HRV</div><div class="m-sub">last 14d</div></div>
-    <div class="m"><div class="m-val" id="greenPct">—</div><div class="m-label">Green days</div><div class="m-sub">all time</div></div>
-  </div>
-
-  <div class="sh">Strength progression</div>
-  <div class="grid2">
-    <div class="panel"><div class="ph"><span class="l" style="color:var(--purple)">Bench Press e1RM</span><span class="t">Brzycki · 38 entries</span></div><div class="pb chart" id="benchChart"></div></div>
-    <div class="panel"><div class="ph"><span class="l">Weekly Training Frequency</span><span class="t">sessions/week</span></div><div class="pb chart" id="freqChart"></div></div>
-  </div>
-
-  <div class="sh">Recovery intelligence <span style="font-weight:400;text-transform:none;letter-spacing:0">(live from Apple Watch)</span></div>
-  <div class="grid2">
-    <div class="panel"><div class="ph"><span class="l">Recovery Zone — last 90 days</span><span class="t" id="zoneLabel">loading...</span></div><div class="pb" id="zoneChart"></div></div>
-    <div class="panel"><div class="ph"><span class="l" style="color:var(--cyan)">HRV Trend</span><span class="t">last 60 days · ms</span></div><div class="pb chart" id="hrvChart"></div></div>
-  </div>
-  <div class="grid2">
-    <div class="panel"><div class="ph"><span class="l" style="color:var(--green)">Sleep Hours</span><span class="t">last 60 days</span></div><div class="pb chart" id="sleepChart"></div></div>
-    <div class="panel"><div class="ph"><span class="l">Resting Heart Rate</span><span class="t">last 60 days · bpm</span></div><div class="pb chart" id="rhrChart"></div></div>
-  </div>
-
-  <div class="sh">Recent workouts <span style="font-weight:400;text-transform:none;letter-spacing:0">(from Hevy)</span></div>
-  <div class="panel"><div class="pb" id="recentWorkouts"></div></div>
-
-  <div class="sh">Coaches & program</div>
-  <div class="warn"><strong>⚠ Pattern detected:</strong> You train harder on yellow/red days than green days — inverse of optimal. Use recovery zone to autoregulate intensity.</div>
-  <div class="coach-grid">
-    <div class="panel"><div class="ph"><span class="l" style="color:var(--cyan)">Running Coach</span><span class="t">Seiler · Helgerud · Billat</span></div><div class="pb">
-      <div class="dr"><span class="k">Model</span><span class="v">Polarized (80/20)</span></div>
-      <div class="dr"><span class="k">Tue</span><span class="v">Copenhill hill intervals</span></div>
-      <div class="dr"><span class="k">Thu</span><span class="v">Rower HIIT 3-4×4min HR 170+</span></div>
-      <div class="dr"><span class="k">Fri</span><span class="v">Zone 2 easy run (+10%/wk)</span></div>
-    </div></div>
-    <div class="panel"><div class="ph"><span class="l" style="color:var(--purple)">Strength Coach</span><span class="t">Schoenfeld · Helms</span></div><div class="pb">
-      <div class="dr"><span class="k">Focus</span><span class="v">Hypertrophy · RPE autoregulation</span></div>
-      <div class="dr"><span class="k">Split</span><span class="v">Push / Pull / Legs+Acc</span></div>
-      <div class="dr"><span class="k">Priority</span><span class="v">Chest, shoulders, biceps, back</span></div>
-      <div class="dr"><span class="k">Bench target</span><span class="v">100kg Oct-Nov '26</span></div>
-    </div></div>
-  </div>
-  <div style="margin-top:1rem"></div>
-  <div class="prog-grid">
-    <div class="prog-day"><div class="prog-day-name">Push</div><div class="prog-ex"><span class="n">Bench Press</span><span class="s">4×6-8 RPE 8</span></div><div class="prog-ex"><span class="n">OHP</span><span class="s">3×8-10</span></div><div class="prog-ex"><span class="n">Incline DB</span><span class="s">3×10-12</span></div><div class="prog-ex"><span class="n">Lateral Raises</span><span class="s">3×12-15</span></div><div class="prog-ex"><span class="n">Dips</span><span class="s">3×8-10</span></div></div>
-    <div class="prog-day"><div class="prog-day-name">Pull</div><div class="prog-ex"><span class="n">Pull-ups</span><span class="s">4×6-10</span></div><div class="prog-ex"><span class="n">Barbell Rows</span><span class="s">4×8-10</span></div><div class="prog-ex"><span class="n">Face Pulls</span><span class="s">3×15-20</span></div><div class="prog-ex"><span class="n">DB Curls</span><span class="s">3×10-12</span></div><div class="prog-ex"><span class="n">Hammer Curls</span><span class="s">3×10-12</span></div></div>
-    <div class="prog-day"><div class="prog-day-name">Legs + Acc</div><div class="prog-ex"><span class="n">Squat</span><span class="s">4×6-8 RPE 8</span></div><div class="prog-ex"><span class="n">RDL</span><span class="s">3×8-10</span></div><div class="prog-ex"><span class="n">KB Lunges</span><span class="s">3×10/leg</span></div><div class="prog-ex"><span class="n">Calf Raises</span><span class="s">3×15-20</span></div></div>
+<!-- HEADER -->
+<div class="mh">
+  <h1>Training Intelligence<br><em>Knowledge · Data · Program</em></h1>
+  <div class="tl" id="subtitle">Loading data…</div>
+  <div class="hdr-btns">
+    <button class="hdr-btn" onclick="document.body.classList.toggle('eink')">📖 E-ink</button>
+    <button class="hdr-btn" onclick="scrollTo(document.getElementById('upload'))">📤 Upload data</button>
   </div>
 </div>
-<footer>Personal AI System · Training · F26</footer>
+
+<nav>
+  <a href="#status">📊 Status</a>
+  <a href="#week">✅ Uge</a>
+  <a href="#recovery">❤️ Recovery</a>
+  <a href="#styrke">💪 Styrke</a>
+  <a href="#kroppen">⚖️ Kroppen</a>
+  <a href="#cardio">🏃 Cardio</a>
+  <a href="#cykel">🚴 Cykling</a>
+  <a href="#findings">🔬 Findings</a>
+  <a href="#skip">🚨 Skip-day</a>
+  <a href="#program">📋 Program</a>
+  <a href="#upload">📤 Data</a>
+</nav>
+
+<!-- ===== STATUS (live from Supabase) ===== -->
+<div class="sc" id="status">
+  <div class="sl"><span class="d" style="background:var(--cyan)"></span>STATUS</div>
+  <h2 id="status-title">Loading…</h2>
+  <div class="sts" id="stats-grid"></div>
+  <div id="today-recovery"></div>
+</div>
+
+<!-- ===== WEEKLY TICK-OFF ===== -->
+<div class="sc" id="week">
+  <div class="sl"><span class="d" style="background:var(--green)"></span>DENNE UGE</div>
+  <h2>Ugentlig compliance</h2>
+  <div id="week-label" style="font-size:.6rem;color:var(--t2);margin-bottom:.5rem"></div>
+  <div class="week-grid" id="week-grid"></div>
+  <div class="compliance-bar"><div class="compliance-fill" id="compliance-fill"></div></div>
+  <div id="compliance-text" style="font-size:.55rem;color:var(--t3);margin-top:.25rem;text-align:right"></div>
+
+  <div class="c" style="margin-top:.75rem">
+    <h3>Volume denne uge vs. landmarks</h3>
+    <table>
+      <tr><th>Muskel</th><th>Denne uge</th><th>MED</th><th>MEV</th><th>MAV</th></tr>
+      <tbody id="volume-table"></tbody>
+    </table>
+    <p style="margin-top:.3rem">MED = minimum effective dose · MEV = min for growth · MAV = max adaptive (Schoenfeld 2017)</p>
+  </div>
+</div>
+
+<!-- ===== RECOVERY ===== -->
+<div class="sc" id="recovery">
+  <div class="sl"><span class="d" style="background:var(--pink)"></span>RECOVERY · HRV · SØVN</div>
+  <h2 id="recovery-title">474 dage med recovery-data</h2>
+  <div class="sts" id="recovery-stats"></div>
+  <div class="cw"><div class="cl">HRV — seneste 90 dage (7d glidende gennemsnit) · grøn linje = 57 ms threshold</div><div class="chart-container" id="chart-hrv"></div></div>
+  <div class="cw"><div class="cl">Hvilepuls — seneste 90 dage · grøn linje = 62 bpm threshold</div><div class="chart-container" id="chart-rhr"></div></div>
+  <div class="cw"><div class="cl">Søvn — seneste 90 dage · grøn linje = 8h threshold</div><div class="chart-container" id="chart-sleep"></div></div>
+  <div class="cw"><div class="cl">Recovery zone fordeling</div><div id="zone-dist"></div></div>
+
+  <div class="c"><h3>Dine personlige readiness-tærskler</h3>
+  <table>
+    <tr><th>Signal</th><th>HRV</th><th>RHR</th><th>Søvn</th><th>Anbefaling</th></tr>
+    <tr style="color:var(--green)"><td>✅ Grøn</td><td>≥ 57 ms</td><td>≤ 62</td><td>≥ 8.0h</td><td style="font-family:'DM Sans';font-size:.54rem">Push hårdt, ny PR</td></tr>
+    <tr style="color:var(--amber)"><td>🟡 Gul</td><td>40–56</td><td>63–72</td><td>5–7.9h</td><td style="font-family:'DM Sans';font-size:.54rem">Normal træning</td></tr>
+    <tr style="color:var(--red)"><td>🔴 Rød</td><td>&lt; 40</td><td>&gt; 72</td><td>&lt; 5h</td><td style="font-family:'DM Sans';font-size:.54rem">Kun mobility/hvile</td></tr>
+  </table></div>
+</div>
+
+<!-- ===== STYRKE ===== -->
+<div class="sc" id="styrke">
+  <div class="sl"><span class="d" style="background:var(--green)"></span>STYRKE</div>
+  <h2>Progression og volumen</h2>
+  <div class="sts" id="strength-stats"></div>
+  <div class="cw"><div class="cl">Bench Press e1RM — stiplet linje = 100kg mål</div><div class="chart-container" id="chart-bench"></div></div>
+
+  <div class="c"><h3>Seneste workouts</h3><div id="workout-list" style="max-height:280px;overflow-y:auto"></div></div>
+
+  <div class="f g"><h4>September = guldmåned: alt steg (LBM↑ VO2↑ RHR↓)</h4><p>Bedste resultater kom måneden EFTER hårdeste måned. Kroppen tilpasser sig under hvile — <strong>supercompensation er reel</strong>.</p></div>
+  <div class="f b"><h4>Pull-ups tabte 46% efter 2 mdr. uden rygtræning (×13→×7)</h4><p>Reagerer hurtigst på fravær. Aldrig spring pull-dag over — selv 5×max i dørkarmsbar bevarer styrken.</p></div>
+  <div class="f w"><h4>Compliance > volumen</h4><p>Bedre at lave <strong>8 sæt konsekvent</strong> end at programmere 16 og lave 8. Dit mønster: ~50% compliance. Fokusér på at møde op.</p></div>
+</div>
+
+<!-- ===== KROPPEN ===== -->
+<div class="sc" id="kroppen">
+  <div class="sl"><span class="d" style="background:var(--cyan)"></span>KROPPEN</div>
+  <h2>Muskelmasse, vægt og body composition</h2>
+  <div class="sts" id="body-stats"></div>
+  <div class="fr">
+    <div class="cw"><div class="cl">Fedtfri masse (kg) — lean body mass</div><div class="chart-container" id="chart-lbm"></div></div>
+    <div class="cw"><div class="cl">Kropsvægt (kg)</div><div class="chart-container" id="chart-weight"></div></div>
+  </div>
+  <div class="f g"><h4>Styrke → muskelmasse: r = +0.61</h4><p>Op til ~6 løbeture/md er "gratis" for muskelmassen med 10+ styrke-sessioner. Mere løb = LBM falder (r = -0.71).</p></div>
+  <div class="f w"><h4>36% af VO2max-stigning var vægttab, ikke reel fitness</h4><p>VO2max måles pr. kg. Vægttab øger VO2 automatisk. September: absolut VO2 peaked (3.308) — reel forbedring.</p></div>
+</div>
+
+<!-- ===== CARDIO ===== -->
+<div class="sc" id="cardio">
+  <div class="sl"><span class="d" style="background:var(--red)"></span>CARDIO · VO2MAX</div>
+  <h2>VO2max, løb og kondition</h2>
+  <div class="sts" id="cardio-stats"></div>
+  <div class="cw"><div class="cl">VO2max trend — stiplet linje = 48 mål</div><div class="chart-container" id="chart-vo2"></div></div>
+  <div class="f g"><h4>Søvn-pace korrelation: 8-9h søvn = 50 sek/km hurtigere</h4><p>Prioriter 8h søvn før løbedage. Største single-faktor for løbepræstation.</p></div>
+  <div class="f b"><h4>Boom-bust mønster: 16 volumenspikes i 30 uger</h4><p>Spikes på +199%, +259%, +649% uge-til-uge. Sener tilpasser sig over 6-12 uger. <strong>10%-reglen gælder.</strong> Konsistens > sporadiske lange ture.</p></div>
+</div>
+
+<!-- ===== CYKLING ===== -->
+<div class="sc" id="cykel">
+  <div class="sl"><span class="d" style="background:var(--cyan)"></span>CYKLING · DIN SKJULTE MOTOR</div>
+  <h2>Transport-cykling er din primære kardio</h2>
+  <div class="sts" id="cycling-stats"></div>
+  <div class="cw"><div class="cl">Månedlig cykelvolumen (km)</div><div class="chart-container" id="chart-cycling"></div></div>
+  <div class="f g"><h4>Transport-cykling = primær kardio-træning</h4><p>Cyklen giver zone 2-timer du aldrig får fra løb alene. Puls faldende over tid: <strong>-17 bpm</strong> ved sammenlignelig tur-type. Behold og værdsæt den.</p></div>
+</div>
+
+<!-- ===== FINDINGS ===== -->
+<div class="sc" id="findings">
+  <div class="sl"><span class="d" style="background:var(--violet)"></span>ALLE FINDINGS</div>
+  <h2>Nøgleindsigter fra 474 dages data</h2>
+  <div class="c"><table id="findings-table">
+    <tr><th>#</th><th>Finding</th><th>Handling</th></tr>
+  </table></div>
+</div>
+
+<!-- ===== SKIP-DAY ===== -->
+<div class="sc" id="skip">
+  <div class="sl"><span class="d" style="background:var(--amber)"></span>SKIP-DAY GUIDE</div>
+  <h2>Når du overvejer at droppe en træning</h2>
+  <div class="hl"><h4>15 minutter slår 0 minutter. Altid.</h4><p>Dine tilbageskridt kom fra <strong>totalt fravær</strong>, ikke fra at gøre lidt mindre.</p></div>
+
+  <div class="sk"><div class="skh"><h4 style="color:var(--violet)">● PUSH</h4></div><div class="sko">
+    <div class="so"><div class="tier a">A</div><div class="desc"><strong>Fuld</strong> — Bench→Incline DB→Laterals→Dips→Triceps (16 sæt)</div><div class="tm">45m</div></div>
+    <div class="so"><div class="tier b">B</div><div class="desc"><strong>Compounds</strong> — Bench 3×6→Dips 2×10→Laterals 2×15</div><div class="tm">25m</div></div>
+    <div class="so"><div class="tier c">C</div><div class="desc"><strong>Min</strong> — Bench 3×6→Dips 2×max. Kan gøres hjemme</div><div class="tm">15m</div></div>
+  </div></div>
+
+  <div class="sk"><div class="skh"><h4 style="color:var(--blue)">● PULL</h4><div class="badge" style="background:rgba(240,96,96,.12);color:var(--red)">DROP ALDRIG!</div></div><div class="sko">
+    <div class="so"><div class="tier a">A</div><div class="desc"><strong>Fuld</strong> — Pull-ups→Row→Face pulls→Curls→Rear delt (17 sæt)</div><div class="tm">50m</div></div>
+    <div class="so"><div class="tier b">B</div><div class="desc"><strong>Ryg</strong> — Pull-ups 4×max→Row 3×10→Curls 3×12</div><div class="tm">25m</div></div>
+    <div class="so"><div class="tier c">C</div><div class="desc"><strong>Min</strong> — Pull-ups 5×max. Dørkarmsbar. <em>2 md uden = -46%</em></div><div class="tm">10m</div></div>
+  </div></div>
+
+  <div class="sk"><div class="skh"><h4 style="color:var(--amber)">● BEN + ACC</h4><div class="badge" style="background:rgba(240,96,96,.12);color:var(--red)">DROP ALDRIG!</div></div><div class="sko">
+    <div class="so"><div class="tier a">A</div><div class="desc"><strong>Fuld</strong> — Squat→RDL→Lunges→Calves→Abs (15 sæt)</div><div class="tm">50m</div></div>
+    <div class="so"><div class="tier b">B</div><div class="desc"><strong>Kun ben</strong> — Squat 3×6→RDL 3×8→Lunges 2×10/side</div><div class="tm">30m</div></div>
+    <div class="so"><div class="tier c">C</div><div class="desc"><strong>Min</strong> — Squat 3×6→RDL 3×8</div><div class="tm">15m</div></div>
+  </div></div>
+
+  <div class="sk"><div class="skh"><h4 style="color:var(--red)">● HIIT RONING</h4></div><div class="sko">
+    <div class="so"><div class="tier a">A</div><div class="desc"><strong>Fuld</strong> — 4×4 min @ HR 170+, 3 min hvile</div><div class="tm">35m</div></div>
+    <div class="so"><div class="tier b">B</div><div class="desc"><strong>Kort</strong> — 3×4 min. Stadig effektivt</div><div class="tm">25m</div></div>
+    <div class="so"><div class="tier c">C</div><div class="desc"><strong>Tempo</strong> — 15 min steady state, middel modstand</div><div class="tm">15m</div></div>
+  </div></div>
+
+  <div class="sk"><div class="skh"><h4 style="color:var(--cyan)">● ZONE 2 LØB</h4></div><div class="sko">
+    <div class="so"><div class="tier a">A</div><div class="desc"><strong>Fuld</strong> — 25-35 min, puls maks 150</div><div class="tm">30m</div></div>
+    <div class="so"><div class="tier b">B</div><div class="desc"><strong>Kort</strong> — 20 min zone 2. Minimumsgrænse</div><div class="tm">20m</div></div>
+    <div class="so"><div class="tier c">C</div><div class="desc"><strong>Gang</strong> — 30 min rask gang. Holder ben aktive</div><div class="tm">30m</div></div>
+  </div></div>
+</div>
+
+<!-- ===== PROGRAM ===== -->
+<div class="sc" id="program">
+  <div class="sl"><span class="d" style="background:var(--green)"></span>PROGRAM</div>
+  <h2>Push / Pull / Legs + Cardio</h2>
+  <div class="fr">
+    <div class="c" style="border-left:3px solid var(--violet)"><h3>PUSH</h3><p><strong>Bench Press</strong> 3-4×4-8 RPE 8<br><strong>Incline DB</strong> 3×8-12<br><strong>Lateral Raises</strong> 3×12-15<br><strong>Dips</strong> 2-3×8-12<br><strong>Triceps</strong> 2×10-15</p></div>
+    <div class="c" style="border-left:3px solid var(--blue)"><h3>PULL</h3><p><strong>Pull-ups</strong> 3-4×6-10<br><strong>Barbell Row</strong> 3×8-12<br><strong>Face Pulls</strong> 3×15-20<br><strong>Biceps Curl</strong> 3×10-15<br><strong>Rear Delt</strong> 2×15-20</p></div>
+    <div class="c" style="border-left:3px solid var(--amber)"><h3>BEN + ACC</h3><p><strong>Squat</strong> 3-4×6-10 RPE 8<br><strong>RDL</strong> 3×8-12<br><strong>Walking Lunges</strong> 2-3×10-12/side<br><strong>Calf Raises</strong> 3×12-15<br><strong>Abs</strong> 2-3 sæt</p></div>
+  </div>
+  <div class="fr">
+    <div class="c" style="border-left:3px solid var(--red)"><h3>HIIT RONING (tor)</h3><p><strong>3-4 × 4 min</strong> @ HR 170+<br>3 min let mellem<br><em>Concept 2 rower</em></p></div>
+    <div class="c" style="border-left:3px solid var(--cyan)"><h3>ZONE 2 LØB (fre)</h3><p><strong>HR 130-150</strong><br>10% ugentlig progression<br><em>+10%/wk distance</em></p></div>
+  </div>
+</div>
+
+<!-- ===== DATA UPLOAD ===== -->
+<div class="sc" id="upload">
+  <div class="sl"><span class="d" style="background:var(--lime)"></span>DATA UPLOAD</div>
+  <h2>Opdater data fra Apple Watch og Hevy</h2>
+  <div class="fr">
+    <div class="upload-area">
+      <h3 style="font-size:.72rem;margin-bottom:.4rem">Apple Watch CSV</h3>
+      <p style="font-size:.55rem;color:var(--t3);margin-bottom:.4rem">Upload Health Auto Export CSV. Opdaterer recovery_logs i Supabase (HRV, RHR, søvn, vægt, VO2max, LBM).</p>
+      <textarea id="inp-aw" placeholder="Paste CSV data her, eller upload via chat med Claude"></textarea>
+      <button class="upload-btn" onclick="uploadAW()" id="btn-aw">Upload Apple Watch</button>
+      <div class="upload-status" id="status-aw"></div>
+    </div>
+    <div class="upload-area">
+      <h3 style="font-size:.72rem;margin-bottom:.4rem">Hevy Workouts CSV</h3>
+      <p style="font-size:.55rem;color:var(--t3);margin-bottom:.4rem">Paste Hevy CSV export. Opdaterer workout-data i siden (embedded JSON).</p>
+      <textarea id="inp-hevy" placeholder="Paste Hevy CSV her, eller upload via chat med Claude"></textarea>
+      <button class="upload-btn" onclick="uploadHevy()" id="btn-hevy">Upload Hevy</button>
+      <div class="upload-status" id="status-hevy"></div>
+      <p style="font-size:.5rem;color:var(--t3);margin-top:.3rem"><em>Note: Hevy data gemmes ikke i Supabase men i sidens embedded data. Upload ny CSV til Claude for at rebuilde siden.</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- TICK-OFF MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Vælg type</h3>
+    <div class="modal-opts" id="modal-opts"></div>
+    <button class="modal-close" onclick="closeModal()">Annuller</button>
+  </div>
+</div>
+
+<div class="foot" id="foot">Loading…</div>
+</div>
+
 <script>
-const S='https://kgiepplwarutwmzvvezc.supabase.co/rest/v1';
-const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
-const H={'apikey':K,'Authorization':'Bearer '+K};
+// ═══════════════════════════════════════════════
+// EMBEDDED DATA (updated when you upload new exports)
+// ═══════════════════════════════════════════════
+const WORKOUTS = [{"d": "2025-06-21", "t": "pull", "title": "Back, bicep", "dur": 38, "vol": 1258, "sets": 6, "exs": 2, "bench": null}, {"d": "2025-06-25", "t": "pull", "title": "Back, bicep", "dur": 66, "vol": 5034, "sets": 15, "exs": 5, "bench": null}, {"d": "2025-07-08", "t": "push", "title": "Chest, tri", "dur": 43, "vol": 2700, "sets": 9, "exs": 3, "bench": 63.0}, {"d": "2025-07-11", "t": "pull", "title": "Back, bicep", "dur": 98, "vol": 2812, "sets": 15, "exs": 5, "bench": null}, {"d": "2025-07-13", "t": "push", "title": "Chest, tri", "dur": 73, "vol": 4442, "sets": 18, "exs": 6, "bench": 58.5}, {"d": "2025-07-20", "t": "legs", "title": "Knee recovery", "dur": 11, "vol": 162, "sets": 5, "exs": 2, "bench": null}, {"d": "2025-07-20", "t": "push", "title": "Chest, tri", "dur": 57, "vol": 4052, "sets": 15, "exs": 5, "bench": 60.0}, {"d": "2025-07-22", "t": "legs", "title": "Knee recovery", "dur": 23, "vol": 180, "sets": 6, "exs": 2, "bench": null}, {"d": "2025-07-22", "t": "pull", "title": "Back, bicep", "dur": 58, "vol": 3540, "sets": 15, "exs": 5, "bench": null}, {"d": "2025-07-26", "t": "push", "title": "Chest, tri", "dur": 53, "vol": 4133, "sets": 15, "exs": 5, "bench": 61.5}, {"d": "2025-08-02", "t": "push", "title": "Chest, tri", "dur": 52, "vol": 4528, "sets": 15, "exs": 5, "bench": 63.0}, {"d": "2025-08-03", "t": "pull", "title": "Back, bicep", "dur": 77, "vol": 5548, "sets": 22, "exs": 7, "bench": null}, {"d": "2025-08-05", "t": "push", "title": "Chest, tri", "dur": 48, "vol": 4849, "sets": 15, "exs": 5, "bench": 63.0}, {"d": "2025-08-07", "t": "pull", "title": "Back, bicep", "dur": 55, "vol": 4533, "sets": 15, "exs": 5, "bench": null}, {"d": "2025-08-10", "t": "push", "title": "Chest, tri", "dur": 52, "vol": 4909, "sets": 15, "exs": 5, "bench": 63.0}, {"d": "2025-08-12", "t": "pull", "title": "Back, bicep", "dur": 114, "vol": 8440, "sets": 28, "exs": 7, "bench": null}, {"d": "2025-08-14", "t": "push", "title": "Chest, tri", "dur": 83, "vol": 6479, "sets": 21, "exs": 6, "bench": 64.5}, {"d": "2025-08-18", "t": "push", "title": "Chest, tri", "dur": 65, "vol": 6130, "sets": 21, "exs": 6, "bench": 68.3}, {"d": "2025-08-19", "t": "pull", "title": "Back, bicep", "dur": 68, "vol": 5282, "sets": 18, "exs": 6, "bench": null}, {"d": "2025-08-21", "t": "push", "title": "Chest, tri", "dur": 73, "vol": 5688, "sets": 15, "exs": 5, "bench": 66.0}, {"d": "2025-08-23", "t": "pull", "title": "Back, bicep", "dur": 68, "vol": 5289, "sets": 19, "exs": 6, "bench": null}, {"d": "2025-08-26", "t": "push", "title": "Chest, tri", "dur": 47, "vol": 3856, "sets": 12, "exs": 4, "bench": 63.0}, {"d": "2025-08-27", "t": "pull", "title": "Back, bicep", "dur": 79, "vol": 5754, "sets": 19, "exs": 6, "bench": null}, {"d": "2025-08-31", "t": "push", "title": "Chest, tri", "dur": 71, "vol": 6659, "sets": 23, "exs": 6, "bench": 67.5}, {"d": "2025-09-01", "t": "pull", "title": "Back, bicep", "dur": 78, "vol": 6364, "sets": 18, "exs": 6, "bench": null}, {"d": "2025-09-04", "t": "push", "title": "Chest, tri", "dur": 73, "vol": 5189, "sets": 16, "exs": 5, "bench": 67.5}, {"d": "2025-09-08", "t": "pull", "title": "Back, bicep", "dur": 74, "vol": 6456, "sets": 24, "exs": 8, "bench": null}, {"d": "2025-09-10", "t": "push", "title": "Chest, tri", "dur": 74, "vol": 5532, "sets": 12, "exs": 4, "bench": 67.5}, {"d": "2025-09-12", "t": "pull", "title": "Back, bicep", "dur": 62, "vol": 4567, "sets": 19, "exs": 6, "bench": null}, {"d": "2025-09-17", "t": "push", "title": "Chest, tri", "dur": 64, "vol": 5594, "sets": 17, "exs": 5, "bench": 69.0}, {"d": "2025-09-18", "t": "legs", "title": "Legs", "dur": 16, "vol": 1748, "sets": 3, "exs": 1, "bench": null}, {"d": "2025-09-20", "t": "pull", "title": "Back, bicep", "dur": 77, "vol": 6940, "sets": 24, "exs": 7, "bench": null}, {"d": "2025-09-22", "t": "push", "title": "Chest, tri", "dur": 57, "vol": 5334, "sets": 16, "exs": 5, "bench": 70.0}, {"d": "2025-09-28", "t": "push", "title": "Chest, tri", "dur": 86, "vol": 6705, "sets": 23, "exs": 7, "bench": 68.3}, {"d": "2025-09-29", "t": "pull", "title": "Back, bicep", "dur": 76, "vol": 6708, "sets": 26, "exs": 7, "bench": null}, {"d": "2025-10-02", "t": "push", "title": "Chest, tri", "dur": 60, "vol": 5978, "sets": 20, "exs": 5, "bench": 70.0}, {"d": "2025-10-04", "t": "pull", "title": "Back, bicep", "dur": 85, "vol": 7604, "sets": 29, "exs": 8, "bench": null}, {"d": "2025-10-07", "t": "push", "title": "Chest, tri", "dur": 77, "vol": 7684, "sets": 24, "exs": 7, "bench": 71.7}, {"d": "2025-10-08", "t": "pull", "title": "Back, bicep", "dur": 106, "vol": 7092, "sets": 19, "exs": 6, "bench": null}, {"d": "2025-10-13", "t": "legs", "title": "Legs", "dur": 41, "vol": 5665, "sets": 12, "exs": 4, "bench": null}, {"d": "2025-10-23", "t": "legs", "title": "Legs", "dur": 37, "vol": 7438, "sets": 13, "exs": 4, "bench": null}, {"d": "2025-10-30", "t": "push", "title": "Chest, tri", "dur": 59, "vol": 4935, "sets": 20, "exs": 6, "bench": 66.7}, {"d": "2025-11-09", "t": "push", "title": "Chest, tri", "dur": 54, "vol": 5419, "sets": 22, "exs": 6, "bench": 63.3}, {"d": "2025-11-16", "t": "push", "title": "Chest, tri", "dur": 59, "vol": 5711, "sets": 21, "exs": 6, "bench": 65.0}, {"d": "2025-11-23", "t": "push", "title": "Chest, tri", "dur": 60, "vol": 2112, "sets": 10, "exs": 3, "bench": 72.0}, {"d": "2025-12-06", "t": "push", "title": "Chest, tri", "dur": 62, "vol": 5646, "sets": 21, "exs": 6, "bench": 65.0}, {"d": "2025-12-15", "t": "pull", "title": "Back, bicep", "dur": 49, "vol": 4060, "sets": 15, "exs": 5, "bench": null}, {"d": "2025-12-21", "t": "push", "title": "Chest, tri", "dur": 62, "vol": 4762, "sets": 16, "exs": 5, "bench": 65.0}, {"d": "2026-01-12", "t": "push", "title": "Chest, tri", "dur": 43, "vol": 4132, "sets": 16, "exs": 5, "bench": 63.3}, {"d": "2026-01-13", "t": "legs", "title": "Legs", "dur": 54, "vol": 7362, "sets": 13, "exs": 4, "bench": null}, {"d": "2026-01-14", "t": "pull", "title": "Back, bicep", "dur": 49, "vol": 3305, "sets": 17, "exs": 5, "bench": null}, {"d": "2026-01-16", "t": "push", "title": "Chest, tri", "dur": 50, "vol": 4675, "sets": 16, "exs": 5, "bench": 65.0}, {"d": "2026-01-18", "t": "legs", "title": "Legs", "dur": 53, "vol": 6935, "sets": 12, "exs": 4, "bench": null}, {"d": "2026-01-19", "t": "pull", "title": "Back, bicep", "dur": 68, "vol": 5530, "sets": 22, "exs": 7, "bench": null}, {"d": "2026-01-21", "t": "push", "title": "Chest, tri", "dur": 60, "vol": 5087, "sets": 15, "exs": 5, "bench": 66.7}, {"d": "2026-01-29", "t": "pull", "title": "Back, bicep", "dur": 69, "vol": 4070, "sets": 20, "exs": 6, "bench": null}, {"d": "2026-01-31", "t": "push", "title": "Chest, tri", "dur": 61, "vol": 5476, "sets": 15, "exs": 5, "bench": 68.3}, {"d": "2026-02-02", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 67, "vol": 3060, "sets": 18, "exs": 6, "bench": 68.3}, {"d": "2026-02-05", "t": "pull", "title": "Back, bicep (b\u00f8f)", "dur": 85, "vol": 3861, "sets": 23, "exs": 7, "bench": null}, {"d": "2026-02-07", "t": "legs", "title": "Ben (b\u00f8f)", "dur": 76, "vol": 6055, "sets": 20, "exs": 6, "bench": null}, {"d": "2026-02-09", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 77, "vol": 3450, "sets": 18, "exs": 6, "bench": 70.0}, {"d": "2026-02-16", "t": "pull", "title": "Back, bicep (b\u00f8f)", "dur": 109, "vol": 3938, "sets": 23, "exs": 7, "bench": null}, {"d": "2026-02-18", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 72, "vol": 3630, "sets": 18, "exs": 6, "bench": 71.7}, {"d": "2026-02-19", "t": "legs", "title": "Ben (b\u00f8f)", "dur": 89, "vol": 7290, "sets": 20, "exs": 7, "bench": null}, {"d": "2026-02-23", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 61, "vol": 3700, "sets": 15, "exs": 5, "bench": 73.3}, {"d": "2026-02-28", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 15, "vol": 1400, "sets": 3, "exs": 1, "bench": 68.3}, {"d": "2026-03-02", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 66, "vol": 2985, "sets": 15, "exs": 5, "bench": 72.0}, {"d": "2026-03-06", "t": "pull", "title": "Back, bicep (b\u00f8f)", "dur": 81, "vol": 3513, "sets": 22, "exs": 7, "bench": null}, {"d": "2026-03-07", "t": "legs", "title": "Ben (b\u00f8f)", "dur": 91, "vol": 7450, "sets": 22, "exs": 7, "bench": null}, {"d": "2026-03-10", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 61, "vol": 3045, "sets": 16, "exs": 5, "bench": 74.0}, {"d": "2026-03-12", "t": "pull", "title": "Back, bicep (b\u00f8f)", "dur": 86, "vol": 5120, "sets": 23, "exs": 7, "bench": null}, {"d": "2026-03-18", "t": "pull", "title": "Pull up", "dur": 1, "vol": 0, "sets": 1, "exs": 1, "bench": null}, {"d": "2026-03-18", "t": "legs", "title": "Ben (b\u00f8f)", "dur": 46, "vol": 3280, "sets": 10, "exs": 3, "bench": null}, {"d": "2026-03-19", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 40, "vol": 1560, "sets": 7, "exs": 3, "bench": 76.0}, {"d": "2026-03-21", "t": "pull", "title": "Back, bicep (b\u00f8f)", "dur": 39, "vol": 2490, "sets": 13, "exs": 4, "bench": null}, {"d": "2026-03-24", "t": "legs", "title": "Ben (b\u00f8f)", "dur": 26, "vol": 3140, "sets": 9, "exs": 3, "bench": null}, {"d": "2026-03-25", "t": "push", "title": "Chest, tri (b\u00f8f)", "dur": 34, "vol": 2280, "sets": 9, "exs": 3, "bench": 78.0}];
+const WEIGHTS = [{"d": "2024-12-20", "v": 81.2}, {"d": "2024-12-21", "v": 80.9}, {"d": "2025-01-13", "v": 82.5}, {"d": "2025-01-28", "v": 82.1}, {"d": "2025-01-29", "v": 80.7}, {"d": "2025-01-30", "v": 80.9}, {"d": "2025-01-31", "v": 82.4}, {"d": "2025-02-01", "v": 82.1}, {"d": "2025-02-02", "v": 82.0}, {"d": "2025-02-03", "v": 81.6}, {"d": "2025-02-06", "v": 82.2}, {"d": "2025-02-07", "v": 82.1}, {"d": "2025-02-10", "v": 81.9}, {"d": "2025-02-12", "v": 82.5}, {"d": "2025-02-13", "v": 80.6}, {"d": "2025-02-21", "v": 81.1}, {"d": "2025-02-22", "v": 81.2}, {"d": "2025-02-24", "v": 81.9}, {"d": "2025-02-26", "v": 82.2}, {"d": "2025-02-27", "v": 82.5}, {"d": "2025-02-28", "v": 80.9}, {"d": "2025-03-01", "v": 81.2}, {"d": "2025-03-06", "v": 81.1}, {"d": "2025-03-07", "v": 80.3}, {"d": "2025-03-08", "v": 81.0}, {"d": "2025-03-10", "v": 81.4}, {"d": "2025-03-21", "v": 82.0}, {"d": "2025-03-22", "v": 81.8}, {"d": "2025-03-24", "v": 81.8}, {"d": "2025-03-25", "v": 81.2}, {"d": "2025-03-26", "v": 81.0}, {"d": "2025-03-27", "v": 81.6}, {"d": "2025-04-01", "v": 80.5}, {"d": "2025-04-02", "v": 80.8}, {"d": "2025-04-07", "v": 80.0}, {"d": "2025-04-09", "v": 80.5}, {"d": "2025-04-15", "v": 81.8}, {"d": "2025-04-20", "v": 80.8}, {"d": "2025-04-24", "v": 81.4}, {"d": "2025-04-28", "v": 80.3}, {"d": "2025-04-29", "v": 80.3}, {"d": "2025-05-01", "v": 80.7}, {"d": "2025-05-02", "v": 81.4}, {"d": "2025-05-05", "v": 81.5}, {"d": "2025-05-06", "v": 81.7}, {"d": "2025-05-07", "v": 81.1}, {"d": "2025-05-10", "v": 81.6}, {"d": "2025-05-22", "v": 78.5}, {"d": "2025-05-24", "v": 78.7}, {"d": "2025-05-26", "v": 78.6}, {"d": "2025-06-02", "v": 78.4}, {"d": "2025-06-06", "v": 81.1}, {"d": "2025-06-18", "v": 82.0}, {"d": "2025-06-28", "v": 80.8}, {"d": "2025-06-29", "v": 82.6}, {"d": "2025-07-07", "v": 79.0}, {"d": "2025-07-08", "v": 80.0}, {"d": "2025-07-10", "v": 80.0}, {"d": "2025-07-11", "v": 81.0}, {"d": "2025-08-04", "v": 80.0}, {"d": "2025-08-07", "v": 80.6}, {"d": "2025-08-08", "v": 81.0}, {"d": "2025-08-22", "v": 81.8}, {"d": "2025-08-23", "v": 82.2}, {"d": "2025-08-27", "v": 81.6}, {"d": "2025-08-28", "v": 80.8}, {"d": "2025-08-29", "v": 82.1}, {"d": "2025-09-01", "v": 79.5}, {"d": "2025-09-03", "v": 82.4}, {"d": "2025-09-05", "v": 81.9}, {"d": "2025-09-07", "v": 82.3}, {"d": "2025-09-10", "v": 83.3}, {"d": "2025-09-12", "v": 82.1}, {"d": "2025-09-13", "v": 81.7}, {"d": "2025-09-17", "v": 82.0}];
+const VO2DATA = [{"d": "2025-01-04", "v": 46.7}, {"d": "2025-01-07", "v": 42.0}, {"d": "2025-01-10", "v": 41.9}, {"d": "2025-01-11", "v": 42.1}, {"d": "2025-01-20", "v": 43.6}, {"d": "2025-01-21", "v": 43.4}, {"d": "2025-01-22", "v": 43.4}, {"d": "2025-01-23", "v": 43.3}, {"d": "2025-01-24", "v": 42.5}, {"d": "2025-01-25", "v": 41.9}, {"d": "2025-01-28", "v": 41.9}, {"d": "2025-01-31", "v": 41.4}, {"d": "2025-02-02", "v": 41.8}, {"d": "2025-02-10", "v": 39.8}, {"d": "2025-02-14", "v": 39.8}, {"d": "2025-02-16", "v": 40.7}, {"d": "2025-02-17", "v": 41.4}, {"d": "2025-02-18", "v": 41.6}, {"d": "2025-02-25", "v": 42.5}, {"d": "2025-02-27", "v": 42.8}, {"d": "2025-03-04", "v": 42.8}, {"d": "2025-03-05", "v": 43.0}, {"d": "2025-03-06", "v": 43.4}, {"d": "2025-03-07", "v": 43.5}, {"d": "2025-03-12", "v": 43.9}, {"d": "2025-03-16", "v": 44.1}, {"d": "2025-03-29", "v": 44.4}, {"d": "2025-04-02", "v": 44.8}, {"d": "2025-04-06", "v": 45.3}, {"d": "2025-04-15", "v": 46.8}, {"d": "2025-04-16", "v": 46.7}, {"d": "2025-04-17", "v": 45.1}, {"d": "2025-04-18", "v": 44.2}, {"d": "2025-04-19", "v": 43.5}, {"d": "2025-04-20", "v": 43.3}, {"d": "2025-04-21", "v": 43.8}, {"d": "2025-04-23", "v": 43.9}, {"d": "2025-04-24", "v": 44.0}, {"d": "2025-04-28", "v": 44.0}, {"d": "2025-04-29", "v": 44.2}, {"d": "2025-05-01", "v": 44.2}, {"d": "2025-05-06", "v": 44.2}, {"d": "2025-05-12", "v": 44.2}, {"d": "2025-05-19", "v": 44.4}, {"d": "2025-05-24", "v": 44.1}, {"d": "2025-05-25", "v": 43.9}, {"d": "2025-05-26", "v": 43.7}, {"d": "2025-05-28", "v": 43.7}, {"d": "2025-05-29", "v": 43.8}, {"d": "2025-05-31", "v": 43.9}, {"d": "2025-06-01", "v": 43.1}, {"d": "2025-06-03", "v": 42.7}, {"d": "2025-06-04", "v": 42.7}, {"d": "2025-06-08", "v": 42.8}, {"d": "2025-06-11", "v": 43.0}, {"d": "2025-06-12", "v": 43.1}, {"d": "2025-06-13", "v": 43.0}, {"d": "2025-06-14", "v": 43.0}, {"d": "2025-06-16", "v": 43.1}, {"d": "2025-06-17", "v": 43.3}, {"d": "2025-06-19", "v": 43.7}, {"d": "2025-06-22", "v": 43.7}, {"d": "2025-06-23", "v": 43.7}, {"d": "2025-06-24", "v": 43.7}, {"d": "2025-06-25", "v": 43.8}, {"d": "2025-06-29", "v": 44.0}, {"d": "2025-06-30", "v": 44.0}, {"d": "2025-07-01", "v": 43.7}, {"d": "2025-07-02", "v": 43.9}, {"d": "2025-07-03", "v": 43.8}, {"d": "2025-07-04", "v": 43.8}, {"d": "2025-07-05", "v": 43.7}, {"d": "2025-07-09", "v": 43.7}, {"d": "2025-07-13", "v": 42.8}, {"d": "2025-07-16", "v": 42.5}, {"d": "2025-07-18", "v": 41.5}, {"d": "2025-07-19", "v": 41.5}, {"d": "2025-07-22", "v": 41.5}, {"d": "2025-07-25", "v": 41.5}, {"d": "2025-07-28", "v": 41.5}, {"d": "2025-07-29", "v": 41.8}, {"d": "2025-07-30", "v": 42.0}, {"d": "2025-07-31", "v": 42.2}, {"d": "2025-08-06", "v": 42.6}, {"d": "2025-08-08", "v": 42.6}, {"d": "2025-08-09", "v": 42.7}, {"d": "2025-08-11", "v": 45.3}, {"d": "2025-08-12", "v": 45.4}, {"d": "2025-08-13", "v": 45.5}, {"d": "2025-08-14", "v": 45.1}, {"d": "2025-08-15", "v": 45.1}, {"d": "2025-08-17", "v": 44.7}, {"d": "2025-08-18", "v": 44.5}, {"d": "2025-08-19", "v": 44.6}, {"d": "2025-08-22", "v": 44.6}, {"d": "2025-08-23", "v": 44.5}, {"d": "2025-08-24", "v": 44.6}, {"d": "2025-09-03", "v": 44.5}, {"d": "2025-09-04", "v": 44.5}, {"d": "2025-09-09", "v": 44.4}, {"d": "2025-09-12", "v": 44.4}, {"d": "2025-09-15", "v": 43.5}, {"d": "2025-09-18", "v": 43.6}, {"d": "2025-09-19", "v": 44.3}, {"d": "2025-09-20", "v": 45.5}, {"d": "2025-09-21", "v": 46.5}, {"d": "2025-09-22", "v": 45.7}, {"d": "2025-09-24", "v": 45.8}, {"d": "2025-09-25", "v": 44.4}, {"d": "2025-09-30", "v": 44.2}, {"d": "2025-10-06", "v": 44.2}, {"d": "2025-10-07", "v": 44.1}, {"d": "2025-10-09", "v": 44.6}, {"d": "2025-10-12", "v": 44.6}, {"d": "2025-10-18", "v": 44.8}, {"d": "2025-10-20", "v": 45.0}, {"d": "2025-10-22", "v": 44.6}, {"d": "2025-10-24", "v": 44.8}, {"d": "2025-10-30", "v": 45.2}, {"d": "2025-11-01", "v": 45.9}, {"d": "2025-11-02", "v": 45.2}, {"d": "2025-11-03", "v": 45.6}, {"d": "2025-11-04", "v": 45.7}, {"d": "2025-11-07", "v": 45.1}, {"d": "2025-11-12", "v": 45.4}, {"d": "2025-11-13", "v": 45.6}, {"d": "2025-11-17", "v": 45.1}, {"d": "2025-11-28", "v": 44.3}, {"d": "2025-11-30", "v": 44.0}, {"d": "2025-12-04", "v": 44.3}, {"d": "2025-12-10", "v": 45.2}, {"d": "2025-12-11", "v": 44.1}, {"d": "2025-12-18", "v": 43.6}, {"d": "2025-12-22", "v": 44.3}, {"d": "2025-12-23", "v": 45.3}, {"d": "2025-12-24", "v": 45.8}, {"d": "2025-12-25", "v": 45.8}, {"d": "2025-12-26", "v": 44.7}, {"d": "2026-01-03", "v": 44.2}, {"d": "2026-01-04", "v": 44.5}, {"d": "2026-01-05", "v": 44.2}, {"d": "2026-01-14", "v": 44.2}, {"d": "2026-01-15", "v": 44.0}, {"d": "2026-01-16", "v": 44.2}, {"d": "2026-01-22", "v": 43.3}, {"d": "2026-01-24", "v": 43.2}, {"d": "2026-01-25", "v": 43.6}, {"d": "2026-01-27", "v": 43.9}, {"d": "2026-01-29", "v": 44.1}, {"d": "2026-01-30", "v": 44.5}, {"d": "2026-02-03", "v": 44.1}, {"d": "2026-02-06", "v": 44.1}, {"d": "2026-02-07", "v": 43.8}, {"d": "2026-02-08", "v": 43.6}, {"d": "2026-02-17", "v": 43.0}, {"d": "2026-02-21", "v": 43.5}, {"d": "2026-03-03", "v": 42.5}, {"d": "2026-03-07", "v": 42.9}, {"d": "2026-03-09", "v": 42.6}, {"d": "2026-03-12", "v": 42.7}, {"d": "2026-03-17", "v": 42.6}, {"d": "2026-03-20", "v": 42.9}, {"d": "2026-03-21", "v": 43.5}, {"d": "2026-03-23", "v": 43.6}, {"d": "2026-03-26", "v": 43.9}, {"d": "2026-03-29", "v": 43.5}, {"d": "2026-03-31", "v": 43.9}, {"d": "2026-04-03", "v": 43.9}, {"d": "2026-04-04", "v": 43.9}];
+const LBM = [{"d": "2024-12-20", "v": 73.9}, {"d": "2024-12-21", "v": 73.6}, {"d": "2025-01-13", "v": 74.6}, {"d": "2025-01-28", "v": 74.9}, {"d": "2025-01-29", "v": 73.8}, {"d": "2025-01-30", "v": 73.8}, {"d": "2025-01-31", "v": 75.4}, {"d": "2025-02-01", "v": 74.7}, {"d": "2025-02-02", "v": 74.4}, {"d": "2025-02-03", "v": 74.2}, {"d": "2025-02-06", "v": 74.7}, {"d": "2025-02-07", "v": 74.3}, {"d": "2025-02-10", "v": 74.6}, {"d": "2025-02-12", "v": 74.9}, {"d": "2025-02-13", "v": 73.4}, {"d": "2025-02-21", "v": 74.2}, {"d": "2025-02-22", "v": 74.3}, {"d": "2025-02-24", "v": 74.5}, {"d": "2025-02-26", "v": 75.0}, {"d": "2025-02-27", "v": 74.5}, {"d": "2025-02-28", "v": 73.5}, {"d": "2025-03-01", "v": 73.9}, {"d": "2025-03-06", "v": 73.7}, {"d": "2025-03-07", "v": 73.1}, {"d": "2025-03-08", "v": 74.1}, {"d": "2025-03-10", "v": 74.4}, {"d": "2025-03-21", "v": 74.5}, {"d": "2025-03-22", "v": 74.3}, {"d": "2025-03-24", "v": 74.1}, {"d": "2025-03-25", "v": 73.7}, {"d": "2025-03-26", "v": 73.7}, {"d": "2025-03-27", "v": 73.9}, {"d": "2025-04-01", "v": 73.2}, {"d": "2025-04-02", "v": 73.4}, {"d": "2025-04-07", "v": 72.8}, {"d": "2025-04-09", "v": 73.2}, {"d": "2025-04-15", "v": 74.2}, {"d": "2025-04-20", "v": 73.9}, {"d": "2025-04-24", "v": 74.0}, {"d": "2025-04-28", "v": 73.1}, {"d": "2025-04-29", "v": 73.1}, {"d": "2025-05-01", "v": 73.8}, {"d": "2025-05-02", "v": 74.0}, {"d": "2025-05-05", "v": 74.2}, {"d": "2025-05-06", "v": 74.3}, {"d": "2025-05-07", "v": 73.5}, {"d": "2025-05-10", "v": 74.2}, {"d": "2025-05-22", "v": 72.2}, {"d": "2025-05-24", "v": 72.6}, {"d": "2025-05-26", "v": 72.4}, {"d": "2025-06-02", "v": 72.7}, {"d": "2025-06-06", "v": 74.2}, {"d": "2025-06-28", "v": 73.2}, {"d": "2025-06-29", "v": 74.3}, {"d": "2025-07-07", "v": 73.0}, {"d": "2025-07-08", "v": 73.8}, {"d": "2025-07-10", "v": 73.1}, {"d": "2025-07-11", "v": 74.5}, {"d": "2025-08-04", "v": 72.8}, {"d": "2025-08-07", "v": 73.0}, {"d": "2025-08-08", "v": 73.3}, {"d": "2025-08-22", "v": 74.0}, {"d": "2025-08-23", "v": 74.4}, {"d": "2025-08-27", "v": 73.8}, {"d": "2025-08-28", "v": 73.0}, {"d": "2025-08-29", "v": 74.3}, {"d": "2025-09-01", "v": 72.7}, {"d": "2025-09-03", "v": 74.0}, {"d": "2025-09-05", "v": 73.7}, {"d": "2025-09-07", "v": 74.7}, {"d": "2025-09-10", "v": 75.3}, {"d": "2025-09-12", "v": 74.0}, {"d": "2025-09-13", "v": 73.4}, {"d": "2025-09-17", "v": 74.1}];
+const STEPS_M = [{"d": "2024-12", "v": 6008}, {"d": "2025-01", "v": 8959}, {"d": "2025-02", "v": 7996}, {"d": "2025-03", "v": 6914}, {"d": "2025-04", "v": 9297}, {"d": "2025-05", "v": 6980}, {"d": "2025-06", "v": 9052}, {"d": "2025-07", "v": 12144}, {"d": "2025-08", "v": 8904}, {"d": "2025-09", "v": 7176}, {"d": "2025-10", "v": 6624}, {"d": "2025-11", "v": 7730}, {"d": "2025-12", "v": 7277}, {"d": "2026-01", "v": 7396}, {"d": "2026-02", "v": 6535}, {"d": "2026-03", "v": 8422}, {"d": "2026-04", "v": 7905}];
+const CYCLING_M = [{"d": "2024-12", "v": 2, "total": 8.6}, {"d": "2025-01", "v": 23, "total": 186.4}, {"d": "2025-02", "v": 24, "total": 271.0}, {"d": "2025-03", "v": 29, "total": 356.9}, {"d": "2025-04", "v": 25, "total": 210.5}, {"d": "2025-05", "v": 30, "total": 330.2}, {"d": "2025-06", "v": 27, "total": 343.2}, {"d": "2025-07", "v": 18, "total": 238.5}, {"d": "2025-08", "v": 26, "total": 488.4}, {"d": "2025-09", "v": 29, "total": 437.0}, {"d": "2025-10", "v": 26, "total": 381.6}, {"d": "2025-11", "v": 30, "total": 389.5}, {"d": "2025-12", "v": 27, "total": 354.7}, {"d": "2026-01", "v": 28, "total": 303.6}, {"d": "2026-02", "v": 25, "total": 259.5}, {"d": "2026-03", "v": 28, "total": 258.9}, {"d": "2026-04", "v": 2, "total": 24.1}];
 
-// === HEVY DATA (regenerate by pasting new CSV export to Claude) ===
-const BENCH=[{"date":"2025-07-08","e1rm":64.8},{"date":"2025-07-13","e1rm":57.9},{"date":"2025-07-20","e1rm":60},{"date":"2025-07-26","e1rm":62.3},{"date":"2025-08-02","e1rm":64.8},{"date":"2025-08-05","e1rm":64.8},{"date":"2025-08-10","e1rm":64.8},{"date":"2025-08-14","e1rm":67.5},{"date":"2025-08-18","e1rm":69.2},{"date":"2025-08-21","e1rm":70.4},{"date":"2025-08-26","e1rm":64.8},{"date":"2025-08-31","e1rm":73.6},{"date":"2025-09-04","e1rm":73.6},{"date":"2025-09-10","e1rm":73.6},{"date":"2025-09-17","e1rm":58.1},{"date":"2025-09-22","e1rm":72},{"date":"2025-09-28","e1rm":69.2},{"date":"2025-10-02","e1rm":72},{"date":"2025-10-07","e1rm":75},{"date":"2025-10-30","e1rm":66.7},{"date":"2025-11-09","e1rm":62.1},{"date":"2025-11-16","e1rm":64.3},{"date":"2025-11-23","e1rm":69.7},{"date":"2025-12-06","e1rm":64.3},{"date":"2025-12-21","e1rm":64.3},{"date":"2026-01-12","e1rm":62.1},{"date":"2026-01-16","e1rm":64.3},{"date":"2026-01-21","e1rm":66.7},{"date":"2026-01-31","e1rm":69.2},{"date":"2026-02-02","e1rm":69.2},{"date":"2026-02-09","e1rm":72},{"date":"2026-02-18","e1rm":75},{"date":"2026-02-23","e1rm":78.3},{"date":"2026-02-28","e1rm":69.2},{"date":"2026-03-02","e1rm":69.7},{"date":"2026-03-10","e1rm":72},{"date":"2026-03-19","e1rm":74.5},{"date":"2026-03-25","e1rm":77.1}];
-const WEEKLY=[{"week":"W24","count":1},{"week":"W25","count":1},{"week":"W27","count":3},{"week":"W28","count":2},{"week":"W29","count":3},{"week":"W30","count":2},{"week":"W31","count":3},{"week":"W32","count":2},{"week":"W33","count":4},{"week":"W34","count":3},{"week":"W35","count":2},{"week":"W36","count":3},{"week":"W37","count":3},{"week":"W38","count":2},{"week":"W39","count":3},{"week":"W40","count":2},{"week":"W41","count":1},{"week":"W42","count":1},{"week":"W43","count":1},{"week":"W44","count":1},{"week":"W45","count":1},{"week":"W46","count":1},{"week":"W48","count":1},{"week":"W50","count":2},{"week":"W02","count":5},{"week":"W03","count":2},{"week":"W04","count":2},{"week":"W05","count":3},{"week":"W06","count":1},{"week":"W07","count":3},{"week":"W08","count":2},{"week":"W09","count":3},{"week":"W10","count":2},{"week":"W11","count":4},{"week":"W12","count":2}];
-const RECENT=[{"date":"2026-03-25","title":"Chest, tri (b\u00f8f)","duration":34,"exercises":3,"sets":9,"ex_list":["Bench Press (Barbell)","Triceps Dip","Hex Press (Dumbbell)"]},{"date":"2026-03-24","title":"Ben (b\u00f8f)","duration":26,"exercises":3,"sets":9,"ex_list":["Squat (Barbell)","Romanian Deadlift (Barbell)","Bulgarian Split Squat"]},{"date":"2026-03-21","title":"Back, bicep (b\u00f8f)","duration":39,"exercises":4,"sets":13,"ex_list":["Pull Up","Bent Over Row (Barbell)","Hammer Curl (Dumbbell)","Bicep Curl (Dumbbell)"]},{"date":"2026-03-19","title":"Chest, tri (b\u00f8f)","duration":40,"exercises":3,"sets":7,"ex_list":["Bench Press (Barbell)","Triceps Dip","Hex Press (Dumbbell)"]},{"date":"2026-03-18","title":"Ben (b\u00f8f)","duration":46,"exercises":3,"sets":10,"ex_list":["Squat (Barbell)","Romanian Deadlift (Barbell)","Bulgarian Split Squat"]},{"date":"2026-03-12","title":"Back, bicep (b\u00f8f)","duration":86,"exercises":7,"sets":23,"ex_list":["Pull Up","Bent Over Row (Barbell)","Dumbbell Row","Rear Delt Reverse Fly (Dumbbell)","Hammer Curl (Dumbbell)","Bicep Curl (Dumbbell)","Concentration Curl"]},{"date":"2026-03-10","title":"Chest, tri (b\u00f8f)","duration":61,"exercises":5,"sets":16,"ex_list":["Bench Press (Barbell)","Triceps Dip","Hex Press (Dumbbell)","Shoulder Press (Dumbbell)","Lateral Raise (Dumbbell)"]},{"date":"2026-03-07","title":"Ben (b\u00f8f)","duration":91,"exercises":7,"sets":22,"ex_list":["Squat (Barbell)","Romanian Deadlift (Barbell)","Bulgarian Split Squat","Chest Supported Incline Row (Dumbbell)","Floor Press (Dumbbell)","Push Up","Drag Curl"]},{"date":"2026-03-06","title":"Back, bicep (b\u00f8f)","duration":81,"exercises":7,"sets":22,"ex_list":["Pull Up","Bent Over Row (Barbell)","Dumbbell Row","Rear Delt Reverse Fly (Dumbbell)","Hammer Curl (Dumbbell)","Bicep Curl (Dumbbell)","Concentration Curl"]},{"date":"2026-03-02","title":"Chest, tri (b\u00f8f)","duration":66,"exercises":5,"sets":15,"ex_list":["Bench Press (Barbell)","Triceps Dip","Hex Press (Dumbbell)","Shoulder Press (Dumbbell)","Lateral Raise (Dumbbell)"]}];
+// ═══════════════════════════════════════════════
+// SUPABASE CONFIG
+// ═══════════════════════════════════════════════
+const SB_URL = 'https://kgiepplwarutwmzvvezc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
+const S = SB_URL + '/rest/v1';
+const H = {'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY};
 
-// === CHART FUNCTIONS ===
-function drawLine(id,data,xKey,yKey,color,unit,opts={}){
-  if(!data.length)return;
-  const el=document.getElementById(id);
-  const W=500,bot=140,top=20,pad=50,HH=160;
-  const vals=data.map(d=>d[yKey]);
-  let min=Math.min(...vals),max=Math.max(...vals);
-  const mg=(max-min)*.08||1;min-=mg;max+=mg;
-  const range=max-min||1;
-  const pts=data.map((d,i)=>{const x=pad+i*(W-pad-10)/(data.length-1||1);const y=bot-(d[yKey]-min)/range*(bot-top);return[x,y]});
-  const pp=pts.map(p=>p[0]+','+p[1]).join(' ');
-  const ap=pp+' '+(W-10)+','+bot+' '+pad+','+bot;
-  const lv=vals[vals.length-1];
-  const fd=data[0][xKey]||'',ld=data[data.length-1][xKey]||'';
-  let tl='';
-  if(opts.target){const ty=bot-(opts.target-min)/range*(bot-top);tl=`<line x1="${pad}" y1="${ty}" x2="${W-10}" y2="${ty}" stroke="${color}" stroke-width="1" stroke-dasharray="6,4" opacity=".3"/><text x="${W-10}" y="${ty-4}" fill="${color}" font-size="7" text-anchor="end" font-family="JetBrains Mono" opacity=".5">${opts.target}${unit}</text>`}
-  el.innerHTML=`<svg viewBox="0 0 ${W} ${HH+20}" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="g_${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".12"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
-    <line x1="${pad}" y1="${top}" x2="${pad}" y2="${bot}" stroke="#e7e5e4"/><line x1="${pad}" y1="${bot}" x2="${W-10}" y2="${bot}" stroke="#e7e5e4"/>
-    <line x1="${pad}" y1="${(top+bot)/2}" x2="${W-10}" y2="${(top+bot)/2}" stroke="#e7e5e4" stroke-width=".5" stroke-dasharray="4"/>
-    <text x="${pad-4}" y="${bot+4}" fill="#a8a29e" font-size="8" text-anchor="end" font-family="JetBrains Mono">${min.toFixed(0)}</text>
-    <text x="${pad-4}" y="${top+4}" fill="#a8a29e" font-size="8" text-anchor="end" font-family="JetBrains Mono">${max.toFixed(0)}</text>
-    <text x="${pad}" y="${HH+14}" fill="#d6d3d1" font-size="7" font-family="JetBrains Mono">${fd.slice(5)||''}</text>
-    <text x="${W-10}" y="${HH+14}" fill="#d6d3d1" font-size="7" text-anchor="end" font-family="JetBrains Mono">${ld.slice(5)||''}</text>
-    ${tl}<polygon points="${ap}" fill="url(#g_${id})"/><polyline points="${pp}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3.5" fill="${color}"/>
-    <text x="${pts[pts.length-1][0]}" y="${pts[pts.length-1][1]-10}" fill="${color}" font-size="10" text-anchor="end" font-family="JetBrains Mono" font-weight="600">${typeof lv==='number'?lv.toFixed?lv%1?lv.toFixed(1):lv:lv:lv}${unit}</text>
+// ═══════════════════════════════════════════════
+// WEEKLY PLAN & TICK-OFF
+// ═══════════════════════════════════════════════
+const WEEKLY_PLAN = [
+  { id: 'push', name: 'Push', detail: 'Bench, Incline DB, Laterals, Dips, Triceps', day: 'Man/Ons', icon: '💪',
+    full: 'Bench 3-4×4-8, Incline DB 3×8-12, Laterals 3×12-15, Dips 2-3×8-12, Triceps 2×10-15',
+    short: 'Bench 3×6, Dips 2×10, Laterals 2×15',
+    sets_full: { chest: 7, shoulders: 3, triceps: 5 }, sets_short: { chest: 3, shoulders: 2, triceps: 2 }},
+  { id: 'pull', name: 'Pull', detail: 'Pull-ups, Rows, Face Pulls, Curls, Rear Delt', day: 'Tir/Tor', icon: '🏋️',
+    full: 'Pull-ups 3-4×6-10, BB Row 3×8-12, Face Pulls 3×15-20, Curls 3×10-15, Rear Delt 2×15-20',
+    short: 'Pull-ups 4×max, Row 3×10, Curls 3×12',
+    sets_full: { back: 7, biceps: 6, shoulders: 5 }, sets_short: { back: 7, biceps: 3, shoulders: 0 }},
+  { id: 'legs', name: 'Ben + Acc', detail: 'Squat, RDL, Lunges, Calves, Abs', day: 'Fre/Lør', icon: '🦵',
+    full: 'Squat 3-4×6-10, RDL 3×8-12, Lunges 2-3×10-12/s, Calves 3×12-15, Abs 2-3 sæt',
+    short: 'Squat 3×6, RDL 3×8, Lunges 2×10',
+    sets_full: { legs: 12, core: 3 }, sets_short: { legs: 8, core: 0 }},
+  { id: 'hiit', name: 'HIIT Roning', detail: '3-4 × 4 min @ HR 170+', day: 'Tor', icon: '🚣',
+    full: '4×4 min @ HR 170+, 3 min let', short: '3×4 min @ HR 170+', sets_full: {}, sets_short: {}},
+  { id: 'zone2', name: 'Zone 2 Løb', detail: 'HR 130-150, progressiv', day: 'Fre', icon: '🏃',
+    full: '25-35 min, HR maks 150', short: '20 min zone 2', sets_full: {}, sets_short: {}},
+];
+
+const VOLUME_TARGETS = {
+  chest:    { med: 6, mev: 8, mav: 14 },
+  back:     { med: 6, mev: 8, mav: 16 },
+  legs:     { med: 6, mev: 8, mav: 14 },
+  biceps:   { med: 4, mev: 6, mav: 10 },
+  triceps:  { med: 4, mev: 6, mav: 10 },
+  shoulders:{ med: 6, mev: 8, mav: 14 },
+  core:     { med: 2, mev: 4, mav: 8 },
+};
+
+function getWeekKey() {
+  const d = new Date(); const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function loadTicks() {
+  const key = 'ticks_' + getWeekKey();
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+}
+
+function saveTicks(ticks) {
+  localStorage.setItem('ticks_' + getWeekKey(), JSON.stringify(ticks));
+}
+
+let currentModalId = null;
+
+function renderWeek() {
+  const ticks = loadTicks();
+  const grid = document.getElementById('week-grid');
+  const weekStart = getWeekKey();
+  document.getElementById('week-label').textContent = `Uge fra ${weekStart}`;
+  
+  grid.innerHTML = WEEKLY_PLAN.map(w => {
+    const tick = ticks[w.id];
+    const cls = tick ? `done-${tick.mode}` : '';
+    const check = tick ? '✓' : '';
+    const modeLabel = tick ? (tick.mode === 'full' ? 'Fuld' : tick.mode === 'short' ? 'Kort' : 'Andet') : '';
+    return `<div class="wo-row ${cls}" onclick="openModal('${w.id}')">
+      <div class="wo-check">${check}</div>
+      <div><div class="wo-name">${w.icon} ${w.name}</div><div class="wo-detail">${w.detail}${modeLabel ? ' · <strong>'+modeLabel+'</strong>' : ''}</div></div>
+      <div class="wo-day">${w.day}</div>
+    </div>`;
+  }).join('');
+  
+  // Compliance
+  const done = Object.keys(ticks).length;
+  const pct = Math.round(done / WEEKLY_PLAN.length * 100);
+  const fill = document.getElementById('compliance-fill');
+  fill.style.width = pct + '%';
+  fill.style.background = pct >= 80 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--red)';
+  document.getElementById('compliance-text').textContent = `${done}/${WEEKLY_PLAN.length} sessions · ${pct}%`;
+  
+  // Volume table
+  renderVolumeTable(ticks);
+}
+
+function renderVolumeTable(ticks) {
+  const vol = {};
+  Object.keys(VOLUME_TARGETS).forEach(m => vol[m] = 0);
+  
+  Object.entries(ticks).forEach(([id, tick]) => {
+    const plan = WEEKLY_PLAN.find(w => w.id === id);
+    if (!plan) return;
+    const sets = tick.mode === 'short' ? plan.sets_short : plan.sets_full;
+    Object.entries(sets).forEach(([muscle, count]) => {
+      vol[muscle] = (vol[muscle] || 0) + count;
+    });
+  });
+  
+  const tbody = document.getElementById('volume-table');
+  tbody.innerHTML = Object.entries(VOLUME_TARGETS).map(([muscle, targets]) => {
+    const v = vol[muscle] || 0;
+    const cls = v >= targets.mev ? 'hit' : v >= targets.med ? 'ok' : v === 0 ? '' : 'miss';
+    const names = {chest:'Bryst',back:'Ryg',legs:'Ben',biceps:'Biceps',triceps:'Triceps',shoulders:'Skulder',core:'Core'};
+    return `<tr><td>${names[muscle]||muscle}</td><td class="${cls}" style="font-weight:600">${v}</td><td>${targets.med}</td><td>${targets.mev}</td><td>${targets.mav}</td></tr>`;
+  }).join('');
+}
+
+function openModal(id) {
+  currentModalId = id;
+  const plan = WEEKLY_PLAN.find(w => w.id === id);
+  const ticks = loadTicks();
+  
+  document.getElementById('modal-title').textContent = plan.icon + ' ' + plan.name;
+  
+  const isDone = ticks[id];
+  let opts = `
+    <div class="modal-opt" onclick="tickWorkout('full')">
+      <h4 style="color:var(--green)">✅ Fuld session</h4>
+      <p>${plan.full}</p>
+      <div class="time">45-50 min</div>
+    </div>
+    <div class="modal-opt" onclick="tickWorkout('short')">
+      <h4 style="color:var(--amber)">⚡ Kort session</h4>
+      <p>${plan.short}</p>
+      <div class="time">20-25 min</div>
+    </div>
+    <div class="modal-opt" onclick="tickWorkout('other')">
+      <h4 style="color:var(--t2)">📝 Andet</h4>
+      <p>Noget andet — logger som gennemført</p>
+    </div>`;
+  
+  if (isDone) {
+    opts += `<div class="modal-opt" onclick="untickWorkout()" style="border-color:var(--red)">
+      <h4 style="color:var(--red)">↩ Fjern markering</h4>
+      <p>Afmarker denne session</p>
+    </div>`;
+  }
+  
+  document.getElementById('modal-opts').innerHTML = opts;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  currentModalId = null;
+}
+
+function tickWorkout(mode) {
+  const ticks = loadTicks();
+  ticks[currentModalId] = { mode, date: new Date().toISOString() };
+  saveTicks(ticks);
+  closeModal();
+  renderWeek();
+}
+
+function untickWorkout() {
+  const ticks = loadTicks();
+  delete ticks[currentModalId];
+  saveTicks(ticks);
+  closeModal();
+  renderWeek();
+}
+
+// ═══════════════════════════════════════════════
+// CHART DRAWING
+// ═══════════════════════════════════════════════
+function drawChart(id, data, color, unit, opts = {}) {
+  const el = document.getElementById(id);
+  if (!data.length) { el.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--t3);font-size:.6rem">Ingen data endnu</div>'; return; }
+  const W = 800, HH = 180, pad = 45, bot = 155, top = 15;
+  const vals = data.map(d => d.v);
+  const vmin = opts.min != null ? opts.min : Math.min(...vals) - Math.abs(Math.min(...vals)) * .05 - 1;
+  const vmax = opts.max != null ? opts.max : Math.max(...vals) + Math.abs(Math.max(...vals)) * .05 + 1;
+  const range = vmax - vmin || 1;
+
+  // 7-day moving average
+  const ma = vals.map((_, i) => {
+    const start = Math.max(0, i - 6);
+    const slice = vals.slice(start, i + 1);
+    return slice.reduce((a, b) => a + b, 0) / slice.length;
+  });
+
+  const pts = data.map((d, i) => {
+    const x = pad + i * (W - pad - 10) / (data.length - 1 || 1);
+    const y = bot - (d.v - vmin) / range * (bot - top);
+    return [x, y];
+  });
+  const maPts = ma.map((v, i) => {
+    const x = pad + i * (W - pad - 10) / (data.length - 1 || 1);
+    const y = bot - (v - vmin) / range * (bot - top);
+    return [x, y];
+  });
+
+  let threshLine = '';
+  if (opts.threshold != null) {
+    const ty = bot - (opts.threshold - vmin) / range * (bot - top);
+    if (ty >= top && ty <= bot) threshLine = `<line x1="${pad}" y1="${ty}" x2="${W-10}" y2="${ty}" stroke="${opts.threshColor||'#2dd4a0'}" stroke-width="1" stroke-dasharray="6,3" opacity=".35"/><text x="${W-8}" y="${ty-3}" fill="${opts.threshColor||'#2dd4a0'}" font-size="7" text-anchor="end" opacity=".5">${opts.threshold}</text>`;
+  }
+  let targetLine = '';
+  if (opts.target != null) {
+    const tty = bot - (opts.target - vmin) / range * (bot - top);
+    if (tty >= top && tty <= bot) targetLine = `<line x1="${pad}" y1="${tty}" x2="${W-10}" y2="${tty}" stroke="${color}" stroke-width="1" stroke-dasharray="4,4" opacity=".2"/><text x="${W-8}" y="${tty-3}" fill="${color}" font-size="7" text-anchor="end" opacity=".4">mål ${opts.target}</text>`;
+  }
+
+  const lastVal = vals[vals.length - 1];
+  const firstDate = data[0].d, lastDate = data[data.length - 1].d;
+
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${HH+15}" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="g_${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".12"/><stop offset="1" stop-color="${color}" stop-opacity=".01"/></linearGradient></defs>
+    <line x1="${pad}" y1="${top}" x2="${pad}" y2="${bot}" stroke="var(--bd)" stroke-width=".5"/>
+    <line x1="${pad}" y1="${bot}" x2="${W-10}" y2="${bot}" stroke="var(--bd)" stroke-width=".5"/>
+    ${threshLine}${targetLine}
+    <text x="${pad-4}" y="${bot+4}" fill="var(--t3)" font-size="7" text-anchor="end">${vmin.toFixed(0)}</text>
+    <text x="${pad-4}" y="${top+4}" fill="var(--t3)" font-size="7" text-anchor="end">${vmax.toFixed(0)}</text>
+    <text x="${pad}" y="${HH+10}" fill="var(--t3)" font-size="6.5">${firstDate?.slice(5)||''}</text>
+    <text x="${W-10}" y="${HH+10}" fill="var(--t3)" font-size="6.5" text-anchor="end">${lastDate?.slice(5)||''}</text>
+    <polygon points="${pts.map(p=>p[0]+','+p[1]).join(' ')} ${W-10},${bot} ${pad},${bot}" fill="url(#g_${id})"/>
+    <polyline points="${pts.map(p=>p[0]+','+p[1]).join(' ')}" fill="none" stroke="${color}" stroke-width="1" stroke-opacity=".25"/>
+    <polyline points="${maPts.map(p=>p[0]+','+p[1]).join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${maPts[maPts.length-1][0]}" cy="${maPts[maPts.length-1][1]}" r="4" fill="${color}"/>
+    <text x="${maPts[maPts.length-1][0]-2}" y="${maPts[maPts.length-1][1]-10}" fill="${color}" font-size="10" text-anchor="end" font-weight="600">${typeof lastVal==='number'?lastVal.toFixed(1):lastVal}${unit}</text>
   </svg>`;
 }
-function drawBars(id,data,xKey,yKey,color){
-  if(!data.length)return;
-  const el=document.getElementById(id);
-  const W=500,bot=140,top=20,pad=50,HH=160;
-  const vals=data.map(d=>d[yKey]),max=Math.max(...vals)+1;
-  const bw=Math.min(12,(W-pad-10)/data.length*.7),gap=(W-pad-10)/data.length;
-  let bars='';
-  data.forEach((d,i)=>{const x=pad+i*gap+gap/2-bw/2;const h=(d[yKey]/max)*(bot-top);bars+=`<rect x="${x}" y="${bot-h}" width="${bw}" height="${h}" rx="2" fill="${color}" opacity="${i>=data.length-4?1:.5}"/>`});
-  const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
-  const avgY=bot-(avg/max)*(bot-top);
-  el.innerHTML=`<svg viewBox="0 0 ${W} ${HH+20}" xmlns="http://www.w3.org/2000/svg">
-    <line x1="${pad}" y1="${bot}" x2="${W-10}" y2="${bot}" stroke="#e7e5e4"/>
-    <line x1="${pad}" y1="${avgY}" x2="${W-10}" y2="${avgY}" stroke="${color}" stroke-width="1" stroke-dasharray="4,4" opacity=".3"/>
-    <text x="${W-10}" y="${avgY-4}" fill="${color}" font-size="7" text-anchor="end" font-family="JetBrains Mono" opacity=".5">avg ${avg.toFixed(1)}</text>
+
+function drawBarChart(id, data, color) {
+  const el = document.getElementById(id);
+  if (!data.length) return;
+  const W = 800, HH = 140, pad = 45, bot = 120, top = 10;
+  const maxVal = Math.max(...data.map(d => d.total || d.v));
+  
+  const barW = Math.min(40, (W - pad - 20) / data.length - 4);
+  
+  const bars = data.map((d, i) => {
+    const x = pad + i * ((W - pad - 10) / data.length) + barW / 2;
+    const val = d.total || d.v;
+    const h = (val / maxVal) * (bot - top);
+    const label = d.d.length > 4 ? d.d.slice(5) : d.d;
+    return `<rect x="${x}" y="${bot - h}" width="${barW}" height="${h}" rx="3" fill="${color}" opacity=".6"/>
+      <text x="${x + barW/2}" y="${bot - h - 4}" fill="${color}" font-size="7" text-anchor="middle" font-weight="600">${Math.round(val)}</text>
+      <text x="${x + barW/2}" y="${bot + 12}" fill="var(--t3)" font-size="6" text-anchor="middle">${label}</text>`;
+  }).join('');
+  
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${HH}" xmlns="http://www.w3.org/2000/svg">
+    <line x1="${pad}" y1="${bot}" x2="${W-10}" y2="${bot}" stroke="var(--bd)" stroke-width=".5"/>
     ${bars}
-    <text x="${pad}" y="${HH+14}" fill="#d6d3d1" font-size="7" font-family="JetBrains Mono">${data[0][xKey]}</text>
-    <text x="${W-10}" y="${HH+14}" fill="#d6d3d1" font-size="7" text-anchor="end" font-family="JetBrains Mono">${data[data.length-1][xKey]}</text>
   </svg>`;
 }
 
-// === RENDER HEVY ===
-drawLine('benchChart',BENCH,'date','e1rm','#7c3aed',' kg',{target:100});
-drawBars('freqChart',WEEKLY,'week','count','#2563eb');
+// ═══════════════════════════════════════════════
+// FINDINGS TABLE
+// ═══════════════════════════════════════════════
+const FINDINGS = [
+  ['green','Styrke → muskelmasse: r = +0.61','10+ styrke-sessioner/md'],
+  ['red','Løb → minus muskelmasse: r = -0.71','Max 6 ture/md for LBM'],
+  ['amber','Compliance ~50% på alle muskelgrupper','Compliance > volumen'],
+  ['green','September supercompensation','Hvile efter hård blok virker'],
+  ['red','Pull-ups -46% efter 2 md fravær','Aldrig spring pull over'],
+  ['amber','August overload: RHR spike til 90','Max 9 sessions/14 dage'],
+  ['green','Søvn-pace: 8h = 50 sek/km hurtigere','Prioriter 8h før løb'],
+  ['red','HRV-drop >30% = sygdomssignal','Skip hård træning'],
+  ['cyan','Cykling = 381h zone 2 (35× mere end løb)','Din primære kardio'],
+  ['cyan','Cykel-puls -17 bpm over 14 md','Hjertet forbedres af transport'],
+  ['amber','Fredag = dårligste dag (RHR 66.5)','Let zone 2 er korrekt valg'],
+  ['green','Optimal 14d: 9 sess + 8h søvn','Dit program rammer dette'],
+  ['violet','Trains harder on yellow than green','Invertér: push på grøn, hold igen på gul'],
+  ['green','Trappehastighed +17% fra bentræning','Funktionel gevinst'],
+  ['amber','36% af VO2max = vægttab, ikke fitness','Absolut VO2 er bedre mål'],
+];
 
-document.getElementById('recentWorkouts').innerHTML=RECENT.map(w=>{
-  const dt=new Date(w.date),ds=dt.toLocaleDateString('da-DK',{day:'numeric',month:'short'});
-  const t=w.title.toLowerCase();
-  const cat=t.includes('chest')||t.includes('tri')?'push':t.includes('back')||t.includes('pull')||t.includes('bicep')?'pull':'legs';
-  return`<div class="wk-row"><span class="wk-date">${ds}</span><div><div class="wk-title">${w.title}</div><div class="wk-meta">${w.sets} sets · ${w.exercises} exercises · ${w.duration} min</div></div><span class="wk-badge ${cat}">${cat}</span></div>`;
-}).join('');
+function renderFindings() {
+  const table = document.getElementById('findings-table');
+  const colors = {green:'var(--green)',red:'var(--red)',amber:'var(--amber)',cyan:'var(--cyan)',violet:'var(--violet)'};
+  FINDINGS.forEach((f, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="color:${colors[f[0]]||'var(--t1)'};font-weight:600">${i+1}</td><td style="color:${colors[f[0]]||'var(--t2)'}">${f[1]}</td><td style="font-family:'DM Sans';font-size:.54rem;color:var(--t2)">${f[2]}</td>`;
+    table.appendChild(tr);
+  });
+}
 
-// === RECOVERY FROM SUPABASE ===
-fetch(S+'/recovery_logs?select=date,hrv,rhr,sleep_hours,recovery_zone&order=date.desc&limit=90',{headers:H}).then(r=>r.json()).then(d=>{
-  if(!d.length)return;
-  d.reverse();
-  const today=d[d.length-1];
-  const zc={green:'var(--green)',yellow:'var(--amber)',red:'var(--red)'};
-  document.getElementById('todayZone').style.color=zc[today.recovery_zone]||'var(--t3)';
-  document.getElementById('todayZone').textContent=today.recovery_zone.toUpperCase();
-  document.getElementById('todayDetail').textContent='HRV '+Math.round(today.hrv||0)+' · RHR '+Math.round(today.rhr||0);
-  const l14=d.slice(-14);
-  document.getElementById('avgSleep').textContent=(l14.reduce((s,r)=>s+(r.sleep_hours||0),0)/l14.length).toFixed(1)+'h';
-  document.getElementById('avgHrv').textContent=Math.round(l14.reduce((s,r)=>s+(r.hrv||0),0)/l14.length);
-  const gc=d.filter(r=>r.recovery_zone==='green').length,yc=d.filter(r=>r.recovery_zone==='yellow').length,rc=d.filter(r=>r.recovery_zone==='red').length;
-  document.getElementById('greenPct').textContent=Math.round(100*gc/d.length)+'%';
-  document.getElementById('zoneLabel').textContent=gc+' green · '+yc+' yellow · '+rc+' red';
-  let strip='<div class="zone-strip">';
-  d.forEach(r=>{const c=r.recovery_zone==='green'?'#16a34a':r.recovery_zone==='red'?'#dc2626':'#f59e0b';strip+=`<div class="zone-day" style="background:${c}" title="${r.date}: ${r.recovery_zone}"></div>`});
-  strip+='</div><div style="display:flex;justify-content:space-between;font-size:.6875rem;color:var(--t3);font-family:JetBrains Mono,monospace"><span>'+d[0].date.slice(5)+'</span><span>'+d[d.length-1].date.slice(5)+'</span></div>';
-  document.getElementById('zoneChart').innerHTML=strip;
-  const l60=d.slice(-60).filter(r=>r.hrv>0);
-  if(l60.length)drawLine('hrvChart',l60,'date','hrv','#0891b2','',{target:57});
-  const sl60=d.slice(-60).filter(r=>r.sleep_hours>0);
-  if(sl60.length)drawLine('sleepChart',sl60,'date','sleep_hours','#16a34a','h',{target:8});
-  const rhr60=d.slice(-60).filter(r=>r.rhr>0);
-  if(rhr60.length)drawLine('rhrChart',rhr60,'date','rhr','#dc2626','',{target:62});
-}).catch(e=>console.error(e));
+// ═══════════════════════════════════════════════
+// POPULATE FROM EMBEDDED DATA
+// ═══════════════════════════════════════════════
+function populateEmbedded() {
+  // Strength stats
+  const benchData = WORKOUTS.filter(w => w.bench != null);
+  const latestBench = benchData.length ? benchData[benchData.length - 1].bench : '—';
+  document.getElementById('strength-stats').innerHTML = `
+    <div class="st"><div class="l">Bench e1RM</div><div class="v" style="color:var(--violet)">${latestBench}</div><div class="n">kg · → 100</div></div>
+    <div class="st"><div class="l">Workouts</div><div class="v" style="color:var(--blue)">${WORKOUTS.length}</div><div class="n">logget</div></div>
+    <div class="st"><div class="l">Push</div><div class="v">${WORKOUTS.filter(w=>w.t==='push').length}</div></div>
+    <div class="st"><div class="l">Pull</div><div class="v">${WORKOUTS.filter(w=>w.t==='pull').length}</div></div>
+    <div class="st"><div class="l">Legs</div><div class="v">${WORKOUTS.filter(w=>w.t==='legs').length}</div></div>`;
+
+  // Bench chart
+  drawChart('chart-bench', benchData.map(w => ({d: w.d, v: w.bench})), '#8b7cf0', ' kg', {target: 100, min: 50});
+
+  // Workout list
+  const typeColors = {push:'var(--violet)',pull:'var(--blue)',legs:'var(--amber)',other:'var(--t3)'};
+  document.getElementById('workout-list').innerHTML = WORKOUTS.slice().reverse().slice(0, 20).map(w => {
+    const dt = new Date(w.d);
+    const ds = dt.toLocaleDateString('da-DK', {day:'numeric', month:'short'});
+    return `<div style="display:flex;align-items:center;gap:.5rem;padding:.35rem 0;border-bottom:1px solid var(--bd);font-size:.6rem">
+      <div style="width:4px;height:22px;border-radius:2px;background:${typeColors[w.t]||'var(--t3)'}"></div>
+      <div style="flex:1"><strong>${w.title}</strong><br><span style="color:var(--t3)">${ds} · ${w.dur}min · ${w.sets} sæt</span></div>
+      <div style="font-family:'JetBrains Mono';color:var(--t2);text-align:right">${(w.vol/1000).toFixed(1)}t</div>
+    </div>`;
+  }).join('');
+
+  // Body stats
+  const latestWeight = WEIGHTS.length ? WEIGHTS[WEIGHTS.length-1].v : '—';
+  const latestLBM = LBM.length ? LBM[LBM.length-1].v : '—';
+  const latestVO2 = VO2DATA.length ? VO2DATA[VO2DATA.length-1].v : '—';
+  document.getElementById('body-stats').innerHTML = `
+    <div class="st"><div class="l">Fedtfri masse</div><div class="v" style="color:var(--blue)">${latestLBM}</div><div class="n">kg</div></div>
+    <div class="st"><div class="l">Kropsvægt</div><div class="v">${latestWeight}</div><div class="n">kg</div></div>
+    <div class="st"><div class="l">LBM range</div><div class="v">${LBM.length?Math.min(...LBM.map(d=>d.v)):'-'}–${LBM.length?Math.max(...LBM.map(d=>d.v)):'-'}</div><div class="n">kg</div></div>`;
+
+  // Body charts
+  drawChart('chart-lbm', LBM, '#4d8eff', ' kg');
+  drawChart('chart-weight', WEIGHTS, '#2dd4a0', ' kg');
+
+  // Cardio stats
+  document.getElementById('cardio-stats').innerHTML = `
+    <div class="st"><div class="l">VO2max</div><div class="v" style="color:var(--amber)">${latestVO2}</div><div class="n">→ 48+</div></div>
+    <div class="st"><div class="l">VO2 range</div><div class="v">${VO2DATA.length?Math.min(...VO2DATA.map(d=>d.v)):'-'}–${VO2DATA.length?Math.max(...VO2DATA.map(d=>d.v)):'-'}</div></div>
+    <div class="st"><div class="l">Skridt/dag</div><div class="v">${STEPS_M.length?STEPS_M[STEPS_M.length-1].v:'-'}</div><div class="n">seneste md</div></div>`;
+
+  // VO2 chart
+  drawChart('chart-vo2', VO2DATA, '#f0a040', '', {target: 48, min: 38});
+
+  // Cycling stats
+  const totalCycleKm = CYCLING_M.reduce((s, d) => s + (d.total || 0), 0);
+  const totalCycleRides = CYCLING_M.reduce((s, d) => s + d.v, 0);
+  document.getElementById('cycling-stats').innerHTML = `
+    <div class="st"><div class="l">Total km</div><div class="v" style="color:var(--cyan)">${Math.round(totalCycleKm)}</div></div>
+    <div class="st"><div class="l">Ture</div><div class="v">${totalCycleRides}</div></div>
+    <div class="st"><div class="l">Gns/md</div><div class="v">${Math.round(totalCycleKm / CYCLING_M.length)}</div><div class="n">km</div></div>`;
+
+  // Cycling bar chart
+  drawBarChart('chart-cycling', CYCLING_M, '#40d0d8');
+}
+
+// ═══════════════════════════════════════════════
+// LIVE DATA FROM SUPABASE
+// ═══════════════════════════════════════════════
+async function loadRecovery() {
+  try {
+    const res = await fetch(S + '/recovery_logs?select=date,hrv,rhr,sleep_hours,recovery_zone&order=date.asc', {headers: H});
+    const data = await res.json();
+    if (!data.length) return;
+
+    // Status section
+    const today = data[data.length - 1];
+    const hrvVals = data.filter(d => d.hrv > 0);
+    const avgHRV = (hrvVals.reduce((s, d) => s + d.hrv, 0) / hrvVals.length).toFixed(0);
+    const greenDays = data.filter(d => d.recovery_zone === 'green').length;
+    const redDays = data.filter(d => d.recovery_zone === 'red').length;
+    const latestVO2 = VO2DATA.length ? VO2DATA[VO2DATA.length-1].v : '—';
+    const latestBench = WORKOUTS.filter(w=>w.bench).slice(-1)[0]?.bench || '—';
+
+    document.getElementById('status-title').textContent = `${data.length} dage tracket · ${WORKOUTS.length} workouts logget`;
+    document.getElementById('stats-grid').innerHTML = `
+      <div class="st"><div class="l">VO2max</div><div class="v" style="color:var(--amber)">${latestVO2}</div><div class="n">→ 48+</div></div>
+      <div class="st"><div class="l">Bench e1RM</div><div class="v" style="color:var(--violet)">${latestBench}kg</div><div class="n">→ 100kg</div></div>
+      <div class="st"><div class="l">HRV gns</div><div class="v">${avgHRV}</div><div class="n">ms · threshold 57</div></div>
+      <div class="st"><div class="l">Grønne dage</div><div class="v" style="color:var(--green)">${greenDays}</div><div class="n">af ${data.length}</div></div>
+      <div class="st"><div class="l">Røde dage</div><div class="v" style="color:var(--red)">${redDays}</div></div>
+      <div class="st"><div class="l">I dag</div><div class="v" style="color:var(${today.recovery_zone==='green'?'--green':today.recovery_zone==='red'?'--red':'--amber'})">${today.recovery_zone?.toUpperCase()||'—'}</div></div>`;
+
+    // Today's recovery detail
+    const zBg = {green:'rgba(45,212,160,.08)',yellow:'rgba(240,160,64,.08)',red:'rgba(240,96,96,.08)'};
+    const zBd = {green:'rgba(45,212,160,.2)',yellow:'rgba(240,160,64,.2)',red:'rgba(240,96,96,.2)'};
+    const zCol = {green:'var(--green)',yellow:'var(--amber)',red:'var(--red)'};
+    document.getElementById('today-recovery').innerHTML = `<div class="c" style="background:${zBg[today.recovery_zone]||zBg.yellow};border-color:${zBd[today.recovery_zone]||zBd.yellow}">
+      <h3 style="color:${zCol[today.recovery_zone]||'var(--amber)'}">I dag: ${today.recovery_zone?.toUpperCase()||'—'} (${today.date})</h3>
+      <p>HRV <strong style="color:${today.hrv>=57?'var(--green)':today.hrv<40?'var(--red)':'var(--amber)'}">${today.hrv?.toFixed(0)||'—'} ms</strong> · RHR <strong style="color:${today.rhr<=62?'var(--green)':today.rhr>72?'var(--red)':'var(--amber)'}">${today.rhr||'—'} bpm</strong> · Søvn <strong style="color:${today.sleep_hours>=8?'var(--green)':today.sleep_hours<5?'var(--red)':'var(--amber)'}">${today.sleep_hours?.toFixed(1)||'—'}h</strong></p>
+    </div>`;
+
+    // Recovery stats
+    const avgRHR = (data.filter(d=>d.rhr>0).reduce((s,d)=>s+d.rhr,0)/data.filter(d=>d.rhr>0).length).toFixed(0);
+    const avgSleep = (data.filter(d=>d.sleep_hours>0).reduce((s,d)=>s+d.sleep_hours,0)/data.filter(d=>d.sleep_hours>0).length).toFixed(1);
+    document.getElementById('recovery-title').textContent = `${data.length} dage med recovery-data`;
+    document.getElementById('recovery-stats').innerHTML = `
+      <div class="st"><div class="l">HRV gns</div><div class="v">${avgHRV}</div><div class="n">ms</div></div>
+      <div class="st"><div class="l">RHR gns</div><div class="v">${avgRHR}</div><div class="n">bpm</div></div>
+      <div class="st"><div class="l">Søvn gns</div><div class="v" style="color:${parseFloat(avgSleep)>=7.5?'var(--green)':'var(--amber)'}">${avgSleep}</div><div class="n">timer</div></div>
+      <div class="st"><div class="l">Grøn %</div><div class="v" style="color:var(--green)">${Math.round(greenDays/data.length*100)}%</div></div>`;
+
+    // Charts — last 90 days
+    const recent = data.slice(-90);
+    drawChart('chart-hrv', recent.filter(d=>d.hrv>0).map(d=>({d:d.date,v:Math.round(d.hrv*10)/10})), '#4d8eff', ' ms', {threshold:57});
+    drawChart('chart-rhr', recent.filter(d=>d.rhr>0).map(d=>({d:d.date,v:d.rhr})), '#f06060', ' bpm', {threshold:62});
+    drawChart('chart-sleep', recent.filter(d=>d.sleep_hours>0).map(d=>({d:d.date,v:Math.round(d.sleep_hours*10)/10})), '#8b7cf0', 'h', {threshold:8,min:4});
+
+    // Zone distribution
+    const zones = {green:0,yellow:0,red:0};
+    data.forEach(d => zones[d.recovery_zone]++);
+    const total = data.length;
+    document.getElementById('zone-dist').innerHTML = `
+      <div style="display:flex;justify-content:space-around;margin:.5rem 0">
+        <div style="text-align:center"><div style="font-family:'JetBrains Mono';font-size:1.2rem;font-weight:600;color:var(--green)">${zones.green}</div><div style="font-size:.45rem;color:var(--t3);text-transform:uppercase">Grøn</div></div>
+        <div style="text-align:center"><div style="font-family:'JetBrains Mono';font-size:1.2rem;font-weight:600;color:var(--amber)">${zones.yellow}</div><div style="font-size:.45rem;color:var(--t3);text-transform:uppercase">Gul</div></div>
+        <div style="text-align:center"><div style="font-family:'JetBrains Mono';font-size:1.2rem;font-weight:600;color:var(--red)">${zones.red}</div><div style="font-size:.45rem;color:var(--t3);text-transform:uppercase">Rød</div></div>
+      </div>
+      <div style="display:flex;height:8px;border-radius:4px;overflow:hidden">
+        <div style="width:${(zones.green/total*100).toFixed(1)}%;background:var(--green)"></div>
+        <div style="width:${(zones.yellow/total*100).toFixed(1)}%;background:var(--amber)"></div>
+        <div style="width:${(zones.red/total*100).toFixed(1)}%;background:var(--red)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.45rem;color:var(--t3);margin-top:.2rem">
+        <span>${(zones.green/total*100).toFixed(0)}%</span><span>${(zones.yellow/total*100).toFixed(0)}%</span><span>${(zones.red/total*100).toFixed(0)}%</span>
+      </div>`;
+
+    // Subtitle
+    document.getElementById('subtitle').textContent = `${data.length} recovery-dage · ${WORKOUTS.length} workouts · ${VO2DATA.length} VO2-målinger · ${LBM.length} LBM-målinger · ${CYCLING_M.reduce((s,d)=>s+d.v,0)} cykelture`;
+    document.getElementById('foot').textContent = `${data.length} recovery-dage · ${WORKOUTS.length} workouts · VO2 ${VO2DATA.length?VO2DATA[0].v+'→'+VO2DATA[VO2DATA.length-1].v:'-'} · LBM ${LBM.length?LBM[0].v+'→'+LBM[LBM.length-1].v:'-'} kg · ${Math.round(CYCLING_M.reduce((s,d)=>s+(d.total||0),0))} km cykling`;
+
+  } catch (e) {
+    console.error('Recovery load error:', e);
+    document.getElementById('status-title').textContent = 'Kunne ikke hente recovery-data';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// DATA UPLOAD HANDLERS
+// ═══════════════════════════════════════════════
+function uploadAW() {
+  const el = document.getElementById('status-aw');
+  el.textContent = 'Apple Watch data uploades bedst via Claude chat — paste CSV-filen der, og bed om at pushe til Supabase recovery_logs.';
+  el.className = 'upload-status';
+}
+
+function uploadHevy() {
+  const el = document.getElementById('status-hevy');
+  el.textContent = 'Hevy data opdateres ved at paste CSV til Claude chat — beder om at rebuilde embedded WORKOUTS array i denne fil.';
+  el.className = 'upload-status';
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+populateEmbedded();
+renderWeek();
+renderFindings();
+loadRecovery();
 </script>
 </body>
 </html>
