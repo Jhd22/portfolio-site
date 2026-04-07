@@ -23,6 +23,16 @@ nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decora
 .loading{color:var(--t3);font-size:.75rem;padding:.75rem}
 footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
 
+/* Pills */
+.pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;text-decoration:none;padding:.4rem .875rem;border:1px solid var(--border);border-radius:100px;font-weight:500;background:var(--surface);box-shadow:var(--shadow);color:var(--t2);transition:all .15s}
+.pill:hover{border-color:var(--b2);box-shadow:var(--shadow-md);color:var(--t1)}
+.pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* Week header in list view */
+.week-hd{font-size:.625rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);padding:.625rem 1.125rem .375rem;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:center;background:var(--s2)}
+.week-hd-right{font-weight:400;text-transform:none;letter-spacing:0;font-family:'JetBrains Mono',monospace;font-size:.625rem}
+
 /* Læseplan tabs */
 .lp-tabs{display:flex;gap:.25rem;margin-bottom:1.25rem;flex-wrap:wrap}
 .lp-tab{padding:.4rem .875rem;border-radius:8px;font-size:.8125rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--t2);transition:all .15s;font-family:inherit}
@@ -144,12 +154,11 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
   <div class="sh">Kurser</div>
   <div class="course-grid" id="courseGrid"><div class="loading">Loading...</div></div>
 
-  <!-- TOOLS -->
-  <div class="sh">Tools</div>
-  <div class="tools-grid">
-    <div class="tool-card"><h3>📊 Læseplan</h3><p>Embedded reading tracker with check-off and depth tracking. Works directly from GitHub Pages — connected to Supabase.</p><span class="tool-tag">Live</span><span class="tool-tag">Embedded</span></div>
-    <div class="tool-card"><h3>📋 Briefing</h3><p>Weekly AI briefing across all courses, deadlines, events. Served via Tailscale.</p><span class="tool-tag">Tailscale</span><span class="tool-tag">API key</span></div>
-    <div class="tool-card"><h3>🎛️ Command Center</h3><p>Cross-domain risk alerts and priority allocation. Where to focus this week.</p><span class="tool-tag">Claude Project</span></div>
+  <!-- LINKS -->
+  <div class="sh">Links</div>
+  <div class="pills">
+    <a href="http://100.78.65.85:8080/briefing.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Briefing</a>
+    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--t3)"></span> Command Center</a>
   </div>
 </div>
 <footer>Personal AI System · Academics · F26</footer>
@@ -359,7 +368,23 @@ function renderList(el) {
     <select onchange="setFilter('week',this.value)"><option value="">Alle uger</option>${wOpts}</select>
     <span class="lp-count">${f.length} tekster</span>
   </div>`;
-  h += `<div class="lp-panel">${f.length ? f.map(readingHTML).join("") : '<div class="loading">Ingen tekster matcher filtrene</div>'}</div>`;
+  if (!f.length) {
+    h += `<div class="lp-panel"><div class="loading">Ingen tekster matcher filtrene</div></div>`;
+    el.innerHTML = h; return;
+  }
+  // Group by week
+  const byWeek = {};
+  f.forEach(r => { if (!byWeek[r.week]) byWeek[r.week] = []; byWeek[r.week].push(r); });
+  const weeks = Object.keys(byWeek).map(Number).sort((a,b) => a-b);
+  h += `<div class="lp-panel">`;
+  weeks.forEach(w => {
+    const wr = byWeek[w];
+    const done = wr.filter(r => r.status === "læst").length;
+    const dates = WEEK_DATES[w] ? ` · ${WEEK_DATES[w]}` : '';
+    h += `<div class="week-hd"><span>Uge ${w}${dates}</span><span class="week-hd-right">${done}/${wr.length} læst</span></div>`;
+    h += wr.map(readingHTML).join("");
+  });
+  h += `</div>`;
   el.innerHTML = h;
 }
 
