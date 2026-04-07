@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ugebriefing — Forår 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#f8fafc; --card:#fff; --border:#e2e8f0; --text:#1e293b; --muted:#64748b; --faint:#94a3b8; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--text); }
+  .mono { font-family:'DM Mono',monospace; }
+  .container { max-width:800px; margin:0 auto; padding:24px; }
+  .header { text-align:center; margin-bottom:32px; }
+  .header h1 { font-size:24px; font-weight:700; letter-spacing:-0.5px; }
+  .header-sub { font-size:13px; color:var(--faint); margin-top:4px; }
+  .card { background:var(--card); border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06); padding:24px; margin-bottom:20px; }
+  .card-title { font-size:15px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .briefing-text { font-size:15px; line-height:1.7; color:#334155; white-space:pre-wrap; }
+  .briefing-text p { margin-bottom:14px; }
+  .stat-row { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .stat { background:var(--card); border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,0.06); flex:1; min-width:120px; text-align:center; }
+  .stat-val { font-size:24px; font-weight:700; }
+  .stat-label { font-size:11px; color:var(--muted); margin-top:2px; }
+  .reading-item { padding:10px 0; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .reading-item:last-child { border-bottom:none; }
+  .badge { border-radius:4px; padding:2px 8px; font-size:11px; font-weight:600; display:inline-block; }
+  .event-item { padding:10px 0; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; }
+  .event-item:last-child { border-bottom:none; }
+  .loading { text-align:center; padding:60px 20px; color:var(--muted); }
+  .loading .spinner { font-size:32px; margin-bottom:12px; animation:spin 1.5s linear infinite; display:inline-block; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .error { background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:20px; color:#991b1b; }
+  .btn { background:#1e293b; color:#fff; border:none; border-radius:8px; padding:10px 24px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+  .btn:hover { background:#334155; }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .setup { max-width:500px; margin:80px auto; padding:24px; }
+  .setup input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; margin-bottom:12px; }
+  .schedule-grid { display:grid; grid-template-columns: 80px 1fr; gap:4px 12px; font-size:13px; }
+  .schedule-day { font-weight:600; color:var(--text); padding:4px 0; }
+  .schedule-entry { color:var(--muted); padding:4px 0; }
+  .section-toggle { cursor:pointer; user-select:none; }
+  .section-toggle:hover { color:var(--text); }
+  .tabs { display:flex; gap:4px; margin-bottom:20px; justify-content:center; }
+  .tabs button { padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:transparent; color:var(--muted); }
+  .tabs button.active { background:var(--text); color:#fff; }
+  @media(max-width:600px) { .stat-row { flex-direction:column; } .container { padding:16px; } }
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+<script>
+// =============================================================================
+// CONFIG
+// =============================================================================
+const SUPABASE_URL = "https://kgiepplwarutwmzvvezc.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec";
+
+const COURSE_COLORS = {
+  IR2:     { bg:"#059669", c:"#fff" },
+  IP3:     { bg:"#7c3aed", c:"#fff" },
+  Økonomi: { bg:"#2563eb", c:"#fff" },
+  Metode:  { bg:"#ea580c", c:"#fff" },
+};
+
+const WEEK_DATES = { 6:"2/2–8/2",7:"9/2–15/2",8:"16/2–22/2",9:"23/2–1/3",10:"2/3–8/3",11:"9/3–15/3",12:"16/3–22/3",13:"23/3–29/3",14:"30/3–5/4",15:"6/4–12/4",16:"13/4–19/4",17:"20/4–26/4",18:"27/4–3/5",19:"4/5–10/5",20:"11/5–17/5",21:"18/5–24/5",22:"25/5–31/5",23:"1/6–7/6",24:"8/6–14/6" };
+
+// =============================================================================
+// STATE
+// =============================================================================
+let anthropicKey = localStorage.getItem("anthropic_key") || "";
+let briefing = "";
+let rawData = null;
+let loading = false;
+let error = null;
+let view = "briefing"; // briefing | data
+
+// =============================================================================
+// HELPERS
+// =============================================================================
+function currentWeek() {
+  const now = new Date();
+  const jan1 = new Date(now.getFullYear(), 0, 1);
+  const days = Math.floor((now - jan1) / 86400000);
+  return Math.ceil((days + jan1.getDay() + 1) / 7);
+}
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+async function supa(path) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+  });
+  if (!res.ok) throw new Error(`Supabase: ${res.status}`);
+  return res.json();
+}
+
+// =============================================================================
+// DATA FETCHING
+// =============================================================================
+async function fetchAllData() {
+  const week = currentWeek();
+  const [readings, events, schedule] = await Promise.all([
+    supa("readings?order=week.asc,id.asc&select=id,course,week,lecture,title,author,pages,status,priority,depth"),
+    supa("events?order=week.asc"),
+    supa("ku_schedule?order=week.asc,day_of_week.asc,time_slot.asc"),
+  ]);
+
+  const unread = readings.filter(r => r.status !== "læst");
+  const thisWeekUnread = unread.filter(r => r.week === week);
+  const nextWeekUnread = unread.filter(r => r.week === week + 1);
+  const backlog = unread.filter(r => r.week < week);
+  const highPriority = unread.filter(r => r.priority === "høj");
+
+  // Progress per course
+  const progress = {};
+  for (const c of ["IP3", "Økonomi", "Metode"]) {
+    const ct = readings.filter(r => r.course === c);
+    const done = ct.filter(r => r.status === "læst").length;
+    progress[c] = { total: ct.length, done, pct: ct.length ? Math.round(100 * done / ct.length) : 0 };
+  }
+
+  // Schedule for this week
+  let weekSchedule = schedule.filter(s => s.week === week);
+  if (weekSchedule.length === 0) weekSchedule = schedule.filter(s => s.week === null);
+
+  // Upcoming deadlines (within 4 weeks)
+  const upcoming = events.filter(e =>
+    (e.type === "deadline" || e.type === "exam") && e.week >= week && e.week <= week + 4
+  );
+
+  return {
+    week,
+    readings,
+    unread,
+    thisWeekUnread,
+    nextWeekUnread,
+    backlog,
+    highPriority,
+    progress,
+    weekSchedule,
+    upcoming,
+    allEvents: events,
+  };
+}
+
+// =============================================================================
+// BRIEFING GENERATION
+// =============================================================================
+async function generateBriefing(data) {
+  const prompt = `Du er Jakobs personlige akademiske assistent. Generer en ugentlig briefing på dansk baseret på følgende data.
+
+**Uge ${data.week}** (${WEEK_DATES[data.week] || "ukendt"})
+
+**Undervisning denne uge:**
+${data.weekSchedule.map(s => `${s.day_of_week} ${s.time_slot}: ${s.course} (${s.session_type}) — ${s.room || ""}`).join("\n") || "Ingen undervisning (ferie/læseuge)"}
+
+**Ulæste tekster denne uge (uge ${data.week}):** ${data.thisWeekUnread.length} tekster
+${data.thisWeekUnread.slice(0, 10).map(r => `- [${r.course}] ${r.title} — ${r.author} (${r.priority} prioritet)`).join("\n") || "Ingen"}
+
+**Ulæste tekster næste uge (uge ${data.week + 1}):** ${data.nextWeekUnread.length} tekster
+${data.nextWeekUnread.slice(0, 8).map(r => `- [${r.course}] ${r.title} — ${r.author} (${r.priority} prioritet)`).join("\n") || "Ingen"}
+
+**Backlog (tekster fra tidligere uger, stadig ulæste):** ${data.backlog.length} tekster
+${data.backlog.filter(r => r.priority === "høj").slice(0, 5).map(r => `- [${r.course}, uge ${r.week}] ${r.title} — ${r.author}`).join("\n") || "Ingen høj-prioritet backlog"}
+
+**Fremgang per fag:**
+${Object.entries(data.progress).map(([c, p]) => `${c}: ${p.done}/${p.total} (${p.pct}%)`).join("\n")}
+
+**Kommende deadlines:**
+${data.upcoming.map(e => `- ${e.date || `Uge ${e.week}`}: ${e.label} (${e.course || "alle fag"})`).join("\n") || "Ingen inden for de næste 4 uger"}
+
+Skriv briefingen i 3-4 afsnit:
+1. Ugens overblik: hvad sker der denne uge (undervisning, vigtige datoer)
+2. Læsefokus: hvad er vigtigst at læse denne uge, og hvad bør prioriteres fra backloggen
+3. Næste uge: hvad bør forberedes allerede nu
+4. Eventuelle advarsler eller anbefalinger (kun hvis relevant — fx nærmer en deadline sig)
+
+Vær direkte og konkret. Ingen fyld. Brug tekst-titler og forfattere når du nævner specifikke tekster.`;
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": anthropicKey,
+      "anthropic-version": "2023-06-01",
+      "Content-Type": "application/json",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1500,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Claude API: ${res.status} — ${text.slice(0, 200)}`);
+  }
+
+  const json = await res.json();
+  return json.content.map(b => b.text || "").join("");
+}
+
+// =============================================================================
+// RENDER
+// =============================================================================
+function render() {
+  const app = document.getElementById("app");
+
+  // Setup screen — need API key
+  if (!anthropicKey) {
+    app.innerHTML = `
+      <div class="setup">
+        <div class="card">
+          <div class="card-title">🔑 Anthropic API-nøgle</div>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:16px">
+            Briefingen bruger Claude til at generere et ugentligt overblik baseret på dine Supabase-data. Indsæt din API-nøgle herunder — den gemmes kun lokalt i din browser.
+          </p>
+          <input type="password" id="key-input" placeholder="sk-ant-..." />
+          <button class="btn" onclick="saveKey()">Gem og start</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Loading
+  if (loading) {
+    app.innerHTML = `
+      <div class="header">
+        <h1>Ugebriefing</h1>
+        <div class="header-sub mono">Uge ${currentWeek()} · ${WEEK_DATES[currentWeek()] || ""}</div>
+      </div>
+      <div class="loading">
+        <div class="spinner">◌</div>
+        <div>Henter data fra Supabase og genererer briefing...</div>
+      </div>`;
+    return;
+  }
+
+  // Error
+  if (error) {
+    app.innerHTML = `
+      <div class="header">
+        <h1>Ugebriefing</h1>
+      </div>
+      <div class="error">${esc(error)}</div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn" onclick="runBriefing()">Prøv igen</button>
+        <button class="btn" style="background:#64748b;margin-left:8px" onclick="resetKey()">Skift API-nøgle</button>
+      </div>`;
+    return;
+  }
+
+  // Main view
+  const d = rawData;
+  if (!d) return;
+
+  let h = `
+    <div class="header">
+      <h1>Ugebriefing</h1>
+      <div class="header-sub mono">Uge ${d.week} · ${WEEK_DATES[d.week] || ""} · Forår 2026</div>
+    </div>
+    <div class="tabs">
+      <button class="${view==='briefing'?'active':''}" onclick="setView('briefing')">Briefing</button>
+      <button class="${view==='data'?'active':''}" onclick="setView('data')">Rådata</button>
+    </div>`;
+
+  // Stats row
+  h += `<div class="stat-row">
+    <div class="stat"><div class="stat-val mono" style="color:#ef4444">${d.thisWeekUnread.length}</div><div class="stat-label">Ulæst denne uge</div></div>
+    <div class="stat"><div class="stat-val mono" style="color:#f59e0b">${d.backlog.length}</div><div class="stat-label">Backlog</div></div>
+    <div class="stat"><div class="stat-val mono" style="color:#7c3aed">${d.highPriority.length}</div><div class="stat-label">Høj prioritet</div></div>
+    <div class="stat"><div class="stat-val mono" style="color:#10b981">${d.upcoming.length}</div><div class="stat-label">Deadlines (4 uger)</div></div>
+  </div>`;
+
+  if (view === "briefing") {
+    // AI briefing
+    h += `<div class="card">
+      <div class="card-title">📋 Ugentlig briefing</div>
+      <div class="briefing-text">${formatBriefing(briefing)}</div>
+    </div>`;
+
+    // Refresh button
+    h += `<div style="text-align:center;margin-top:8px;margin-bottom:24px">
+      <button class="btn" onclick="runBriefing()">↻ Generer ny briefing</button>
+      <button class="btn" style="background:#64748b;margin-left:8px" onclick="resetKey()">Skift API-nøgle</button>
+    </div>`;
+  }
+
+  if (view === "data") {
+    // Schedule
+    h += `<div class="card">
+      <div class="card-title">📅 Skema — uge ${d.week}</div>`;
+    if (d.weekSchedule.length) {
+      const days = {};
+      d.weekSchedule.forEach(s => {
+        if (!days[s.day_of_week]) days[s.day_of_week] = [];
+        days[s.day_of_week].push(s);
+      });
+      for (const [day, slots] of Object.entries(days)) {
+        h += `<div style="margin-bottom:10px"><div style="font-weight:600;font-size:13px;margin-bottom:4px">${esc(day)}</div>`;
+        slots.forEach(s => {
+          const cc = COURSE_COLORS[s.course] || { bg:"#64748b", c:"#fff" };
+          h += `<div style="font-size:13px;color:var(--muted);padding:2px 0">
+            <span class="mono">${esc(s.time_slot)}</span>
+            <span class="badge" style="background:${cc.bg};color:${cc.c};margin-left:6px">${esc(s.course)}</span>
+            ${esc(s.session_type)} <span style="color:var(--faint);font-size:11px">${esc(s.room||"")}</span>
+          </div>`;
+        });
+        h += `</div>`;
+      }
+    } else {
+      h += `<div style="color:var(--faint);font-size:14px">Ingen undervisning denne uge</div>`;
+    }
+    h += `</div>`;
+
+    // This week's unread
+    h += `<div class="card">
+      <div class="card-title">📖 Ulæste tekster — uge ${d.week} (${d.thisWeekUnread.length})</div>`;
+    if (d.thisWeekUnread.length) {
+      d.thisWeekUnread.forEach(r => { h += readingHTML(r); });
+    } else {
+      h += `<div style="color:#10b981;font-size:14px;font-weight:500">✓ Alle tekster for denne uge er læst</div>`;
+    }
+    h += `</div>`;
+
+    // Next week
+    h += `<div class="card">
+      <div class="card-title">📖 Næste uge — uge ${d.week+1} (${d.nextWeekUnread.length})</div>`;
+    if (d.nextWeekUnread.length) {
+      d.nextWeekUnread.forEach(r => { h += readingHTML(r); });
+    } else {
+      h += `<div style="color:#10b981;font-size:14px">Ingen tekster næste uge</div>`;
+    }
+    h += `</div>`;
+
+    // Backlog
+    if (d.backlog.length) {
+      h += `<div class="card">
+        <div class="card-title">⚠️ Backlog (${d.backlog.length} tekster fra tidligere uger)</div>`;
+      d.backlog.filter(r => r.priority === "høj").slice(0, 10).forEach(r => { h += readingHTML(r, true); });
+      const remaining = d.backlog.length - d.backlog.filter(r => r.priority === "høj").slice(0, 10).length;
+      if (remaining > 0) h += `<div style="font-size:12px;color:var(--faint);padding:8px 0">+ ${remaining} tekster med mellem/lav prioritet</div>`;
+      h += `</div>`;
+    }
+
+    // Upcoming deadlines
+    if (d.upcoming.length) {
+      h += `<div class="card">
+        <div class="card-title">🎯 Kommende deadlines</div>`;
+      d.upcoming.forEach(e => {
+        const cc = e.course ? COURSE_COLORS[e.course] : null;
+        h += `<div class="event-item">
+          <div>
+            <div style="font-size:13px;font-weight:500">${esc(e.label)}</div>
+            ${cc ? `<span class="badge" style="background:${cc.bg};color:${cc.c};margin-top:3px">${esc(e.course)}</span>` : ""}
+          </div>
+          <div class="mono" style="font-size:12px;color:var(--faint)">${e.date || 'Uge '+e.week}</div>
+        </div>`;
+      });
+      h += `</div>`;
+    }
+
+    // Progress
+    h += `<div class="card">
+      <div class="card-title">📊 Fremgang</div>`;
+    for (const [c, p] of Object.entries(d.progress)) {
+      const cc = COURSE_COLORS[c] || { bg:"#64748b" };
+      h += `<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span class="badge" style="background:${cc.bg};color:#fff">${c}</span>
+          <span class="mono" style="font-size:13px;font-weight:600;color:${cc.bg}">${p.done}/${p.total} (${p.pct}%)</span>
+        </div>
+        <div style="background:#e2e8f0;border-radius:6px;height:6px;overflow:hidden">
+          <div style="width:${p.pct}%;height:100%;background:${cc.bg};border-radius:6px"></div>
+        </div>
+      </div>`;
+    }
+    h += `</div>`;
+  }
+
+  app.innerHTML = h;
+}
+
+function readingHTML(r, showWeek) {
+  const cc = COURSE_COLORS[r.course] || { bg:"#64748b", c:"#fff" };
+  const ps = { høj:"#fee2e2", mellem:"#fef3c7", lav:"#dcfce7" };
+  const pc = { høj:"#991b1b", mellem:"#92400e", lav:"#166534" };
+  return `<div class="reading-item">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:500;line-height:1.4">${esc(r.title)}</div>
+      <div style="font-size:12px;color:var(--faint);margin-top:2px">${esc(r.author)}${r.pages>0?' · '+r.pages+' s.':''}</div>
+      <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">
+        <span class="badge" style="background:${cc.bg};color:${cc.c}">${r.course}</span>
+        <span class="badge" style="background:${ps[r.priority]||ps.mellem};color:${pc[r.priority]||pc.mellem}">${r.priority}</span>
+        ${showWeek ? `<span class="badge" style="background:#f1f5f9;color:var(--muted)">Uge ${r.week}</span>` : ""}
+      </div>
+    </div>
+  </div>`;
+}
+
+function formatBriefing(text) {
+  return text.split("\n").map(line => {
+    line = line.trim();
+    if (!line) return "";
+    if (line.startsWith("##")) return `<h3 style="font-size:15px;font-weight:600;margin:18px 0 6px;color:var(--text)">${esc(line.replace(/^#+\s*/,""))}</h3>`;
+    if (line.startsWith("**") && line.endsWith("**")) return `<h3 style="font-size:15px;font-weight:600;margin:18px 0 6px;color:var(--text)">${esc(line.replace(/\*\*/g,""))}</h3>`;
+    // Bold inline
+    line = line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    return `<p>${line}</p>`;
+  }).join("");
+}
+
+// =============================================================================
+// ACTIONS
+// =============================================================================
+window.saveKey = function() {
+  const v = document.getElementById("key-input").value.trim();
+  if (!v) return;
+  anthropicKey = v;
+  localStorage.setItem("anthropic_key", v);
+  runBriefing();
+};
+
+window.resetKey = function() {
+  anthropicKey = "";
+  localStorage.removeItem("anthropic_key");
+  briefing = "";
+  rawData = null;
+  error = null;
+  render();
+};
+
+window.setView = function(v) { view = v; render(); };
+
+window.runBriefing = async function() {
+  loading = true;
+  error = null;
+  render();
+  try {
+    rawData = await fetchAllData();
+    briefing = await generateBriefing(rawData);
+    view = "briefing";
+  } catch (e) {
+    error = e.message;
+    console.error(e);
+  }
+  loading = false;
+  render();
+};
+
+// =============================================================================
+// INIT
+// =============================================================================
+if (anthropicKey) {
+  runBriefing();
+} else {
+  render();
+}
+</script>
+</body>
+</html>

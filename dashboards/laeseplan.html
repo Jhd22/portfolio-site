@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Læseplan — Forår 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8fafc; --card: #fff; --border: #e2e8f0; --text: #1e293b;
+    --muted: #64748b; --faint: #94a3b8; --ir2: #059669; --econ: #2563eb; --metode: #ea580c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  .mono { font-family: 'DM Mono', monospace; }
+  .container { max-width: 900px; margin: 0 auto; padding: 20px 24px; }
+
+  /* Header */
+  .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 24px; position: sticky; top: 0; z-index: 10; }
+  .header-inner { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .header-sub { font-size: 12px; color: var(--faint); }
+  .nav { display: flex; gap: 4px; }
+  .nav button { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all 0.15s; }
+  .nav button.active { background: var(--text); color: #fff; }
+  .nav button:hover:not(.active) { background: #f1f5f9; }
+
+  /* Cards */
+  .card { background: var(--card); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+  .card-pad { padding: 20px; }
+  .card + .card { margin-top: 16px; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+
+  /* Stats */
+  .stats { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat { background: var(--card); border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex: 1; min-width: 140px; }
+  .stat-val { font-size: 28px; font-weight: 700; }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .stat-sub { font-size: 11px; color: var(--faint); margin-top: 4px; }
+
+  /* Progress bar */
+  .pbar { background: #e2e8f0; border-radius: 6px; height: 8px; overflow: hidden; flex: 1; }
+  .pbar-fill { height: 100%; border-radius: 6px; transition: width 0.4s ease; }
+
+  /* Reading rows */
+  .reading { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid #f1f5f9; transition: opacity 0.2s, background 0.2s; }
+  .reading.done { background: #f8fafc; }
+  .reading.updating { opacity: 0.5; }
+  .reading-title { font-size: 14px; font-weight: 500; line-height: 1.4; }
+  .reading.done .reading-title { color: var(--faint); text-decoration: line-through; }
+  .reading-meta { font-size: 12px; color: var(--faint); margin-top: 3px; }
+  .reading-tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+
+  /* Check button */
+  .check { width: 26px; height: 26px; border-radius: 13px; flex-shrink: 0; margin-top: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 2px solid #cbd5e1; background: transparent; transition: all 0.15s; }
+  .check.checked { border: none; }
+
+  /* Badges */
+  .badge { border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .badge-sm { font-size: 11px; font-weight: 500; }
+  .depth-btn { border: none; cursor: pointer; color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; transition: transform 0.1s; }
+  .depth-btn:active { transform: scale(0.93); }
+
+  /* Filters */
+  .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filters select { padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; color: #475569; background: #fff; cursor: pointer; font-family: inherit; }
+
+  /* Week selector */
+  .weeks { display: flex; gap: 6px; flex-wrap: wrap; }
+  .weeks button { padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: #f1f5f9; color: var(--muted); transition: all 0.15s; }
+  .weeks button.active { background: var(--text); color: #fff; }
+  .weeks button.easter { outline: 2px solid #ef4444; outline-offset: 1px; }
+  .weeks button.readweek { outline: 2px solid #f59e0b; outline-offset: 1px; }
+
+  /* Events */
+  .event-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+  .event-row:last-child { border-bottom: none; }
+
+  /* Loading / Error */
+  .center { display: flex; justify-content: center; align-items: center; height: 80vh; text-align: center; }
+  .error-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 24px; max-width: 500px; }
+
+  @media (max-width: 600px) {
+    .stats { flex-direction: column; }
+    .nav { width: 100%; }
+    .nav button { flex: 1; padding: 8px 8px; font-size: 12px; }
+    .header-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>Læseplan</h1>
+      <div class="header-sub mono" id="header-sub">Henter data...</div>
+    </div>
+    <div class="nav" id="nav"></div>
+  </div>
+</div>
+<div class="container" id="app"></div>
+
+<script>
+// =============================================================================
+// CONFIG
+// =============================================================================
+const SUPABASE_URL = "https://kgiepplwarutwmzvvezc.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec";
+
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+const COURSES = {
+  IR2:     { bg: "#059669", light: "#d1fae5", text: "#065f46" },
+  Økonomi: { bg: "#2563eb", light: "#dbeafe", text: "#1e40af" },
+  Metode:  { bg: "#ea580c", light: "#ffedd5", text: "#9a3412" },
+};
+const DEPTH = ["unread","read","noted","restructured","compared","tested"];
+const DEPTH_DA = { unread:"Ulæst", read:"Læst", noted:"Noteret", restructured:"Omstruktureret", compared:"Sammenlignet", tested:"Testet" };
+const DEPTH_CLR = { unread:"#94a3b8", read:"#60a5fa", noted:"#a78bfa", restructured:"#f59e0b", compared:"#10b981", tested:"#ef4444" };
+const PRIO_STYLE = { høj: { bg:"#fee2e2", c:"#991b1b" }, mellem: { bg:"#fef3c7", c:"#92400e" }, lav: { bg:"#dcfce7", c:"#166534" } };
+const STATUS_DA = { ikke_startet:"Ikke startet", i_gang:"I gang", læst:"Læst" };
+const WEEK_DATES = { 6:"2/2–8/2",7:"9/2–15/2",8:"16/2–22/2",9:"23/2–1/3",10:"2/3–8/3",11:"9/3–15/3",12:"16/3–22/3",13:"23/3–29/3",14:"30/3–5/4",15:"6/4–12/4",16:"13/4–19/4",17:"20/4–26/4",18:"27/4–3/5",19:"4/5–10/5",20:"11/5–17/5",21:"18/5–24/5" };
+const EVT_STYLE = { deadline:{bg:"#fef2f2",c:"#991b1b",l:"Deadline"}, exam:{bg:"#fef3c7",c:"#92400e",l:"Eksamen"}, holiday:{bg:"#ecfdf5",c:"#065f46",l:"Ferie"}, info:{bg:"#f0f9ff",c:"#0c4a6e",l:"Info"} };
+
+// =============================================================================
+// STATE
+// =============================================================================
+let readings = [], events = [], view = "dashboard", filters = { course:"", priority:"", status:"", week:"" }, focusWeek = 14;
+
+// =============================================================================
+// SUPABASE
+// =============================================================================
+async function supa(path, opts = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    method: opts.method || "GET",
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", Prefer: "return=representation" },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  if (!res.ok) { const t = await res.text().catch(()=>""); throw new Error(`${res.status}: ${t}`); }
+  return res.json();
+}
+
+async function loadData() {
+  [readings, events] = await Promise.all([
+    supa("readings?order=week.asc,id.asc"),
+    supa("events?order=week.asc"),
+  ]);
+}
+
+async function patchReading(id, patch) {
+  await supa(`readings?id=eq.${id}`, { method: "PATCH", body: patch });
+}
+
+// =============================================================================
+// HELPERS
+// =============================================================================
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+function stats() {
+  const t = readings.length, done = readings.filter(r=>r.status==="læst").length;
+  const ip = readings.filter(r=>r.status==="i_gang").length;
+  const tp = readings.reduce((s,r)=>s+(r.pages||0),0);
+  const dp = readings.filter(r=>r.status==="læst").reduce((s,r)=>s+(r.pages||0),0);
+  const bc = {};
+  for (const c of ["IR2","Økonomi","Metode"]) {
+    const ct = readings.filter(r=>r.course===c), cd = ct.filter(r=>r.status==="læst").length;
+    bc[c] = { total:ct.length, done:cd, pct: ct.length ? Math.round(100*cd/ct.length) : 0 };
+  }
+  return { total:t, done, ip, tp, dp, bc };
+}
+
+// =============================================================================
+// RENDER
+// =============================================================================
+function renderNav() {
+  const nav = document.getElementById("nav");
+  const tabs = [["dashboard","Overblik"],["list","Alle tekster"],["focus","Fokus"],["deadlines","Deadlines"]];
+  nav.innerHTML = tabs.map(([id,label]) =>
+    `<button class="${view===id?'active':''}" onclick="setView('${id}')">${label}</button>`
+  ).join("");
+}
+
+function renderHeader() {
+  const s = stats();
+  document.getElementById("header-sub").innerHTML =
+    `${s.done}/${s.total} tekster · Forår 2026 <span style="margin:0 6px">·</span><span style="color:#10b981">●</span> live`;
+}
+
+function render() {
+  renderNav();
+  renderHeader();
+  const app = document.getElementById("app");
+  if (view === "dashboard") renderDashboard(app);
+  else if (view === "list") renderList(app);
+  else if (view === "focus") renderFocus(app);
+  else if (view === "deadlines") renderDeadlines(app);
+}
+
+function renderDashboard(el) {
+  const s = stats();
+  let h = `<div class="stats">
+    <div class="stat" style="border-top:3px solid #10b981"><div class="stat-val mono" style="color:#10b981">${s.done}</div><div class="stat-label">Tekster læst</div><div class="stat-sub">af ${s.total} totalt</div></div>
+    <div class="stat" style="border-top:3px solid #3b82f6"><div class="stat-val mono" style="color:#3b82f6">${s.ip}</div><div class="stat-label">I gang</div></div>
+    <div class="stat" style="border-top:3px solid #8b5cf6"><div class="stat-val mono" style="color:#8b5cf6">${s.dp}</div><div class="stat-label">Sider læst</div><div class="stat-sub">af ${s.tp} s.</div></div>
+  </div>`;
+
+  // Course progress
+  h += `<div class="card card-pad"><div class="card-title">Fremgang per fag</div>`;
+  for (const c of ["IR2","Økonomi","Metode"]) {
+    const cs = s.bc[c], cc = COURSES[c];
+    h += `<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge" style="background:${cc.bg};color:#fff">${c}</span>
+          <span style="font-size:12px;color:var(--faint)">${cs.done}/${cs.total}</span>
+        </div>
+        <span class="mono" style="font-size:13px;font-weight:600;color:${cc.bg}">${cs.pct}%</span>
+      </div>
+      <div class="pbar"><div class="pbar-fill" style="width:${cs.pct}%;background:${cc.bg}"></div></div>
+    </div>`;
+  }
+  h += `</div>`;
+
+  // Depth distribution
+  h += `<div class="card card-pad"><div class="card-title">Dybdefordeling</div><div style="display:flex;gap:8px;flex-wrap:wrap">`;
+  for (const d of DEPTH) {
+    const n = readings.filter(r=>r.depth===d).length;
+    h += `<div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border-radius:6px;padding:6px 12px">
+      <div style="width:10px;height:10px;border-radius:3px;background:${DEPTH_CLR[d]}"></div>
+      <span style="font-size:12px;color:var(--muted)">${DEPTH_DA[d]}</span>
+      <span class="mono" style="font-size:13px;font-weight:700">${n}</span>
+    </div>`;
+  }
+  h += `</div></div>`;
+
+  // Deadlines
+  const dls = events.filter(e => e.type==="deadline" || e.type==="exam");
+  if (dls.length) {
+    h += `<div class="card card-pad"><div class="card-title">Kommende deadlines</div>`;
+    dls.forEach((e,i) => {
+      const cc = e.course ? COURSES[e.course] : null;
+      h += `<div class="event-row">
+        <div>
+          <div style="font-size:13px;font-weight:500">${esc(e.label)}</div>
+          ${cc ? `<span class="badge badge-sm" style="background:${cc.light};color:${cc.text};margin-top:3px">${e.course}</span>` : ""}
+        </div>
+        <div class="mono" style="font-size:12px;color:var(--faint)">${e.date || `Uge ${e.week}`}</div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+  el.innerHTML = h;
+}
+
+function readingHTML(r) {
+  const cc = COURSES[r.course] || COURSES.IR2;
+  const done = r.status === "læst";
+  const ps = PRIO_STYLE[r.priority] || PRIO_STYLE.mellem;
+  return `<div class="reading ${done?'done':''}" id="r-${r.id}">
+    <button class="check ${done?'checked':''}" style="${done?`border:none;background:${cc.bg}`:''}" onclick="toggleStatus(${r.id})">
+      ${done ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+    </button>
+    <div style="flex:1;min-width:0">
+      <div class="reading-title">${esc(r.title)}</div>
+      <div class="reading-meta">${esc(r.author)}${r.pages>0?` · ${r.pages} s.`:''}</div>
+      <div class="reading-tags">
+        <span class="badge" style="background:${cc.bg};color:#fff">${r.course}</span>
+        <span class="badge badge-sm" style="background:${ps.bg};color:${ps.c}">${r.priority}</span>
+        <button class="depth-btn" style="background:${DEPTH_CLR[r.depth]}" onclick="cycleDepth(${r.id})">${DEPTH_DA[r.depth]}</button>
+        ${r.notes ? `<span style="font-size:11px;color:var(--faint);font-style:italic">${esc(r.notes)}</span>` : ''}
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--faint);flex-shrink:0;text-align:right;min-width:40px">Uge ${r.week}</div>
+  </div>`;
+}
+
+function renderList(el) {
+  let f = readings.filter(r => {
+    if (filters.course && r.course !== filters.course) return false;
+    if (filters.priority && r.priority !== filters.priority) return false;
+    if (filters.status && r.status !== filters.status) return false;
+    if (filters.week && r.week !== parseInt(filters.week)) return false;
+    return true;
+  });
+  const wOpts = Array.from({length:16},(_,i)=>i+6).map(w=>`<option value="${w}" ${filters.week==w?'selected':''}>Uge ${w}</option>`).join("");
+  let h = `<div class="filters">
+    <select onchange="setFilter('course',this.value)"><option value="">Alle fag</option>${["IR2","Økonomi","Metode"].map(c=>`<option value="${c}" ${filters.course===c?'selected':''}>${c}</option>`).join("")}</select>
+    <select onchange="setFilter('priority',this.value)"><option value="">Alle prioriteter</option>${["høj","mellem","lav"].map(p=>`<option value="${p}" ${filters.priority===p?'selected':''}>${p}</option>`).join("")}</select>
+    <select onchange="setFilter('status',this.value)"><option value="">Alle status</option>${["ikke_startet","i_gang","læst"].map(s=>`<option value="${s}" ${filters.status===s?'selected':''}>${STATUS_DA[s]}</option>`).join("")}</select>
+    <select onchange="setFilter('week',this.value)"><option value="">Alle uger</option>${wOpts}</select>
+    <span style="font-size:12px;color:var(--faint);margin-left:8px">${f.length} tekster</span>
+  </div>`;
+  h += `<div class="card">${f.length ? f.map(readingHTML).join("") : '<div style="padding:40px;text-align:center;color:var(--faint);font-size:14px">Ingen tekster matcher filtrene</div>'}</div>`;
+  el.innerHTML = h;
+}
+
+function renderFocus(el) {
+  const backlog = readings.filter(r => r.week <= focusWeek && r.status !== "læst")
+    .sort((a,b) => {
+      const p = {høj:0,mellem:1,lav:2};
+      return (p[a.priority]||1)-(p[b.priority]||1) || a.week-b.week;
+    });
+  const wBtns = Array.from({length:16},(_,i)=>i+6).map(w => {
+    const cls = [w===focusWeek?'active':'', w===14?'easter':'', w===7?'readweek':''].filter(Boolean).join(' ');
+    return `<button class="${cls}" onclick="setFocusWeek(${w})">${w}</button>`;
+  }).join("");
+  let h = `<div class="card card-pad" style="margin-bottom:16px">
+    <div class="card-title">Vælg uge</div>
+    <div class="weeks">${wBtns}</div>
+    <div style="font-size:12px;color:var(--faint);margin-top:10px">${WEEK_DATES[focusWeek]||""} · ${backlog.length} ulæste tekster op til uge ${focusWeek}</div>
+  </div>`;
+  h += `<div class="card">${backlog.length ? backlog.map(readingHTML).join("") : '<div style="padding:40px;text-align:center;color:#10b981;font-size:15px;font-weight:600">✓ Alle tekster op til uge '+focusWeek+' er læst!</div>'}</div>`;
+  el.innerHTML = h;
+}
+
+function renderDeadlines(el) {
+  let h = `<div class="card card-pad"><div class="card-title">Alle begivenheder</div>`;
+  events.forEach(e => {
+    const es = EVT_STYLE[e.type] || EVT_STYLE.info;
+    const cc = e.course ? COURSES[e.course] : null;
+    h += `<div class="event-row">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="badge" style="background:${es.bg};color:${es.c};min-width:60px;text-align:center">${es.l}</span>
+        <div>
+          <div style="font-size:13px;font-weight:500">${esc(e.label)}</div>
+          ${cc ? `<span style="font-size:11px;color:var(--faint)">${e.course}</span>` : ""}
+        </div>
+      </div>
+      <div class="mono" style="font-size:12px;color:var(--faint)">Uge ${e.week}${e.date ? ' · '+e.date : ''}</div>
+    </div>`;
+  });
+  h += `</div>`;
+  el.innerHTML = h;
+}
+
+// =============================================================================
+// ACTIONS
+// =============================================================================
+window.setView = function(v) { view = v; render(); };
+window.setFilter = function(k, v) { filters[k] = v; render(); };
+window.setFocusWeek = function(w) { focusWeek = w; render(); };
+
+window.toggleStatus = async function(id) {
+  const r = readings.find(x => x.id === id);
+  if (!r) return;
+  const newStatus = r.status === "læst" ? "ikke_startet" : "læst";
+  const newDepth = newStatus === "læst" && r.depth === "unread" ? "read" : r.depth;
+  const now = new Date().toISOString();
+  const patch = {
+    status: newStatus,
+    depth: newDepth,
+    completed_at: newStatus === "læst" ? now : null,
+    started_at: r.started_at || (newStatus === "læst" ? now : null),
+  };
+  // Optimistic update
+  Object.assign(r, patch);
+  render();
+  try { await patchReading(id, patch); }
+  catch (e) { console.error("Update failed:", e); Object.assign(r, { status: r.status === "læst" ? "ikke_startet" : "læst" }); render(); }
+};
+
+window.cycleDepth = async function(id) {
+  const r = readings.find(x => x.id === id);
+  if (!r) return;
+  const idx = DEPTH.indexOf(r.depth);
+  const newDepth = DEPTH[(idx + 1) % DEPTH.length];
+  const old = r.depth;
+  r.depth = newDepth;
+  render();
+  try { await patchReading(id, { depth: newDepth }); }
+  catch (e) { console.error("Depth update failed:", e); r.depth = old; render(); }
+};
+
+// =============================================================================
+// INIT
+// =============================================================================
+(async function() {
+  try {
+    await loadData();
+    render();
+  } catch (e) {
+    document.getElementById("app").innerHTML = `<div class="center"><div class="error-box">
+      <div style="font-size:16px;font-weight:600;color:#991b1b;margin-bottom:8px">Forbindelsesfejl</div>
+      <div style="font-size:14px;color:#b91c1c">${esc(e.message)}</div>
+    </div></div>`;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+2026-04-07 20:19:19,102 INFO === Coach pipeline starting ===
+2026-04-07 20:19:19,102 INFO Step 1: Building weekly summary
+2026-04-07 20:35:11,514 INFO === Coach pipeline starting ===
+2026-04-07 20:35:11,514 INFO Step 1: Building weekly summary
+2026-04-07 20:35:12,502 INFO HTTP Request: GET https://kgiepplwarutwmzvvezc.supabase.co/rest/v1/recovery_logs?select=%2A&date=gte.2026-03-31&order=date.asc "HTTP/2 200 OK"
+2026-04-07 20:35:12,626 INFO HTTP Request: GET https://kgiepplwarutwmzvvezc.supabase.co/rest/v1/training_logs?select=%2A&date=gte.2026-03-31&order=date.asc "HTTP/2 200 OK"
+2026-04-07 20:35:12,716 INFO HTTP Request: GET https://kgiepplwarutwmzvvezc.supabase.co/rest/v1/journal_entries?select=%2A&date=gte.2026-03-31&order=date.asc "HTTP/2 200 OK"
+2026-04-07 20:35:12,717 INFO Summary built (219 chars)
+2026-04-07 20:35:12,717 INFO Step 2: Running coach
+2026-04-07 20:35:13,179 INFO Calling running coach
+2026-04-07 20:35:28,183 INFO HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-07 20:35:28,220 INFO Running advice saved to /Users/jakobhentzerdausgaardmacmini/personal-ai-system/outputs/running-advice-2026-04-07.md
+2026-04-07 20:35:28,220 INFO Running advice generated
+2026-04-07 20:35:28,220 INFO Step 3: Strength coach
+2026-04-07 20:35:28,223 INFO Calling strength coach
+2026-04-07 20:35:47,590 INFO HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-07 20:35:47,592 INFO Strength advice saved to /Users/jakobhentzerdausgaardmacmini/personal-ai-system/outputs/strength-advice-2026-04-07.md
+2026-04-07 20:35:47,592 INFO Strength advice generated
+2026-04-07 20:35:47,592 INFO Step 4: Delivering via Telegram
+2026-04-07 20:35:47,937 INFO Sent Telegram chunk (68 chars)
+2026-04-07 20:35:48,205 INFO Sent Telegram chunk (1212 chars)
+2026-04-07 20:35:48,207 INFO Delivered Løbecoach to Telegram
+2026-04-07 20:35:48,439 INFO Sent Telegram chunk (78 chars)
+2026-04-07 20:35:48,765 INFO Sent Telegram chunk (2137 chars)
+2026-04-07 20:35:48,769 INFO Delivered Styrkecoach to Telegram
+2026-04-07 20:35:48,769 INFO === Coach pipeline complete ===
