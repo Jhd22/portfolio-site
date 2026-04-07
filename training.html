@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fafaf9">
+<title>Training — System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{--bg:#fafaf9;--surface:#fff;--s2:#f5f5f4;--border:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--t4:#d6d3d1;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--cyan:#0891b2;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+header{padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:rgba(250,250,249,.92);backdrop-filter:blur(20px)}
+.logo{font-size:.9375rem;font-weight:700;letter-spacing:-.02em}.logo span{color:var(--t3);font-weight:400}
+nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decoration:none;padding:.4rem .875rem;border-radius:8px;transition:all .15s;font-weight:500}nav a:hover{color:var(--t1);background:var(--s2)}nav a.active{color:var(--t1);background:var(--s2)}
+.nt{display:none;background:none;border:none;cursor:pointer;padding:.5rem}.nt svg{width:20px;height:20px;stroke:var(--t2);fill:none;stroke-width:1.5}
+@media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
+.main{max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 1.5rem}@media(max-width:640px){.main{padding:1.5rem 1rem}}
+.page-title{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
+.page-sub{font-size:.875rem;color:var(--t2);margin-bottom:.75rem}
+.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem}.sh:first-of-type{margin-top:0}
+
+.pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;text-decoration:none;padding:.4rem .875rem;border:1px solid var(--border);border-radius:100px;font-weight:500;background:var(--surface);box-shadow:var(--shadow);color:var(--t2);transition:all .15s;margin-right:.5rem;margin-bottom:1rem}
+.pill:hover{border-color:var(--b2);box-shadow:var(--shadow-md);color:var(--t1)}
+.pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:2rem}
+@media(min-width:769px){.metrics{grid-template-columns:repeat(6,1fr)}}
+.m{padding:1rem;border-right:1px solid var(--s2);border-bottom:1px solid var(--s2)}
+.m:nth-child(3n){border-right:none}@media(min-width:769px){.m{border-bottom:none}.m:nth-child(3n){border-right:1px solid var(--s2)}.m:last-child{border-right:none}}
+.m-val{font-family:'JetBrains Mono',monospace;font-size:1.375rem;font-weight:600;line-height:1}
+.m-label{font-size:.5625rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:.375rem}
+.m-sub{font-size:.625rem;color:var(--t3);font-family:'JetBrains Mono',monospace}
+
+/* PANELS */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:1rem}
+.ph{padding:.75rem 1rem;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:center}
+.ph .l{font-size:.75rem;font-weight:600}.ph .t{font-size:.625rem;color:var(--t3)}
+.pb{padding:1rem}
+.grid2{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:860px){.grid2{grid-template-columns:1fr 1fr}}
+
+/* CHART */
+.chart svg{width:100%;height:auto;display:block}
+.chart-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.625rem;font-size:.625rem;color:var(--t3)}
+.chart-legend span{display:flex;align-items:center;gap:.3rem}
+.chart-legend i{width:10px;height:3px;border-radius:1px;display:inline-block}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:2.5rem 1.5rem;color:var(--t3)}
+.empty-icon{font-size:2rem;margin-bottom:.5rem}
+.empty-text{font-size:.8125rem;margin-bottom:.75rem}
+.empty-action{font-size:.75rem;color:var(--cyan);text-decoration:none;font-weight:500}
+
+/* DETAIL ROWS */
+.dr{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--s2);font-size:.8125rem}
+.dr:last-child{border-bottom:none}
+.dr .k{color:var(--t3)}.dr .v{color:var(--t2);text-align:right}
+
+/* PROGRAM */
+.prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+@media(max-width:640px){.prog-grid{grid-template-columns:1fr}}
+.prog-day{padding:1rem;border-right:1px solid var(--s2)}
+.prog-day:last-child{border-right:none}
+@media(max-width:640px){.prog-day{border-right:none;border-bottom:1px solid var(--s2)}.prog-day:last-child{border-bottom:none}}
+.prog-day-name{font-size:.625rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.625rem}
+.prog-ex{font-size:.75rem;padding:.3rem 0;border-top:1px solid var(--s2);color:var(--t2);display:flex;justify-content:space-between}
+.prog-ex:first-of-type{border-top:none}
+.prog-ex .n{color:var(--t1);font-weight:500}.prog-ex .s{color:var(--t3);font-size:.6875rem}
+
+/* WARNING */
+.warn{display:flex;align-items:flex-start;gap:.625rem;padding:.875rem;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--rs);font-size:.75rem;color:var(--t2);margin:.75rem 0}
+.warn strong{color:var(--amber);font-weight:600}
+
+/* RECOVERY TABLE */
+.rt{width:100%;border-collapse:collapse;font-size:.8125rem}
+.rt th{text-align:left;padding:.5rem;color:var(--t3);font-weight:500;font-size:.6875rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.rt td{padding:.5rem;border-bottom:1px solid var(--s2)}
+.rt tr:last-child td{border-bottom:none}
+
+footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">System <span>/ Training</span></div>
+  <button class="nt" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
+  <nav><a href="index.html">Home</a><a href="academics.html">Academics</a><a href="training.html" class="active">Training</a></nav>
+</header>
+<div class="main">
+  <div class="page-title">Training</div>
+  <div class="page-sub">Evidence-based coaching · recovery intelligence</div>
+  <a href="http://100.78.65.85:8080/traening.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Log workouts, recovery & body weight</a>
+
+  <!-- METRICS from goals -->
+  <div class="metrics" id="metricsStrip">
+    <div class="m"><div class="m-val" style="color:var(--cyan)">43</div><div class="m-label">VO2max</div><div class="m-sub">→ 48+</div></div>
+    <div class="m"><div class="m-val" style="color:var(--purple)">72 kg</div><div class="m-label">Bench e1RM</div><div class="m-sub">→ 100 kg</div></div>
+    <div class="m"><div class="m-val">85 kg</div><div class="m-label">Squat</div><div class="m-sub"></div></div>
+    <div class="m"><div class="m-val">117 kg</div><div class="m-label">RDL</div><div class="m-sub"></div></div>
+    <div class="m"><div class="m-val">BW×10</div><div class="m-label">Pull-ups</div><div class="m-sub"></div></div>
+    <div class="m"><div class="m-val">150g</div><div class="m-label">Protein/day</div><div class="m-sub">target</div></div>
+  </div>
+
+  <!-- CHARTS — connected to recovery_logs and training_logs -->
+  <div class="sh">Body composition & strength</div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="ph"><span class="l">Body Weight & Lean Mass</span><span class="t" id="bwPeriod">—</span></div>
+      <div class="pb chart" id="bwChart"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="l" style="color:var(--purple)">Bench Press Progression</span><span class="t">e1RM → 100kg</span></div>
+      <div class="pb chart" id="benchChart"></div>
+    </div>
+  </div>
+
+  <div class="sh">Cardio & endurance</div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="ph"><span class="l" style="color:var(--cyan)">Weekly Running Volume</span><span class="t">km</span></div>
+      <div class="pb chart" id="runChart"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="l" style="color:var(--cyan)">VO2max Trend</span><span class="t">ml/kg/min</span></div>
+      <div class="pb chart" id="vo2Chart"></div>
+    </div>
+  </div>
+
+  <div class="sh">Session frequency</div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="ph"><span class="l">Strength Sessions / Week</span><span class="t" id="sessPeriod">—</span></div>
+      <div class="pb chart" id="sessChart"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="l" style="color:var(--green)">Recovery Thresholds</span><span class="t">From 418-day analysis</span></div>
+      <div class="pb">
+        <table class="rt">
+          <thead><tr><th>Metric</th><th>🟢 Green</th><th>🟡 Yellow</th><th>🔴 Red</th></tr></thead>
+          <tbody>
+            <tr><td>HRV</td><td style="color:var(--green)">≥ 57</td><td style="color:var(--amber)">45–56</td><td style="color:var(--red)">&lt; 45</td></tr>
+            <tr><td>RHR</td><td style="color:var(--green)">≤ 62</td><td style="color:var(--amber)">63–70</td><td style="color:var(--red)">&gt; 70</td></tr>
+            <tr><td>Sleep</td><td style="color:var(--green)">≥ 8h</td><td style="color:var(--amber)">6–7.9h</td><td style="color:var(--red)">&lt; 6h</td></tr>
+          </tbody>
+        </table>
+        <div class="warn"><span>⚠</span><div><strong>Behavioral flag:</strong> Trains harder on yellow days than green — inverse of optimal.</div></div>
+        <div class="dr"><span class="k">Max sessions / 14 days</span><span class="v">~9</span></div>
+        <div class="dr"><span class="k">Max consecutive days</span><span class="v">3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COACHES + PROGRAM -->
+  <div class="sh">Coaches & program</div>
+  <div class="grid2" style="margin-bottom:1.5rem">
+    <div class="panel">
+      <div class="ph"><span class="l" style="color:var(--cyan)">🏃 Running Coach</span><span class="t">Seiler · Helgerud · Billat</span></div>
+      <div class="pb">
+        <div class="dr"><span class="k">Model</span><span class="v">Polarized (80/20)</span></div>
+        <div class="dr"><span class="k">Tue</span><span class="v">Copenhill hill intervals</span></div>
+        <div class="dr"><span class="k">Thu</span><span class="v">Rower HIIT 3-4×4min HR 170+</span></div>
+        <div class="dr"><span class="k">Fri</span><span class="v">Zone 2 easy run (+10%/wk)</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="l" style="color:var(--purple)">💪 Strength Coach</span><span class="t">Schoenfeld · Helms</span></div>
+      <div class="pb">
+        <div class="dr"><span class="k">Focus</span><span class="v">Hypertrophy · RPE autoregulation</span></div>
+        <div class="dr"><span class="k">Split</span><span class="v">Push / Pull / Legs+Acc</span></div>
+        <div class="dr"><span class="k">Priority</span><span class="v">Chest, shoulders, biceps, back</span></div>
+        <div class="dr"><span class="k">Bench target</span><span class="v">100kg by Oct-Nov</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prog-grid">
+    <div class="prog-day"><div class="prog-day-name">Push</div><div class="prog-ex"><span class="n">Bench Press</span><span class="s">4×6-8 RPE 8</span></div><div class="prog-ex"><span class="n">OHP</span><span class="s">3×8-10</span></div><div class="prog-ex"><span class="n">Incline DB</span><span class="s">3×10-12</span></div><div class="prog-ex"><span class="n">Lateral Raises</span><span class="s">3×12-15</span></div><div class="prog-ex"><span class="n">Dips</span><span class="s">3×8-10</span></div></div>
+    <div class="prog-day"><div class="prog-day-name">Pull</div><div class="prog-ex"><span class="n">Pull-ups</span><span class="s">4×6-10</span></div><div class="prog-ex"><span class="n">Barbell Rows</span><span class="s">4×8-10</span></div><div class="prog-ex"><span class="n">Face Pulls</span><span class="s">3×15-20</span></div><div class="prog-ex"><span class="n">DB Curls</span><span class="s">3×10-12</span></div><div class="prog-ex"><span class="n">Hammer Curls</span><span class="s">3×10-12</span></div></div>
+    <div class="prog-day"><div class="prog-day-name">Legs + Acc</div><div class="prog-ex"><span class="n">Squat</span><span class="s">4×6-8 RPE 8</span></div><div class="prog-ex"><span class="n">RDL</span><span class="s">3×8-10</span></div><div class="prog-ex"><span class="n">KB Lunges</span><span class="s">3×10/leg</span></div><div class="prog-ex"><span class="n">Calf Raises</span><span class="s">3×15-20</span></div></div>
+  </div>
+</div>
+<footer>Personal AI System · Training · F26</footer>
+<script>
+const S='https://kgiepplwarutwmzvvezc.supabase.co/rest/v1';
+const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
+const H={'apikey':K,'Authorization':'Bearer '+K};
+
+function emptyState(id,icon,msg){
+  document.getElementById(id).innerHTML='<div class="empty"><div class="empty-icon">'+icon+'</div><div class="empty-text">'+msg+'</div><a href="http://100.78.65.85:8080/traening.html" class="empty-action" target="_blank">Start logging in the training dashboard →</a></div>';
+}
+
+// BODY WEIGHT — from recovery_logs
+fetch(S+'/recovery_logs?select=date,weight_kg&order=date.asc&weight_kg=not.is.null',{headers:H}).then(r=>r.json()).then(d=>{
+  if(!d.length){emptyState('bwChart','⚖️','No body weight data yet');return}
+  document.getElementById('bwPeriod').textContent=d.length+' entries';
+  const W=480,HH=160,pad=44,bot=140,top=15;
+  const vals=d.map(x=>x.weight_kg),min=Math.min(...vals)-2,max=Math.max(...vals)+2,range=max-min;
+  const pts=d.map((x,i)=>{const px=pad+i*(W-pad-10)/(d.length-1||1);const py=bot-(x.weight_kg-min)/range*(bot-top);return px+','+py}).join(' ');
+  document.getElementById('bwChart').innerHTML='<svg viewBox="0 0 '+W+' '+(HH+20)+'" xmlns="http://www.w3.org/2000/svg"><line x1="'+pad+'" y1="'+top+'" x2="'+pad+'" y2="'+bot+'" stroke="#e7e5e4"/><line x1="'+pad+'" y1="'+bot+'" x2="'+(W-10)+'" y2="'+bot+'" stroke="#e7e5e4"/><text x="'+(pad-4)+'" y="'+(bot+4)+'" fill="#a8a29e" font-size="8" text-anchor="end" font-family="JetBrains Mono">'+min.toFixed(0)+'</text><text x="'+(pad-4)+'" y="'+(top+4)+'" fill="#a8a29e" font-size="8" text-anchor="end" font-family="JetBrains Mono">'+max.toFixed(0)+'</text><polyline points="'+pts+'" fill="none" stroke="#16a34a" stroke-width="2" stroke-linejoin="round"/><text x="'+(W-10)+'" y="'+(top-4)+'" fill="#16a34a" font-size="9" text-anchor="end" font-family="JetBrains Mono" font-weight="600">'+vals[vals.length-1]+' kg</text></svg>';
+}).catch(()=>emptyState('bwChart','⚖️','Could not load data'));
+
+// TRAINING LOGS — for bench, sessions, running
+fetch(S+'/training_logs?select=*&order=date.asc',{headers:H}).then(r=>r.json()).then(d=>{
+  if(!d.length){
+    emptyState('benchChart','🏋️','No strength data yet');
+    emptyState('runChart','🏃','No running data yet');
+    emptyState('sessChart','📊','No session data yet');
+    emptyState('vo2Chart','❤️','No VO2max data yet');
+    return;
+  }
+  // TODO: parse training_logs columns once data exists and render charts
+}).catch(()=>{
+  emptyState('benchChart','🏋️','Could not load');
+  emptyState('runChart','🏃','Could not load');
+  emptyState('sessChart','📊','Could not load');
+  emptyState('vo2Chart','❤️','Could not load');
+});
+</script>
+</body>
+</html>
