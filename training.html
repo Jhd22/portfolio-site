@@ -185,11 +185,14 @@ td.hit{color:var(--green)}td.miss{color:var(--red)}td.ok{color:var(--amber)}
 <!-- ===== WEEKLY TICK-OFF ===== -->
 <div class="sc" id="week">
   <div class="sl"><span class="d" style="background:var(--green)"></span>DENNE UGE</div>
-  <h2>Ugentlig compliance</h2>
+  <h2>Ugentlig tracking</h2>
   <div id="week-label" style="font-size:.6rem;color:var(--t2);margin-bottom:.5rem"></div>
   <div class="week-grid" id="week-grid"></div>
   <div class="compliance-bar"><div class="compliance-fill" id="compliance-fill"></div></div>
-  <div id="compliance-text" style="font-size:.55rem;color:var(--t3);margin-top:.25rem;text-align:right"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.25rem">
+    <div id="compliance-text" style="font-size:.55rem;color:var(--t3)"></div>
+    <button id="new-cycle-btn" onclick="advanceCycle()" style="display:none;font-size:.55rem;padding:.2rem .5rem;background:var(--green);color:#fff;border:none;border-radius:4px;cursor:pointer">Ny cyklus</button>
+  </div>
 
   <div class="c" style="margin-top:.75rem">
     <h3>Volume denne uge vs. landmarks</h3>
@@ -231,7 +234,7 @@ td.hit{color:var(--green)}td.miss{color:var(--red)}td.ok{color:var(--amber)}
 
   <div class="f g"><h4>September = guldmåned: alt steg (LBM↑ VO2↑ RHR↓)</h4><p>Bedste resultater kom måneden EFTER hårdeste måned. Kroppen tilpasser sig under hvile — <strong>supercompensation er reel</strong>.</p></div>
   <div class="f b"><h4>Pull-ups tabte 46% efter 2 mdr. uden rygtræning (×13→×7)</h4><p>Reagerer hurtigst på fravær. Aldrig spring pull-dag over — selv 5×max i dørkarmsbar bevarer styrken.</p></div>
-  <div class="f w"><h4>Compliance > volumen</h4><p>Bedre at lave <strong>8 sæt konsekvent</strong> end at programmere 16 og lave 8. Dit mønster: ~50% compliance. Fokusér på at møde op.</p></div>
+  <div class="f w"><h4>Fremmøde > volumen</h4><p>Bedre at lave <strong>8 sæt konsekvent</strong> end at programmere 16 og lave 8. Dit mønster: ~50% gennemførelse. Fokusér på at møde op.</p></div>
 </div>
 
 <!-- ===== KROPPEN ===== -->
@@ -413,29 +416,53 @@ const VOLUME_TARGETS = {
   core:     { med: 2, mev: 4, mav: 8 },
 };
 
-function getWeekKey() {
-  const d = new Date(); const day = d.getDay() || 7;
-  d.setDate(d.getDate() - day + 1);
-  return d.toISOString().slice(0, 10);
+// Cycle-based tracking: resets when all sessions completed OR after 14 days (whichever first)
+function getCycleData() {
+  const today = new Date().toISOString().slice(0, 10);
+  try {
+    const d = JSON.parse(localStorage.getItem('training_cycle') || '{}');
+    if (!d.id) {
+      const fresh = { id: 1, started: today };
+      localStorage.setItem('training_cycle', JSON.stringify(fresh));
+      return fresh;
+    }
+    const daysSince = Math.floor((Date.now() - new Date(d.started)) / 86400000);
+    if (daysSince > 14) {
+      const next = { id: d.id + 1, started: today };
+      localStorage.setItem('training_cycle', JSON.stringify(next));
+      return next;
+    }
+    return d;
+  } catch { return { id: 1, started: new Date().toISOString().slice(0, 10) }; }
 }
 
 function loadTicks() {
-  const key = 'ticks_' + getWeekKey();
-  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
+  const cycle = getCycleData();
+  try { return JSON.parse(localStorage.getItem('ticks_cycle_' + cycle.id) || '{}'); } catch { return {}; }
 }
 
 function saveTicks(ticks) {
-  localStorage.setItem('ticks_' + getWeekKey(), JSON.stringify(ticks));
+  const cycle = getCycleData();
+  localStorage.setItem('ticks_cycle_' + cycle.id, JSON.stringify(ticks));
+}
+
+function advanceCycle() {
+  const today = new Date().toISOString().slice(0, 10);
+  const d = getCycleData();
+  const next = { id: d.id + 1, started: today };
+  localStorage.setItem('training_cycle', JSON.stringify(next));
+  renderWeek();
 }
 
 let currentModalId = null;
 
 function renderWeek() {
   const ticks = loadTicks();
+  const cycle = getCycleData();
   const grid = document.getElementById('week-grid');
-  const weekStart = getWeekKey();
-  document.getElementById('week-label').textContent = `Uge fra ${weekStart}`;
-  
+  const daysSince = Math.floor((Date.now() - new Date(cycle.started)) / 86400000);
+  document.getElementById('week-label').textContent = `Cyklus startet ${cycle.started} · dag ${daysSince + 1}`;
+
   grid.innerHTML = WEEKLY_PLAN.map(w => {
     const tick = ticks[w.id];
     const cls = tick ? `done-${tick.mode}` : '';
@@ -448,13 +475,16 @@ function renderWeek() {
     </div>`;
   }).join('');
   
-  // Compliance
+  // Tracking bar
   const done = Object.keys(ticks).length;
-  const pct = Math.round(done / WEEKLY_PLAN.length * 100);
+  const total = WEEKLY_PLAN.length;
+  const pct = Math.round(done / total * 100);
   const fill = document.getElementById('compliance-fill');
   fill.style.width = pct + '%';
   fill.style.background = pct >= 80 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--red)';
-  document.getElementById('compliance-text').textContent = `${done}/${WEEKLY_PLAN.length} sessions · ${pct}%`;
+  document.getElementById('compliance-text').textContent = `${done}/${total} sessions · ${pct}%`;
+  const btn = document.getElementById('new-cycle-btn');
+  btn.style.display = done >= total ? 'inline-block' : 'none';
   
   // Volume table
   renderVolumeTable(ticks);
@@ -629,7 +659,7 @@ function drawBarChart(id, data, color) {
 const FINDINGS = [
   ['green','Styrke → muskelmasse: r = +0.61','10+ styrke-sessioner/md'],
   ['red','Løb → minus muskelmasse: r = -0.71','Max 6 ture/md for LBM'],
-  ['amber','Compliance ~50% på alle muskelgrupper','Compliance > volumen'],
+  ['amber','Gennemførelse ~50% på alle muskelgrupper','Fremmøde > volumen'],
   ['green','September supercompensation','Hvile efter hård blok virker'],
   ['red','Pull-ups -46% efter 2 md fravær','Aldrig spring pull over'],
   ['amber','August overload: RHR spike til 90','Max 9 sessions/14 dage'],
