@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fafaf9">
+<title>Briefing — System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{--bg:#fafaf9;--surface:#fff;--s2:#f5f5f4;--border:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+header{padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:rgba(250,250,249,.95);backdrop-filter:blur(20px)}
+.logo{font-size:.9375rem;font-weight:700;letter-spacing:-.02em}.logo span{color:var(--t3);font-weight:400}
+nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decoration:none;padding:.4rem .875rem;border-radius:8px;transition:all .15s;font-weight:500}nav a:hover{color:var(--t1);background:var(--s2)}nav a.active{color:var(--t1);background:var(--s2)}
+.nt{display:none;background:none;border:none;cursor:pointer;padding:.5rem}.nt svg{width:20px;height:20px;stroke:var(--t2);fill:none;stroke-width:1.5}
+@media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
+.main{max-width:760px;width:100%;margin:0 auto;padding:2.5rem 1.5rem}
+@media(max-width:640px){.main{padding:1.5rem 1rem}}
+.page-title{font-size:1.5rem;font-weight:700;letter-spacing:-.02em}
+.page-sub{font-size:.8125rem;color:var(--t2);margin-top:.125rem;margin-bottom:2rem;font-family:'JetBrains Mono',monospace}
+.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.25rem}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.625rem;margin-bottom:1.5rem}
+@media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.875rem .75rem;text-align:center;box-shadow:var(--shadow)}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:700}
+.stat-label{font-size:.625rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:.25rem}
+.briefing-text{font-size:.9375rem;line-height:1.8;color:var(--t1);white-space:pre-wrap}
+.briefing-text p{margin-bottom:1rem}
+.btn{background:var(--t1);color:#fff;border:none;border-radius:8px;padding:.625rem 1.25rem;font-size:.8125rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:var(--t2)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sec{background:var(--surface);color:var(--t2);border:1px solid var(--border)}.btn-sec:hover{background:var(--s2);color:var(--t1)}
+.btn-row{display:flex;gap:.5rem;margin-top:1.25rem}
+.setup-panel{max-width:480px;margin:4rem auto}
+.setup-panel p{font-size:.875rem;color:var(--t2);line-height:1.6;margin-bottom:1.25rem}
+.setup-input{width:100%;padding:.625rem .875rem;border:1px solid var(--border);border-radius:8px;font-size:.875rem;font-family:'JetBrains Mono',monospace;background:var(--surface);color:var(--t1);margin-bottom:.75rem}
+.setup-input:focus{outline:2px solid var(--blue);outline-offset:-1px;border-color:transparent}
+.setup-note{font-size:.6875rem;color:var(--t3);margin-top:.5rem}
+.loading-state{text-align:center;padding:4rem 2rem}
+.spinner{display:inline-block;width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--t1);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-label{font-size:.875rem;color:var(--t2)}
+.error-panel{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:1.25rem;color:#991b1b;font-size:.875rem;margin-bottom:1rem}
+.badge{border-radius:4px;padding:.175rem .5rem;font-size:.625rem;font-weight:600;display:inline-block}
+.reading-row{padding:.625rem 0;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:flex-start;gap:.75rem;font-size:.8125rem}
+.reading-row:last-child{border-bottom:none}
+.reading-title{font-weight:500;flex:1;line-height:1.4}
+.reading-meta{font-size:.6875rem;color:var(--t3);text-align:right;flex-shrink:0}
+.prog-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.625rem}
+.prog-label{width:72px;font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0}
+.prog-bar{flex:1;height:7px;background:var(--s2);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width .6s}
+.prog-pct{font-family:'JetBrains Mono',monospace;font-size:.6875rem;color:var(--t2);width:36px;text-align:right}
+footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border);margin-top:3rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">System <span>/ Briefing</span></div>
+  <button class="nt" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
+  <nav><a href="index.html">Home</a><a href="academics.html">Academics</a><a href="training.html">Training</a><a href="briefing.html" class="active">Briefing</a></nav>
+</header>
+<div class="main" id="app">
+  <div class="loading-state"><div class="spinner"></div><div class="loading-label">Starter…</div></div>
+</div>
+<footer>Personal AI System · Forår 2026</footer>
+
+<script>
+const SUPABASE_URL = "https://kgiepplwarutwmzvvezc.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec";
+const CC = {IP3:{bg:'#2563eb',light:'#dbeafe',text:'#1e40af'},Økonomi:{bg:'#d97706',light:'#fef3c7',text:'#92400e'},Metode:{bg:'#16a34a',light:'#dcfce7',text:'#166534'},IR2:{bg:'#6366f1',light:'#e0e7ff',text:'#3730a3'}};
+const WEEK_DATES = {6:"2/2–8/2",7:"9/2–15/2",8:"16/2–22/2",9:"23/2–1/3",10:"2/3–8/3",11:"9/3–15/3",12:"16/3–22/3",13:"23/3–29/3",14:"30/3–5/4",15:"6/4–12/4",16:"13/4–19/4",17:"20/4–26/4",18:"27/4–3/5",19:"4/5–10/5",20:"11/5–17/5",21:"18/5–24/5"};
+
+let apiKey = localStorage.getItem('briefing_api_key') || '';
+let state = { loading: false, error: null, data: null, briefing: '', view: 'briefing' };
+
+function esc(s){ const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
+
+function currentWeek(){
+  const now=new Date(),jan1=new Date(now.getFullYear(),0,1);
+  return Math.ceil((Math.floor((now-jan1)/86400000)+jan1.getDay()+1)/7);
+}
+
+async function supa(path){
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
+  if(!res.ok)throw new Error(`Supabase ${res.status}`);
+  return res.json();
+}
+
+async function fetchData(){
+  const week=currentWeek();
+  const [readings,events]=await Promise.all([
+    supa('readings?order=week.asc,id.asc&select=id,course,week,title,author,pages,status,priority'),
+    supa('events?order=week.asc'),
+  ]);
+  const unread=readings.filter(r=>r.status!=='læst');
+  const thisWeek=unread.filter(r=>r.week===week);
+  const nextWeek=unread.filter(r=>r.week===week+1);
+  const backlog=unread.filter(r=>r.week<week);
+  const highPri=unread.filter(r=>r.priority==='høj');
+  const progress={};
+  for(const c of ['IP3','Økonomi','Metode']){
+    const ct=readings.filter(r=>r.course===c),done=ct.filter(r=>r.status==='læst').length;
+    progress[c]={total:ct.length,done,pct:ct.length?Math.round(100*done/ct.length):0};
+  }
+  const upcoming=events.filter(e=>(e.type==='deadline'||e.type==='exam')&&e.week>=week&&e.week<=week+4);
+  return {week,readings,unread,thisWeek,nextWeek,backlog,highPri,progress,upcoming,events};
+}
+
+async function generateBriefing(data){
+  const w=data.week;
+  const prompt=`Du er Jakobs personlige akademiske assistent. Generer en ugentlig briefing på dansk.
+
+Uge ${w} (${WEEK_DATES[w]||'ukendt'})
+
+Ulæste tekster denne uge (uge ${w}): ${data.thisWeek.length}
+${data.thisWeek.slice(0,8).map(r=>`- [${r.course}] ${r.title} — ${r.author} (${r.priority})`).join('\n')||'Ingen'}
+
+Ulæste næste uge (uge ${w+1}): ${data.nextWeek.length}
+${data.nextWeek.slice(0,6).map(r=>`- [${r.course}] ${r.title} — ${r.author}`).join('\n')||'Ingen'}
+
+Backlog (tidligere uger, ulæste): ${data.backlog.length} tekster
+Høj prioritet backlog: ${data.backlog.filter(r=>r.priority==='høj').slice(0,4).map(r=>`[${r.course} uge ${r.week}] ${r.title}`).join(', ')||'Ingen'}
+
+Fremgang: ${Object.entries(data.progress).map(([c,p])=>`${c} ${p.done}/${p.total} (${p.pct}%)`).join(' · ')}
+
+Kommende deadlines:
+${data.upcoming.map(e=>`- ${e.date||`Uge ${e.week}`}: ${e.label} (${e.course||'alle fag'})`).join('\n')||'Ingen inden for 4 uger'}
+
+Skriv i 3-4 korte afsnit:
+1. Ugens overblik — hvad sker der, vigtige datoer
+2. Læsefokus — hvad er vigtigst at læse nu, hvad fra backlog
+3. Næste uge — hvad bør forberedes
+4. Advarsler — kun hvis relevant
+
+Vær direkte og konkret. Ingen fyld. Navngiv specifikke tekster ved titel og forfatter.`;
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':apiKey,'anthropic-version':'2023-06-01','Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]}),
+  });
+  if(!res.ok){const t=await res.text().catch(()=>'');throw new Error(`Claude API ${res.status}: ${t.slice(0,200)}`);}
+  const json=await res.json();
+  return json.content.map(b=>b.text||'').join('');
+}
+
+function saveKey(){
+  const val=document.getElementById('api-key-input').value.trim();
+  if(!val.startsWith('sk-ant-')){alert('Nøglen skal starte med sk-ant-');return;}
+  apiKey=val;
+  localStorage.setItem('briefing_api_key',val);
+  run();
+}
+
+function resetKey(){
+  apiKey='';
+  localStorage.removeItem('briefing_api_key');
+  render();
+}
+
+async function run(){
+  state.loading=true;state.error=null;render();
+  try{
+    state.data=await fetchData();
+    state.briefing=await generateBriefing(state.data);
+    state.loading=false;render();
+  }catch(e){
+    state.error=e.message;state.loading=false;render();
+  }
+}
+
+function setView(v){state.view=v;render();}
+
+function render(){
+  const app=document.getElementById('app');
+
+  if(!apiKey){
+    app.innerHTML=`
+      <div class="setup-panel">
+        <div class="page-title">Briefing</div>
+        <div class="page-sub">Ugentlig AI-briefing baseret på dine data</div>
+        <div class="panel">
+          <p>Briefingen bruger Claude til at generere et ugentligt overblik baseret på dine Supabase-data — ulæste tekster, backlog, deadlines.<br><br>Indsæt din Anthropic API-nøgle herunder. Den gemmes i din browser og er aldrig synlig for andre.</p>
+          <input class="setup-input" type="password" id="api-key-input" placeholder="sk-ant-api03-…" autocomplete="off"/>
+          <button class="btn" onclick="saveKey()">Gem og generer</button>
+          <div class="setup-note">Gemt lokalt i localStorage · aldrig sendt til en server · du skriver det kun én gang</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if(state.loading){
+    app.innerHTML=`
+      <div class="page-title">Briefing</div>
+      <div class="page-sub" style="font-family:inherit">Henter data og genererer briefing…</div>
+      <div class="loading-state"><div class="spinner"></div><div class="loading-label">Henter data fra Supabase · genererer med Claude…</div></div>`;
+    return;
+  }
+
+  if(state.error){
+    app.innerHTML=`
+      <div class="page-title">Briefing</div>
+      <div class="page-sub" style="font-family:inherit;margin-bottom:1.5rem">Fejl</div>
+      <div class="error-panel">${esc(state.error)}</div>
+      <div class="btn-row">
+        <button class="btn" onclick="run()">Prøv igen</button>
+        <button class="btn btn-sec" onclick="resetKey()">Skift API-nøgle</button>
+      </div>`;
+    return;
+  }
+
+  if(!state.data){run();return;}
+
+  const d=state.data;
+  const w=d.week;
+
+  app.innerHTML=`
+    <div class="page-title">Briefing</div>
+    <div class="page-sub">Uge ${w} · ${WEEK_DATES[w]||''} · Forår 2026</div>
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val" style="color:var(--red)">${d.thisWeek.length}</div><div class="stat-label">Ulæst denne uge</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--amber)">${d.backlog.length}</div><div class="stat-label">Backlog</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--purple)">${d.highPri.length}</div><div class="stat-label">Høj prioritet</div></div>
+      <div class="stat"><div class="stat-val" style="color:var(--green)">${d.upcoming.length}</div><div class="stat-label">Deadlines (4 uger)</div></div>
+    </div>
+
+    <div style="display:flex;gap:.375rem;margin-bottom:1.5rem">
+      <button class="btn${state.view==='briefing'?'':' btn-sec'}" onclick="setView('briefing')">Briefing</button>
+      <button class="btn${state.view==='data'?'':' btn-sec'}" onclick="setView('data')">Rådata</button>
+    </div>
+
+    <div id="view-content"></div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="run()">Generer ny</button>
+      <button class="btn btn-sec" onclick="resetKey()">Skift nøgle</button>
+    </div>`;
+
+  const vc=document.getElementById('view-content');
+
+  if(state.view==='briefing'){
+    vc.innerHTML=`<div class="panel"><div class="briefing-text">${esc(state.briefing)}</div></div>`;
+  } else {
+    // Fremgang
+    let h=`<div class="sh" style="margin-top:0">Fremgang</div><div class="panel">`;
+    for(const [c,p] of Object.entries(d.progress)){
+      const cc=CC[c]||{bg:'var(--t3)'};
+      h+=`<div class="prog-row"><span class="prog-label" style="color:${cc.bg}">${c}</span><div class="prog-bar"><div class="prog-fill" style="width:${Math.max(p.pct,1)}%;background:${cc.bg}"></div></div><span class="prog-pct">${p.done}/${p.total}</span></div>`;
+    }
+    h+=`</div>`;
+
+    // Denne uge
+    h+=`<div class="sh">Denne uge (uge ${w})</div><div class="panel">`;
+    if(d.thisWeek.length){
+      h+=d.thisWeek.map(r=>{const cc=CC[r.course]||{bg:'var(--t3)',light:'var(--s2)',text:'var(--t2)'};return`<div class="reading-row"><div class="reading-title">${esc(r.title)}<br><span style="font-size:.6875rem;color:var(--t3)">${esc(r.author)}</span></div><div><span class="badge" style="background:${cc.bg};color:#fff">${r.course}</span></div></div>`;}).join('');
+    } else h+=`<div style="font-size:.875rem;color:var(--t3);padding:.25rem 0">Alle tekster læst</div>`;
+    h+=`</div>`;
+
+    // Deadlines
+    if(d.upcoming.length){
+      h+=`<div class="sh">Kommende deadlines</div><div class="panel">`;
+      h+=d.upcoming.map(e=>{const cc=CC[e.course]||null;return`<div class="reading-row"><span class="reading-title">${esc(e.label)}${cc?` <span class="badge" style="background:${cc.bg};color:#fff;margin-left:4px">${e.course}</span>`:''}</span><span class="reading-meta">${e.date||`Uge ${e.week}`}</span></div>`;}).join('');
+      h+=`</div>`;
+    }
+    vc.innerHTML=h;
+  }
+}
+
+// Start
+if(apiKey){run();}else{render();}
+</script>
+</body>
+</html>
