@@ -19,39 +19,29 @@ nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decora
 .page-title{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
 .page-sub{font-size:.875rem;color:var(--t2);margin-bottom:.75rem}
 .sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem}.sh:first-of-type{margin-top:0}
-
 .pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
 .pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;text-decoration:none;padding:.4rem .875rem;border:1px solid var(--border);border-radius:100px;font-weight:500;background:var(--surface);box-shadow:var(--shadow);color:var(--t2);transition:all .15s}
 .pill:hover{border-color:var(--b2);box-shadow:var(--shadow-md);color:var(--t1)}
 .pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-
-.course-grid{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-bottom:2rem}
-@media(min-width:960px){.course-grid{grid-template-columns:repeat(3,1fr)}}
-
+.course-grid{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-bottom:2rem}@media(min-width:960px){.course-grid{grid-template-columns:repeat(3,1fr)}}
 .course-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 .course-header{padding:1rem 1.25rem;border-bottom:1px solid var(--s2);display:flex;justify-content:space-between;align-items:flex-start}
 .course-name{font-size:1.125rem;font-weight:700}.course-full{font-size:.75rem;color:var(--t2);margin-top:.125rem}
 .course-badge{font-size:.6875rem;font-weight:600;padding:.2rem .625rem;border-radius:100px}
 .course-body{padding:1.25rem}
-
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;margin-bottom:1rem}
 .stat{padding:.625rem .5rem;text-align:center;border-right:1px solid var(--s2)}.stat:last-child{border-right:none}
 .stat-val{font-size:1.25rem;font-weight:700}.stat-label{font-size:.5625rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3)}
-
 .prog-wrap{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
 .prog-bar-outer{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden}.prog-bar{height:100%;border-radius:4px;transition:width .8s ease}
 .prog-pct{font-size:.75rem;color:var(--t2);font-variant-numeric:tabular-nums;width:36px;text-align:right;font-weight:600}
-
 .detail{font-size:.8125rem;color:var(--t2);line-height:1.7;margin-bottom:.375rem}.detail strong{color:var(--t1);font-weight:500}
-.detail-row{display:flex;justify-content:space-between;padding:.375rem 0;border-bottom:1px solid var(--s2);font-size:.75rem}.detail-row:last-child{border-bottom:none}
-.detail-row .k{color:var(--t3)}.detail-row .v{color:var(--t2);text-align:right}
-
-.tools-grid{display:grid;grid-template-columns:1fr;gap:.875rem}
-@media(min-width:769px){.tools-grid{grid-template-columns:repeat(3,1fr)}}
+.detail-row{display:flex;justify-content:space-between;padding:.375rem 0;border-bottom:1px solid var(--s2);font-size:.75rem}.detail-row:last-child{border-bottom:none}.detail-row .k{color:var(--t3)}.detail-row .v{color:var(--t2);text-align:right}
+.sub-sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.375rem;margin-top:.75rem}
+.tools-grid{display:grid;grid-template-columns:1fr;gap:.875rem}@media(min-width:769px){.tools-grid{grid-template-columns:repeat(3,1fr)}}
 .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;box-shadow:var(--shadow)}
 .tool-card h3{font-size:.9375rem;font-weight:600;margin-bottom:.25rem}.tool-card p{font-size:.75rem;color:var(--t2);line-height:1.5}
 .tool-tag{display:inline-block;font-size:.5625rem;padding:.175rem .5rem;border:1px solid var(--border);border-radius:100px;color:var(--t3);margin-top:.625rem;margin-right:.25rem;font-weight:500}
-
 .loading{color:var(--t3);font-size:.75rem;padding:.75rem}
 footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
 </style>
@@ -64,21 +54,16 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
 </header>
 <div class="main">
   <div class="page-title">Academics</div>
-  <div class="page-sub">3 current courses · per-course agents · reading tracker</div>
+  <div class="page-sub">3 current courses · per-course agents · live reading tracker</div>
   <div class="pills">
-    <a href="http://100.78.65.85:8080/laeseplan.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Læseplan — tick off readings</a>
+    <a href="http://100.78.65.85:8080/" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Læseplan — tick off readings</a>
     <a href="http://100.78.65.85:8080/briefing.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Weekly briefing</a>
-    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--blue)"></span> IP3 Project</a>
-    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--amber)"></span> Økonomi Project</a>
-    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Metode Project</a>
   </div>
-
   <div class="course-grid" id="courseGrid"><div class="loading">Loading courses from Supabase...</div></div>
-
   <div class="sh">Tools</div>
   <div class="tools-grid">
-    <div class="tool-card"><h3>📊 Læseplan</h3><p>Live reading tracker. Check off readings, per-course progress. Supabase-connected.</p><span class="tool-tag">Live</span><span class="tool-tag">Tailscale</span></div>
-    <div class="tool-card"><h3>📋 Briefing</h3><p>Weekly AI briefing from all courses, deadlines, events. Anthropic API-powered.</p><span class="tool-tag">Live</span><span class="tool-tag">API</span></div>
+    <div class="tool-card"><h3>📊 Læseplan</h3><p>Live reading tracker with check-off. Connected to Supabase. Served via Tailscale.</p><span class="tool-tag">Live</span><span class="tool-tag">Tailscale</span></div>
+    <div class="tool-card"><h3>📋 Briefing</h3><p>Weekly AI briefing across all courses, deadlines, events. Requires Anthropic API key.</p><span class="tool-tag">Live</span><span class="tool-tag">API key required</span></div>
     <div class="tool-card"><h3>🎛️ Command Center</h3><p>Cross-domain risk alerts and priority allocation. Where to focus this week.</p><span class="tool-tag">Claude Project</span></div>
   </div>
 </div>
@@ -88,39 +73,23 @@ const S='https://kgiepplwarutwmzvvezc.supabase.co/rest/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
 const H={'apikey':K,'Authorization':'Bearer '+K};
 const CC={IP3:{color:'#2563eb',full:'International Politics 3',exam:'4 Jun kl. 12',format:'Fri hjemmeopgave',approach:'Comparative theory mapping — realism vs. liberalism vs. constructivism. Raw sources first.',sched:[['Mon','08–10 FL'],['Thu','13–15 FL'],['Fri','08–10 Hold']]},
-  'Økonomi':{color:'#d97706',full:'Macroeconomics',exam:'9 Jun kl. 9-13',format:'4-hour written',approach:'Model-based graphical reasoning. IS-LM, AS-AD, Mundell-Fleming, Phillips curve.',sched:[['Thu','08–10 FL'],['Thu','15–17 Café'],['Fri','10–12 Hold']],alert:'Skriveøvelse 22 Apr — BLOCKING'},
-  Metode:{color:'#16a34a',full:'Qualitative Methods',exam:'26 May kl. 12',format:'Fri hjemmeopgave',approach:'Does not read pensum. Agent delivers summaries before + after lectures.',sched:[['Mon','13–15 FL'],['Thu','10–12 Hold']]}};
-
+'Økonomi':{color:'#d97706',full:'Macroeconomics',exam:'9 Jun kl. 9–13',format:'4-hour written',approach:'Model-based graphical reasoning. IS-LM, AS-AD, Mundell-Fleming, Phillips curve.',sched:[['Thu','08–10 FL'],['Thu','15–17 Café'],['Fri','10–12 Hold']],alert:'Skriveøvelse 22 Apr — BLOCKING'},
+Metode:{color:'#16a34a',full:'Qualitative Methods',exam:'26 May kl. 12',format:'Fri hjemmeopgave',approach:'Does not read pensum. Agent delivers summaries before + after lectures.',sched:[['Mon','13–15 FL'],['Thu','10–12 Hold']]}};
 fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(data=>{
-  const courses={};
-  data.forEach(r=>{const c=r.course;if(!courses[c])courses[c]={t:0,d:0,ip:0};courses[c].t++;if(r.status==='faerdig')courses[c].d++;else if(r.status==='i_gang')courses[c].ip++});
+  const courses={};data.forEach(r=>{const c=r.course;if(!courses[c])courses[c]={t:0,d:0,ip:0};courses[c].t++;if(r.status==='faerdig')courses[c].d++;else if(r.status==='i_gang')courses[c].ip++});
   const order=['Økonomi','IP3','Metode'];
-  const grid=document.getElementById('courseGrid');
-  grid.innerHTML=order.filter(c=>courses[c]).map(c=>{
+  document.getElementById('courseGrid').innerHTML=order.filter(c=>courses[c]).map(c=>{
     const v=courses[c],cfg=CC[c]||{},pct=Math.round(100*v.d/v.t),col=cfg.color||'#a8a29e';
-    return `<div class="course-panel"${c==='Økonomi'?' style="border-color:#fecaca"':''}>
-      <div class="course-header">
-        <div><div class="course-name" style="color:${col}">${c}</div><div class="course-full">${cfg.full||''}</div></div>
-        <span class="course-badge" style="background:${col}11;color:${col}">${cfg.exam?.split(' kl')[0]||''}</span>
-      </div>
+    return`<div class="course-panel"${c==='Økonomi'?' style="border-color:#fecaca"':''}>
+      <div class="course-header"><div><div class="course-name" style="color:${col}">${c}</div><div class="course-full">${cfg.full||''}</div></div><span class="course-badge" style="background:${col}11;color:${col}">${cfg.exam?.split(' kl')[0]||''}</span></div>
       <div class="course-body">
-        <div class="stats-row">
-          <div class="stat"><div class="stat-val" style="color:${col}">${v.t}</div><div class="stat-label">Readings</div></div>
-          <div class="stat"><div class="stat-val">${v.d}</div><div class="stat-label">Done</div></div>
-          <div class="stat"><div class="stat-val">${v.ip}</div><div class="stat-label">In progress</div></div>
-        </div>
+        <div class="stats-row"><div class="stat"><div class="stat-val" style="color:${col}">${v.t}</div><div class="stat-label">Readings</div></div><div class="stat"><div class="stat-val">${v.d}</div><div class="stat-label">Done</div></div><div class="stat"><div class="stat-val">${v.ip}</div><div class="stat-label">In progress</div></div></div>
         <div class="prog-wrap"><div class="prog-bar-outer"><div class="prog-bar" style="width:${Math.max(pct,2)}%;background:${col}"></div></div><span class="prog-pct">${pct}%</span></div>
         ${cfg.alert?'<div style="font-size:.75rem;color:var(--red);font-weight:600;margin-bottom:.75rem;padding:.5rem .75rem;background:#fef2f2;border:1px solid #fecaca;border-radius:6px">⚠ '+cfg.alert+'</div>':''}
-        <div style="font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.375rem">Exam</div>
-        <div class="detail"><strong>Format:</strong> ${cfg.format||''}</div>
-        <div class="detail"><strong>Date:</strong> ${cfg.exam||''}</div>
-        <div style="font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.375rem;margin-top:.75rem">Agent approach</div>
-        <div class="detail">${cfg.approach||''}</div>
-        <div style="font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:.375rem;margin-top:.75rem">Schedule</div>
-        ${(cfg.sched||[]).map(s=>'<div class="detail-row"><span class="k">'+s[0]+'</span><span class="v">'+s[1]+'</span></div>').join('')}
-      </div>
-    </div>`;
-  }).join('');
+        <div class="sub-sh">Exam</div><div class="detail"><strong>Format:</strong> ${cfg.format||''}</div><div class="detail"><strong>Date:</strong> ${cfg.exam||''}</div>
+        <div class="sub-sh">Agent approach</div><div class="detail">${cfg.approach||''}</div>
+        <div class="sub-sh">Schedule</div>${(cfg.sched||[]).map(s=>'<div class="detail-row"><span class="k">'+s[0]+'</span><span class="v">'+s[1]+'</span></div>').join('')}
+      </div></div>`}).join('');
 }).catch(()=>{document.getElementById('courseGrid').innerHTML='<div class="loading">Could not load readings</div>'});
 </script>
 </body>

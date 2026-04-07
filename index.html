@@ -17,62 +17,39 @@ nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decora
 @media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
 .main{max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 1.5rem}@media(max-width:640px){.main{padding:1.5rem 1rem}}
 .sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem}
-
-/* ALERT */
 .alert{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--rs);margin-bottom:2rem;font-size:.8125rem}
 .alert-dot{width:8px;height:8px;background:var(--red);border-radius:50%;flex-shrink:0;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .alert strong{color:var(--red);font-weight:600}.alert-text{color:#991b1b}.alert-days{color:var(--red);font-weight:700;margin-left:auto;white-space:nowrap;font-size:.9375rem}
-
-/* GRID */
-.grid2{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-bottom:2rem}
-@media(min-width:860px){.grid2{grid-template-columns:1fr 1fr}}
-
-/* CARDS */
-.card{display:flex;align-items:center;gap:1rem;padding:1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);text-decoration:none;color:inherit;transition:all .2s;box-shadow:var(--shadow);margin-bottom:.625rem}
-.card:last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-bottom:2rem}@media(min-width:860px){.grid2{grid-template-columns:1fr 1fr}}
+.card{display:flex;align-items:center;gap:1rem;padding:1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);text-decoration:none;color:inherit;transition:all .2s;box-shadow:var(--shadow);margin-bottom:.625rem}.card:last-child{margin-bottom:0}
 .card:hover{box-shadow:var(--shadow-md);border-color:var(--b2);transform:translateY(-1px)}
 .ci{width:44px;height:44px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
 .card h3{font-size:.9375rem;font-weight:600}.card p{font-size:.75rem;color:var(--t2);margin-top:.125rem}
 .card .arrow{color:var(--t4);font-size:1rem;margin-left:auto;transition:transform .2s}.card:hover .arrow{transform:translateX(3px);color:var(--t3)}
-
-/* PROGRESS */
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;box-shadow:var(--shadow)}
 .cr{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}.cr:last-child{margin-bottom:0}
 .cl{width:60px;font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;flex-shrink:0}
 .cb{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden}.cb div{height:100%;border-radius:4px;transition:width .8s ease}
 .cp{font-size:.75rem;color:var(--t2);width:52px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
 .ce{font-size:.6875rem;color:var(--t3);width:50px;text-align:right}@media(max-width:640px){.ce{display:none}}
-
-/* PILLS */
 .pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
 .pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;text-decoration:none;padding:.4rem .875rem;border:1px solid var(--border);border-radius:100px;font-weight:500;background:var(--surface);box-shadow:var(--shadow);color:var(--t2);transition:all .15s}
 .pill:hover{border-color:var(--b2);box-shadow:var(--shadow-md);color:var(--t1)}
 .pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-
-/* DEADLINES */
 .dl-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:2rem}
-.dl{display:grid;grid-template-columns:72px 60px 1fr auto;align-items:center;gap:.75rem;padding:.75rem 1.25rem;border-bottom:1px solid var(--s2);font-size:.8125rem}
-.dl:last-child{border-bottom:none}
-.dl-date{font-weight:600;font-variant-numeric:tabular-nums}
-.dl-c{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
-.dl-name{color:var(--t2)}
+.dl{display:grid;grid-template-columns:72px 60px 1fr auto;align-items:center;gap:.75rem;padding:.75rem 1.25rem;border-bottom:1px solid var(--s2);font-size:.8125rem}.dl:last-child{border-bottom:none}
+.dl-date{font-weight:600;font-variant-numeric:tabular-nums}.dl-c{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}.dl-name{color:var(--t2)}
 .dl-tag{font-size:.625rem;padding:.2rem .625rem;border-radius:100px;font-weight:600}
-
-/* GOALS */
-.goal{padding:.75rem 1.25rem;border-bottom:1px solid var(--s2);display:flex;align-items:flex-start;gap:.75rem;font-size:.8125rem}
-.goal:last-child{border-bottom:none}
+.goal{padding:.75rem 1.25rem;border-bottom:1px solid var(--s2);display:flex;align-items:flex-start;gap:.75rem;font-size:.8125rem}.goal:last-child{border-bottom:none}
 .goal-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
 .goal-title{font-weight:500}.goal-note{font-size:.75rem;color:var(--t3);margin-top:.125rem}
-
-/* SCHEDULE */
 .sched{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 @media(max-width:640px){.sched{grid-template-columns:repeat(3,1fr)}.sh-hide{display:none}}
 .sd{padding:.875rem;border-right:1px solid var(--s2)}.sd:last-child{border-right:none}
 .sd-name{font-size:.625rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.5rem}
 .ss{font-size:.6875rem;color:var(--t2);padding:.3rem 0;border-top:1px solid var(--s2)}.ss:first-of-type{border-top:none}
 .ss .t{color:var(--t3)}.ss .c{font-weight:600}
-
 .loading{color:var(--t3);font-size:.75rem;padding:.75rem}
 footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
 </style>
@@ -84,13 +61,7 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
   <nav><a href="index.html" class="active">Home</a><a href="academics.html">Academics</a><a href="training.html">Training</a></nav>
 </header>
 <div class="main">
-
-  <div class="alert" id="alertBox" style="display:none">
-    <div class="alert-dot"></div>
-    <strong id="alertCourse"></strong>
-    <span class="alert-text" id="alertText"></span>
-    <span class="alert-days" id="alertDays"></span>
-  </div>
+  <div class="alert" id="alertBox" style="display:none"><div class="alert-dot"></div><strong id="alertCourse"></strong><span class="alert-text" id="alertText"></span><span class="alert-days" id="alertDays"></span></div>
 
   <div class="grid2">
     <div>
@@ -99,19 +70,26 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
       <a href="training.html" class="card"><div class="ci" style="background:#f0fdf4">🏋️</div><div><h3>Training</h3><p>Coaches · recovery · body comp · running</p></div><span class="arrow">→</span></a>
     </div>
     <div>
-      <div class="sh">Reading progress <span style="font-weight:400;text-transform:none;letter-spacing:0">(live from Supabase)</span></div>
+      <div class="sh">Reading progress <span style="font-weight:400;text-transform:none;letter-spacing:0">(live)</span></div>
       <div class="panel" id="progressPanel"><div class="loading">Loading...</div></div>
     </div>
   </div>
 
-  <div class="sh">Quick links</div>
+  <div class="sh">Live dashboards <span style="font-weight:400;text-transform:none;letter-spacing:0">(Tailscale — requires same network)</span></div>
   <div class="pills">
-    <a href="http://100.78.65.85:8080/laeseplan.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Læseplan (tick readings)</a>
+    <a href="http://100.78.65.85:8080/" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Læseplan</a>
     <a href="http://100.78.65.85:8080/traening.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Training log</a>
     <a href="http://100.78.65.85:8080/briefing.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Briefing</a>
-    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--blue)"></span> IP3 Project</a>
-    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--amber)"></span> Økonomi Project</a>
-    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Metode Project</a>
+  </div>
+
+  <div class="sh">Claude Projects</div>
+  <div class="pills">
+    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--blue)"></span> IP3</a>
+    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--amber)"></span> Økonomi 2</a>
+    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Metode 3</a>
+    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--cyan)"></span> Running Coach</a>
+    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--purple)"></span> Strength Coach</a>
+    <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--t3)"></span> Command Center</a>
   </div>
 
   <div class="grid2">
@@ -141,32 +119,21 @@ const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im
 const H={'apikey':K,'Authorization':'Bearer '+K};
 const CC={IP3:'#2563eb',IR2:'#6366f1',Metode:'#16a34a','Økonomi':'#d97706'};
 const CE={IP3:'4 Jun','Økonomi':'9 Jun',Metode:'26 May',IR2:''};
-
-// READINGS
 fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(d=>{
   const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,d:0};c[n].t++;if(r.status==='faerdig')c[n].d++});
   const o=['Økonomi','IP3','Metode','IR2'].filter(x=>c[x]);
-  document.getElementById('progressPanel').innerHTML=o.map(n=>{
-    const v=c[n],p=Math.round(100*v.d/v.t),col=CC[n]||'#a8a29e';
-    return '<div class="cr"><span class="cl" style="color:'+col+'">'+n+'</span><div class="cb"><div style="width:'+Math.max(p,2)+'%;background:'+col+'"></div></div><span class="cp">'+v.d+'/'+v.t+'</span><span class="ce">'+(CE[n]||'')+'</span></div>';
-  }).join('');
+  document.getElementById('progressPanel').innerHTML=o.map(n=>{const v=c[n],p=Math.round(100*v.d/v.t),col=CC[n]||'#a8a29e';return'<div class="cr"><span class="cl" style="color:'+col+'">'+n+'</span><div class="cb"><div style="width:'+Math.max(p,2)+'%;background:'+col+'"></div></div><span class="cp">'+v.d+'/'+v.t+'</span><span class="ce">'+(CE[n]||'')+'</span></div>'}).join('');
 }).catch(()=>{document.getElementById('progressPanel').innerHTML='<div class="loading">Could not load</div>'});
-
-// EVENTS
 fetch(S+'/events?select=*&order=date.asc',{headers:H}).then(r=>r.json()).then(ev=>{
   const now=new Date(),up=ev.filter(e=>e.date&&new Date(e.date)>=new Date(now.toDateString()));
   const urg=up.find(e=>e.type==='deadline'||e.type==='exam');
   if(urg){const dd=Math.ceil((new Date(urg.date)-now)/864e5);document.getElementById('alertBox').style.display='flex';document.getElementById('alertCourse').textContent=urg.course||'';document.getElementById('alertText').textContent=urg.label;document.getElementById('alertDays').textContent=dd>0?dd+'d':dd===0?'Today':'Past due'}
   const p=document.getElementById('dlPanel');
-  p.innerHTML=up.length?up.map(e=>{const dt=new Date(e.date),ds=dt.toLocaleDateString('da-DK',{day:'numeric',month:'short'}),dd=Math.ceil((dt-now)/864e5),col=CC[e.course]||'var(--t3)';let tag='';if(e.type==='exam')tag='<span class="dl-tag" style="background:#fffbeb;color:var(--amber)">Eksamen</span>';else if(dd<=14&&e.type==='deadline')tag='<span class="dl-tag" style="background:#fef2f2;color:var(--red)">'+dd+'d</span>';
-    return '<div class="dl"><span class="dl-date" style="color:'+(dd<=7?'var(--red)':dd<=21?'var(--amber)':'var(--t1)')+'">'+ds+'</span><span class="dl-c" style="color:'+col+'">'+(e.course||'')+'</span><span class="dl-name">'+e.label+'</span>'+tag+'</div>';}).join(''):'<div class="loading">No upcoming deadlines</div>';
+  p.innerHTML=up.length?up.map(e=>{const dt=new Date(e.date),ds=dt.toLocaleDateString('da-DK',{day:'numeric',month:'short'}),dd=Math.ceil((dt-now)/864e5),col=CC[e.course]||'var(--t3)';let tag='';if(e.type==='exam')tag='<span class="dl-tag" style="background:#fffbeb;color:var(--amber)">Eksamen</span>';else if(dd<=14&&e.type==='deadline')tag='<span class="dl-tag" style="background:#fef2f2;color:var(--red)">'+dd+'d</span>';return'<div class="dl"><span class="dl-date" style="color:'+(dd<=7?'var(--red)':dd<=21?'var(--amber)':'var(--t1)')+'">'+ds+'</span><span class="dl-c" style="color:'+col+'">'+(e.course||'')+'</span><span class="dl-name">'+e.label+'</span>'+tag+'</div>'}).join(''):'<div class="loading">No upcoming deadlines</div>';
 }).catch(()=>{});
-
-// GOALS
 fetch(S+'/goals?select=*&order=domain.asc',{headers:H}).then(r=>r.json()).then(goals=>{
-  const p=document.getElementById('goalsPanel');
-  const dc={school:'var(--blue)',training:'var(--green)',general:'var(--purple)'};
-  p.innerHTML=goals.filter(g=>g.status==='active').slice(0,6).map(g=>'<div class="goal"><div class="goal-dot" style="background:'+(dc[g.domain]||'var(--t3)')+'"></div><div><div class="goal-title">'+g.title+'</div>'+(g.notes?'<div class="goal-note">'+g.notes+'</div>':'')+'</div></div>').join('');
+  const p=document.getElementById('goalsPanel');const dc={school:'var(--blue)',training:'var(--green)',general:'var(--purple)'};
+  p.innerHTML=goals.filter(g=>g.status==='active').slice(0,8).map(g=>'<div class="goal"><div class="goal-dot" style="background:'+(dc[g.domain]||'var(--t3)')+'"></div><div><div class="goal-title">'+g.title+'</div>'+(g.notes?'<div class="goal-note">'+g.notes+'</div>':'')+'</div></div>').join('');
 }).catch(()=>{});
 </script>
 </body>
