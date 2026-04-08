@@ -26,8 +26,20 @@ nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decora
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.875rem .75rem;text-align:center;box-shadow:var(--shadow)}
 .stat-val{font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:700}
 .stat-label{font-size:.625rem;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-top:.25rem}
-.briefing-text{font-size:.9375rem;line-height:1.8;color:var(--t1);white-space:pre-wrap}
+.briefing-text{font-size:.9375rem;line-height:1.75;color:var(--t1)}
 .briefing-text p{margin-bottom:1rem}
+.briefing-text p:last-child{margin-bottom:0}
+.briefing-text h1,.briefing-text h2,.briefing-text h3{font-weight:700;letter-spacing:-.01em;margin:1.5rem 0 .5rem;line-height:1.3}
+.briefing-text h1{font-size:1.15rem}
+.briefing-text h2{font-size:1.0625rem}
+.briefing-text h3{font-size:.9375rem;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;font-size:.75rem}
+.briefing-text h1:first-child,.briefing-text h2:first-child,.briefing-text h3:first-child{margin-top:0}
+.briefing-text strong{font-weight:600;color:var(--t1)}
+.briefing-text em{font-style:italic;color:var(--t2)}
+.briefing-text ul,.briefing-text ol{margin:.5rem 0 1rem 1.25rem}
+.briefing-text li{margin-bottom:.25rem}
+.briefing-text code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:var(--s2);padding:.1rem .35rem;border-radius:4px;color:var(--purple)}
+.briefing-text a{color:var(--blue);text-decoration:underline;text-underline-offset:2px}
 .btn{background:var(--t1);color:#fff;border:none;border-radius:8px;padding:.625rem 1.25rem;font-size:.8125rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
 .btn:hover{background:var(--t2)}.btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-sec{background:var(--surface);color:var(--t2);border:1px solid var(--border)}.btn-sec:hover{background:var(--s2);color:var(--t1)}
@@ -76,6 +88,38 @@ let apiKey = localStorage.getItem('briefing_api_key') || '';
 let state = { loading: false, error: null, data: null, briefing: '', view: 'briefing' };
 
 function esc(s){ const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
+
+function md(src){
+  const lines=(src||'').replace(/\r\n/g,'\n').split('\n');
+  const out=[]; let i=0;
+  const inline=s=>esc(s)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>')
+    .replace(/(^|\s)_([^_\n]+)_/g,'$1<em>$2</em>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  while(i<lines.length){
+    const ln=lines[i];
+    if(/^\s*$/.test(ln)){i++;continue;}
+    let m;
+    if(m=ln.match(/^(#{1,3})\s+(.*)$/)){out.push(`<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`);i++;continue;}
+    if(/^\s*[-*]\s+/.test(ln)){
+      const items=[];
+      while(i<lines.length&&/^\s*[-*]\s+/.test(lines[i])){items.push(`<li>${inline(lines[i].replace(/^\s*[-*]\s+/,''))}</li>`);i++;}
+      out.push(`<ul>${items.join('')}</ul>`);continue;
+    }
+    if(/^\s*\d+\.\s+/.test(ln)){
+      const items=[];
+      while(i<lines.length&&/^\s*\d+\.\s+/.test(lines[i])){items.push(`<li>${inline(lines[i].replace(/^\s*\d+\.\s+/,''))}</li>`);i++;}
+      out.push(`<ol>${items.join('')}</ol>`);continue;
+    }
+    // paragraph: collect until blank line
+    const para=[];
+    while(i<lines.length&&!/^\s*$/.test(lines[i])&&!/^(#{1,3})\s+/.test(lines[i])&&!/^\s*[-*]\s+/.test(lines[i])&&!/^\s*\d+\.\s+/.test(lines[i])){para.push(lines[i]);i++;}
+    out.push(`<p>${inline(para.join(' '))}</p>`);
+  }
+  return out.join('');
+}
 
 function currentWeek(){
   const now=new Date(),jan1=new Date(now.getFullYear(),0,1);
@@ -242,7 +286,7 @@ function render(){
   const vc=document.getElementById('view-content');
 
   if(state.view==='briefing'){
-    vc.innerHTML=`<div class="panel"><div class="briefing-text">${esc(state.briefing)}</div></div>`;
+    vc.innerHTML=`<div class="panel"><div class="briefing-text">${md(state.briefing)}</div></div>`;
   } else {
     // Fremgang
     let h=`<div class="sh" style="margin-top:0">Fremgang</div><div class="panel">`;
