@@ -15,7 +15,7 @@ header{padding:1rem 1.5rem;display:flex;justify-content:space-between;align-item
 nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decoration:none;padding:.4rem .875rem;border-radius:8px;transition:all .15s;font-weight:500}nav a:hover{color:var(--t1);background:var(--s2)}nav a.active{color:var(--t1);background:var(--s2)}
 .nt{display:none;background:none;border:none;cursor:pointer;padding:.5rem}.nt svg{width:20px;height:20px;stroke:var(--t2);fill:none;stroke-width:1.5}
 @media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
-.main{max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 1.5rem}@media(max-width:640px){.main{padding:1.5rem 1rem}}
+.main{max-width:1100px;width:100%;margin:0 auto;padding:2.25rem 1.5rem 3.5rem}@media(max-width:640px){.main{padding:1.5rem 1rem 3rem}}
 .page-hd{margin-bottom:1.75rem;position:relative}
 .page-hd::after{content:'';display:block;width:100%;height:1px;background:linear-gradient(90deg,var(--blue),var(--purple),#db2777,transparent);opacity:.45;margin-top:1rem}
 .page-title{font-size:1.875rem;font-weight:700;letter-spacing:-.025em;line-height:1.15}
@@ -153,16 +153,17 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
     <div class="page-sub" id="lp-sub">Indlæser data…</div>
   </div>
 
+  <!-- COURSE PANELS -->
+  <div class="sh first" style="--accent:var(--blue);margin-top:0">Kurser</div>
+  <div class="course-grid" id="courseGrid"><div class="loading">Indlæser…</div></div>
+
   <!-- LÆSEPLAN TABS -->
+  <div class="sh" style="--accent:var(--green)">Læseplan</div>
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem">
     <div class="lp-tabs" id="lp-tabs" style="margin-bottom:0"></div>
     <button class="lp-toggle" id="ir2-toggle" onclick="toggleIR2()" title="Vis/skjul IR2 (afsluttet fag)">IR2</button>
   </div>
   <div id="lp-content"><div class="loading">Henter data…</div></div>
-
-  <!-- COURSE PANELS -->
-  <div class="sh" style="--accent:var(--blue)">Kurser</div>
-  <div class="course-grid" id="courseGrid"><div class="loading">Indlæser…</div></div>
 
   <!-- LINKS -->
   <div class="sh" style="--accent:var(--purple)">Links</div>

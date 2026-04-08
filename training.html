@@ -10,7 +10,7 @@
 :root{--bg:#fafaf9;--surface:#fff;--s1:#fff;--s2:#f5f5f4;--s3:#f0f0ee;--border:#e7e5e4;--bd:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--amber:#d97706;--purple:#7c3aed;--violet:#7c3aed;--pink:#db2777;--cyan:#0891b2;--lime:#65a30d;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
 body.eink{--bg:#fff;--surface:#f8f8f8;--s1:#f8f8f8;--s2:#ebebeb;--s3:#ddd;--border:#999;--bd:#999;--t1:#000;--t2:#222;--t3:#555;--blue:#0033aa;--green:#006600;--red:#aa0000;--amber:#885500;--purple:#440099;--violet:#440099;--pink:#880055;--cyan:#005577;--lime:#336600}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
 .p{max-width:1100px;margin:0 auto;padding:2.25rem 1.5rem 4rem}
 @media(max-width:640px){.p{padding:1.5rem 1rem 3rem}}
 
@@ -124,19 +124,20 @@ svg text{font-family:'JetBrains Mono',monospace}
 .modal-close{width:100%;background:none;border:1px solid var(--bd);border-radius:10px;color:var(--t2);padding:10px;font-size:.7rem;cursor:pointer;font-family:inherit;margin-top:.75rem}
 
 /* Skip-day cards */
-.sk{background:var(--s1);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:.5rem}
-.skh{padding:.4rem .7rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd)}
-.skh h4{font-size:.72rem;font-weight:600}
-.skh .badge{font-size:.45rem;padding:.1rem .25rem;border-radius:3px;font-weight:600}
-.sko{padding:.4rem .7rem}
-.so{display:grid;grid-template-columns:auto 1fr auto;gap:.35rem;align-items:start;padding:.3rem 0;border-bottom:1px solid var(--bd)}
+.sk{background:var(--s1);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:.625rem}
+.skh{padding:.55rem .9rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd)}
+.skh h4{font-size:.875rem;font-weight:700;letter-spacing:-.005em}
+.skh .badge{font-size:.625rem;padding:.15rem .4rem;border-radius:4px;font-weight:600;letter-spacing:.02em}
+.sko{padding:.5rem .9rem}
+.so{display:grid;grid-template-columns:auto 1fr auto;gap:.625rem;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--bd)}
 .so:last-child{border-bottom:none}
-.so .tier{font-family:'JetBrains Mono';font-size:.5rem;font-weight:600;padding:.08rem .2rem;border-radius:3px;text-align:center;min-width:20px}
+.so:last-child{border-bottom:none}
+.so .tier{font-family:'JetBrains Mono';font-size:.6875rem;font-weight:700;padding:.15rem .4rem;border-radius:4px;text-align:center;min-width:24px}
 .so .tier.a{background:rgba(22,163,74,.12);color:var(--green)}
 .so .tier.b{background:rgba(217,119,6,.12);color:var(--amber)}
 .so .tier.c{background:rgba(220,38,38,.12);color:var(--red)}
-.so .desc{font-size:.6rem;color:var(--t2);line-height:1.5}.so .desc strong{color:var(--t1)}
-.so .tm{font-family:'JetBrains Mono';font-size:.5rem;color:var(--t3);white-space:nowrap}
+.so .desc{font-size:.8125rem;color:var(--t2);line-height:1.55}.so .desc strong{color:var(--t1);font-weight:600}
+.so .tm{font-family:'JetBrains Mono';font-size:.6875rem;color:var(--t3);white-space:nowrap;font-weight:500}
 
 /* Goal bar */
 .goal-bar{margin:.75rem 0}
@@ -321,15 +322,6 @@ svg text{font-family:'JetBrains Mono',monospace}
     <div class="f w"><h4>September = guldmåned</h4><p>Bedste resultater kom måneden EFTER den hårdeste måned. Supercompensation er reel — <strong>hvile virker</strong>.</p></div>
   </div>
 
-  <!-- Workout log -->
-  <div class="sc">
-    <div class="sl"><span class="d" style="background:var(--blue)"></span>WORKOUT LOG</div>
-    <h2>Seneste sessions</h2>
-    <div class="c" style="padding:.5rem .6rem">
-      <div id="workout-list"></div>
-    </div>
-  </div>
-
   <!-- Key findings -->
   <div class="sc">
     <div class="sl"><span class="d" style="background:var(--green)"></span>NØGLEINDSIGTER</div>
@@ -343,8 +335,8 @@ svg text{font-family:'JetBrains Mono',monospace}
   <!-- PPL skip-day -->
   <div class="sc">
     <div class="sl"><span class="d" style="background:var(--amber)"></span>SKIP-DAG GUIDE</div>
-    <h2>Reducer, aldrig nul</h2>
-    <p style="font-size:.68rem;color:var(--t2);margin-bottom:.75rem"><strong>15 minutter slår 0 minutter.</strong> Tilbageskridtene kom fra totalt fravær, ikke fra at gøre lidt mindre.</p>
+    <h2>Skru ned — spring aldrig helt over</h2>
+    <p style="font-size:.8125rem;color:var(--t2);margin-bottom:1rem;line-height:1.55"><strong>15 minutter slår 0 minutter.</strong> Tilbageskridtene kom fra totalt fravær, ikke fra at gøre lidt mindre. Vælg A, B eller C — bare gennemfør.</p>
     <div class="sk"><div class="skh"><h4 style="color:var(--violet)">PUSH</h4></div><div class="sko">
       <div class="so"><div class="tier a">A</div><div class="desc"><strong>Fuld</strong> — Bench, Incline DB, Laterals, Dips, Triceps (16 sæt)</div><div class="tm">45m</div></div>
       <div class="so"><div class="tier b">B</div><div class="desc"><strong>Compounds</strong> — Bench 3×6, Dips 2×10, Laterals 2×15</div><div class="tm">25m</div></div>
@@ -385,6 +377,12 @@ svg text{font-family:'JetBrains Mono',monospace}
         <div class="goal-track"><div class="goal-fill-amber" id="vo2-goal-fill"></div></div>
       </div>
       <div class="cw"><div class="cl">VO2max estimat (ml/kg/min) — stiplet = 48 mål</div><div class="chart-container" id="chart-vo2"></div></div>
+    </div>
+    <div class="sc">
+      <div class="sl"><span class="d" style="background:var(--blue)"></span>UGENTLIG LØBEVOLUMEN</div>
+      <h2>Distance og frekvens</h2>
+      <div class="sts" id="run-volume-stats"></div>
+      <p style="font-size:.75rem;color:var(--t3);margin-top:.5rem;line-height:1.5">Garmin run-data er endnu ikke koblet på. Upload .fit-filer eller forbind Connect for at fylde tallene ud automatisk.</p>
     </div>
     <div class="sc">
       <div class="sl"><span class="d" style="background:var(--green)"></span>NØGLEINDSIGTER</div>
@@ -844,17 +842,6 @@ function renderStyrke() {
 
   drawChart('chart-lbm', LBM, '#2563eb', ' kg');
   drawChart('chart-weight', WEIGHTS, '#16a34a', ' kg');
-
-  const typeColors = {push:'#7c3aed', pull:'#2563eb', legs:'#d97706'};
-  const typeNames = {push:'Push', pull:'Pull', legs:'Ben'};
-  document.getElementById('workout-list').innerHTML = WORKOUTS.slice().reverse().slice(0,25).map(w => {
-    const ds = new Date(w.d).toLocaleDateString('da-DK', {day:'numeric', month:'short'});
-    return `<div style="display:flex;align-items:center;gap:.55rem;padding:.35rem 0;border-bottom:1px solid var(--bd);font-size:.6rem">
-      <div style="width:3px;height:24px;border-radius:2px;flex-shrink:0;background:${typeColors[w.t]||'var(--t3)'}"></div>
-      <div style="flex:1"><div style="font-weight:600">${typeNames[w.t]||w.t}${w.bench?' · '+w.bench+' kg':''}</div><div style="color:var(--t3);font-size:.52rem">${ds} · ${w.dur} min · ${w.sets} sæt</div></div>
-      <div style="font-family:'JetBrains Mono';color:var(--t2);font-size:.58rem">${(w.vol/1000).toFixed(1)} t</div>
-    </div>`;
-  }).join('');
 }
 
 // ═══════════════════════════════════════════════
@@ -874,6 +861,13 @@ function renderLob() {
     <div class="st"><div class="l">Målinger</div><div class="v">${VO2DATA.length}</div></div>`;
 
   drawChart('chart-vo2', VO2DATA, '#d97706', '', {target:48, min:38, max:50});
+
+  const runEl = document.getElementById('run-volume-stats');
+  if (runEl) runEl.innerHTML = `
+    <div class="st"><div class="l">Km / uge</div><div class="v" style="color:var(--blue)">—</div><div class="n">mål 20+ km</div></div>
+    <div class="st"><div class="l">Løbeture / uge</div><div class="v">—</div><div class="n">mål 3</div></div>
+    <div class="st"><div class="l">Snit-pace</div><div class="v">—</div><div class="n">min/km</div></div>
+    <div class="st"><div class="l">Lang tur</div><div class="v">—</div><div class="n">km</div></div>`;
 }
 
 function renderCykling() {
