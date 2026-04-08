@@ -21,13 +21,19 @@ nav a:hover{color:var(--t1);background:var(--s2)}nav a.active{color:var(--t1);ba
 @media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
 
 /* Layout */
-.main{max-width:1200px;width:100%;margin:0 auto;padding:2rem 1.5rem}
-@media(max-width:640px){.main{padding:1.25rem 1rem}}
-.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem}
-.sh:first-child{margin-top:0}
+.main{max-width:1100px;width:100%;margin:0 auto;padding:2.25rem 1.5rem 3.5rem}
+@media(max-width:640px){.main{padding:1.5rem 1rem 3rem}}
+.page-hd{margin-bottom:1.75rem;position:relative}
+.page-hd::after{content:'';display:block;width:100%;height:1px;background:linear-gradient(90deg,var(--blue),var(--purple),#db2777,transparent);opacity:.45;margin-top:1rem}
+.page-title{font-size:1.875rem;font-weight:700;letter-spacing:-.025em;line-height:1.15}
+.page-title em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-sub{font-size:.8125rem;color:var(--t2);margin-top:.375rem;font-family:'JetBrains Mono',monospace;font-weight:400}
+.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem;display:flex;align-items:center;gap:.5rem}
+.sh:first-of-type{margin-top:0}
+.sh::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent,var(--t3));flex-shrink:0}
 .sh span{font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)}
 .loading{color:var(--t3);font-size:.75rem;padding:.5rem 0}
-footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border);margin-top:3rem}
+footer{padding:2.5rem 1.5rem 2rem;text-align:center;font-size:.6875rem;color:var(--t3);letter-spacing:.04em;border-top:1px solid var(--border);margin-top:3rem}
 
 /* Alert */
 .alert{display:flex;align-items:center;gap:.75rem;padding:.875rem 1.125rem;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--rs);margin-bottom:1.5rem;font-size:.8125rem}
@@ -36,27 +42,29 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
 .alert strong{color:var(--red);font-weight:600}.alert-text{color:#991b1b}.alert-days{color:var(--red);font-weight:700;margin-left:auto;white-space:nowrap;font-family:'JetBrains Mono',monospace}
 
 /* Exam countdown bars */
-.exam-bars{display:flex;flex-direction:column;gap:.375rem;margin-bottom:2rem}
-.exam-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.75rem 1rem;box-shadow:var(--shadow)}
-.exam-bar.urgent{border-color:#fecaca}
-.exam-bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
-.exam-course{font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-.exam-label{font-size:.75rem;color:var(--t2);margin-left:.5rem}
-.exam-right{display:flex;align-items:baseline;gap:.5rem}
-.exam-days{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700}
-.exam-date{font-size:.6875rem;color:var(--t3)}
+.exam-bars{display:flex;flex-direction:column;gap:.5rem;margin-bottom:2rem}
+.exam-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.875rem 1.125rem;box-shadow:var(--shadow);transition:all .2s}
+.exam-bar:hover{box-shadow:var(--shadow-md);border-color:var(--b2)}
+.exam-bar.urgent{border-color:#fecaca;background:linear-gradient(135deg,#fef9f9,#fff)}
+.exam-bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.625rem}
+.exam-course{font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.exam-label{font-size:.8125rem;color:var(--t2);margin-left:.625rem;font-weight:500}
+.exam-right{display:flex;align-items:baseline;gap:.625rem}
+.exam-days{font-family:'JetBrains Mono',monospace;font-size:1.125rem;font-weight:700}
+.exam-date{font-size:.6875rem;color:var(--t3);font-family:'JetBrains Mono',monospace}
 .exam-track{height:6px;background:var(--s2);border-radius:3px;overflow:hidden}
 .exam-fill{height:100%;border-radius:3px;transition:width .8s ease}
 
 /* Compact course cards */
-.course-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:2rem}
+.course-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;margin-bottom:2rem}
 @media(max-width:700px){.course-strip{grid-template-columns:1fr}}
-.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;text-decoration:none;color:inherit;display:block;transition:all .2s}
-.cc:hover{box-shadow:var(--shadow-md);border-color:var(--b2);transform:translateY(-1px)}
-.cc-body{padding:1rem 1.125rem}
-.cc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.625rem}
-.cc-name{font-size:1rem;font-weight:700}
-.cc-badge{font-size:.5625rem;font-weight:600;padding:.2rem .5rem;border-radius:100px;white-space:nowrap}
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;text-decoration:none;color:inherit;display:block;transition:all .2s;position:relative}
+.cc::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:var(--accent,var(--t3))}
+.cc:hover{box-shadow:var(--shadow-md);border-color:var(--b2);transform:translateY(-2px)}
+.cc-body{padding:1.125rem 1.25rem}
+.cc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem}
+.cc-name{font-size:1.0625rem;font-weight:700;letter-spacing:-.01em}
+.cc-badge{font-size:.5625rem;font-weight:600;padding:.2rem .625rem;border-radius:100px;white-space:nowrap}
 .cc-bar-outer{height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:.5rem}
 .cc-bar{height:100%;border-radius:3px;transition:width .8s ease}
 .cc-stats{display:flex;justify-content:space-between;font-size:.6875rem}
@@ -92,9 +100,14 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
 <header>
   <div class="logo">System <span>/ Home</span></div>
   <button class="nt" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
-  <nav><a href="index.html" class="active">Home</a><a href="academics.html">Academics</a><a href="training.html">Træning</a><a href="briefing.html">Briefing</a></nav>
+  <nav><a href="index.html" class="active">Home</a><a href="academics.html">Statskundskab</a><a href="training.html">Træning</a><a href="briefing.html">Briefing</a></nav>
 </header>
 <div class="main">
+
+  <div class="page-hd">
+    <h1 class="page-title">Cockpit <em>Forår 2026</em></h1>
+    <div class="page-sub">4. semester · Statskundskab · Københavns Universitet</div>
+  </div>
 
   <div class="alert" id="alertBox" style="display:none">
     <div class="alert-dot"></div>
@@ -102,24 +115,24 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
     <span class="alert-days" id="alertDays"></span>
   </div>
 
-  <div class="sh" style="margin-top:0">Tid til eksamen</div>
+  <div class="sh" style="--accent:var(--red);margin-top:0">Tid til eksamen</div>
   <div class="exam-bars" id="examBars"></div>
 
-  <div class="sh">Kurser <span id="course-sub"></span></div>
-  <div class="course-strip" id="courseStrip"><div class="loading">Loading...</div></div>
+  <div class="sh" style="--accent:var(--blue)">Kurser <span id="course-sub"></span></div>
+  <div class="course-strip" id="courseStrip"><div class="loading">Indlæser…</div></div>
 
   <div class="grid2">
     <div>
-      <div class="sh" style="margin-top:0">Deadlines</div>
-      <div class="dl-panel" id="dlPanel"><div class="loading" style="padding:.75rem 1rem">Loading...</div></div>
+      <div class="sh" style="--accent:var(--amber);margin-top:0">Deadlines</div>
+      <div class="dl-panel" id="dlPanel"><div class="loading" style="padding:.75rem 1rem">Indlæser…</div></div>
     </div>
     <div>
-      <div class="sh" style="margin-top:0">Mål</div>
-      <div class="dl-panel" id="goalsPanel"><div class="loading" style="padding:.75rem 1rem">Loading...</div></div>
+      <div class="sh" style="--accent:var(--purple);margin-top:0">Mål</div>
+      <div class="dl-panel" id="goalsPanel"><div class="loading" style="padding:.75rem 1rem">Indlæser…</div></div>
     </div>
   </div>
 
-  <div class="sh">Ugeskema</div>
+  <div class="sh" style="--accent:var(--green)">Ugeskema</div>
   <div class="sched">
     <div class="sd"><div class="sd-name">Man</div><div class="ss"><span class="t">08–10</span> <span class="c" style="color:var(--blue)">IP3</span> FL</div><div class="ss"><span class="t">13–15</span> <span class="c" style="color:var(--green)">Metode</span> FL</div></div>
     <div class="sd sh-hide"><div class="sd-name">Tir</div><div class="ss" style="color:var(--t3);font-size:.625rem">Ingen undervisning</div></div>
@@ -129,7 +142,7 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
   </div>
 
 </div>
-<footer>Personal AI System · Forår 2026</footer>
+<footer>Personal AI System · Cockpit · Forår 2026</footer>
 <script>
 const S='https://kgiepplwarutwmzvvezc.supabase.co/rest/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
@@ -165,7 +178,7 @@ fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(d=>
   const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,done:0,ip:0};c[n].t++;if(r.status==='læst')c[n].done++;else if(r.status==='i_gang')c[n].ip++});
   document.getElementById('courseStrip').innerHTML=['Økonomi','IP3','Metode'].filter(n=>c[n]).map(n=>{
     const v=c[n],cfg=CC[n],pct=Math.round(100*v.done/v.t);
-    return`<a href="academics.html" class="cc" style="border-top:3px solid ${cfg.col}">
+    return`<a href="academics.html" class="cc" style="--accent:${cfg.col}">
       <div class="cc-body">
         <div class="cc-head">
           <span class="cc-name" style="color:${cfg.col}">${n}</span>

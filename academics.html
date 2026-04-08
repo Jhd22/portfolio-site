@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#fafaf9">
-<title>Academics — System</title>
+<title>Statskundskab — System</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 :root{--bg:#fafaf9;--surface:#fff;--s2:#f5f5f4;--border:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--t4:#d6d3d1;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--indigo:#6366f1;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
@@ -16,9 +16,15 @@ nav{display:flex;gap:.25rem}nav a{font-size:.8125rem;color:var(--t2);text-decora
 .nt{display:none;background:none;border:none;cursor:pointer;padding:.5rem}.nt svg{width:20px;height:20px;stroke:var(--t2);fill:none;stroke-width:1.5}
 @media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
 .main{max-width:1200px;width:100%;margin:0 auto;padding:2.5rem 1.5rem}@media(max-width:640px){.main{padding:1.5rem 1rem}}
-.page-title{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.125rem}
-.page-sub{font-size:.8125rem;color:var(--t2);margin-bottom:1.5rem}
-.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem}.sh:first-of-type{margin-top:0}
+.page-hd{margin-bottom:1.75rem;position:relative}
+.page-hd::after{content:'';display:block;width:100%;height:1px;background:linear-gradient(90deg,var(--blue),var(--purple),#db2777,transparent);opacity:.45;margin-top:1rem}
+.page-title{font-size:1.875rem;font-weight:700;letter-spacing:-.025em;line-height:1.15}
+.page-title em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-sub{font-size:.8125rem;color:var(--t2);margin-top:.375rem;font-family:'JetBrains Mono',monospace;font-weight:400}
+.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem;display:flex;align-items:center;gap:.5rem}
+.sh:first-of-type{margin-top:0}
+.sh::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent,var(--t3));flex-shrink:0}
+.sh.no-dot::before{display:none}
 .sh span{font-weight:400;text-transform:none;letter-spacing:0}
 .loading{color:var(--t3);font-size:.75rem;padding:.75rem}
 footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-top:1px solid var(--border)}
@@ -42,10 +48,12 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
 .lp-toggle.on{background:var(--indigo);color:#fff;border-color:var(--indigo)}
 
 /* Stat cards */
-.lp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.625rem;margin-bottom:1.25rem}
-.lp-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.875rem .75rem;text-align:center;box-shadow:var(--shadow)}
-.lp-stat-val{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700}
-.lp-stat-label{font-size:.6875rem;color:var(--t2);margin-top:.125rem}
+.lp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:1.25rem}
+.lp-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:1rem 1.125rem;text-align:left;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:all .2s}
+.lp-stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--t3))}
+.lp-stat:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.lp-stat-val{font-family:'JetBrains Mono',monospace;font-size:1.625rem;font-weight:700;letter-spacing:-.02em}
+.lp-stat-label{font-size:.625rem;color:var(--t3);margin-top:.25rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 .lp-stat-sub{font-size:.625rem;color:var(--t3);margin-top:.125rem}
 
 /* Progress bars */
@@ -135,13 +143,15 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
 </head>
 <body>
 <header>
-  <div class="logo">System <span>/ Academics</span></div>
+  <div class="logo">System <span>/ Statskundskab</span></div>
   <button class="nt" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
-  <nav><a href="index.html">Home</a><a href="academics.html" class="active">Academics</a><a href="training.html">Træning</a><a href="briefing.html">Briefing</a></nav>
+  <nav><a href="index.html">Home</a><a href="academics.html" class="active">Statskundskab</a><a href="training.html">Træning</a><a href="briefing.html">Briefing</a></nav>
 </header>
 <div class="main">
-  <div class="page-title">Academics</div>
-  <div class="page-sub" id="lp-sub">Loading data…</div>
+  <div class="page-hd">
+    <h1 class="page-title">Statskundskab <em>F26</em></h1>
+    <div class="page-sub" id="lp-sub">Indlæser data…</div>
+  </div>
 
   <!-- LÆSEPLAN TABS -->
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem">
@@ -151,17 +161,17 @@ footer{padding:2rem;text-align:center;font-size:.75rem;color:var(--t3);border-to
   <div id="lp-content"><div class="loading">Henter data…</div></div>
 
   <!-- COURSE PANELS -->
-  <div class="sh">Kurser</div>
-  <div class="course-grid" id="courseGrid"><div class="loading">Loading...</div></div>
+  <div class="sh" style="--accent:var(--blue)">Kurser</div>
+  <div class="course-grid" id="courseGrid"><div class="loading">Indlæser…</div></div>
 
   <!-- LINKS -->
-  <div class="sh">Links</div>
+  <div class="sh" style="--accent:var(--purple)">Links</div>
   <div class="pills">
     <a href="http://100.78.65.85:8080/briefing.html" class="pill" target="_blank"><span class="dot" style="background:var(--green)"></span> Briefing</a>
     <a href="https://claude.ai" class="pill" target="_blank"><span class="dot" style="background:var(--t3)"></span> Command Center</a>
   </div>
 </div>
-<footer>Personal AI System · Academics · F26</footer>
+<footer>Personal AI System · Statskundskab · Forår 2026</footer>
 
 <script>
 // ═══════════════════════════════════════
@@ -269,10 +279,11 @@ function renderDashboard(el) {
   const s = stats();
   const vis = visibleCourses();
 
+  const pctDone = s.total ? Math.round(100*s.done/s.total) : 0;
   let h = `<div class="lp-stats">
-    <div class="lp-stat" style="border-top:3px solid var(--green)"><div class="lp-stat-val" style="color:var(--green)">${s.done}</div><div class="lp-stat-label">Tekster læst</div><div class="lp-stat-sub">af ${s.total}</div></div>
-    <div class="lp-stat" style="border-top:3px solid var(--blue)"><div class="lp-stat-val" style="color:var(--blue)">${s.ip}</div><div class="lp-stat-label">I gang</div></div>
-    <div class="lp-stat" style="border-top:3px solid var(--purple)"><div class="lp-stat-val" style="color:var(--purple)">${s.dp}</div><div class="lp-stat-label">Sider læst</div><div class="lp-stat-sub">af ${s.tp} s.</div></div>
+    <div class="lp-stat" style="--accent:var(--green)"><div class="lp-stat-val" style="color:var(--green)">${s.done}</div><div class="lp-stat-label">Tekster læst</div><div class="lp-stat-sub">af ${s.total} · ${pctDone}%</div></div>
+    <div class="lp-stat" style="--accent:var(--blue)"><div class="lp-stat-val" style="color:var(--blue)">${s.ip}</div><div class="lp-stat-label">I gang</div><div class="lp-stat-sub">igangværende</div></div>
+    <div class="lp-stat" style="--accent:var(--purple)"><div class="lp-stat-val" style="color:var(--purple)">${s.dp}</div><div class="lp-stat-label">Sider læst</div><div class="lp-stat-sub">af ${s.tp} sider</div></div>
   </div>`;
 
   // Course progress
