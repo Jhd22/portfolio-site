@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0a0a0d">
+<meta name="theme-color" content="#f4f1e8">
 <title>Statskundskab — System</title>
-<link rel="stylesheet" href="shared.css?v=2">
+<link rel="stylesheet" href="shared.css?v=3">
 </head>
 <body>
 <header>
@@ -19,17 +19,17 @@
     <div class="page-sub" id="lp-sub">Indlæser data…</div>
   </div>
 
-  <!-- COURSE PANELS -->
-  <div class="sh first" style="--accent:var(--blue);margin-top:0">Kurser</div>
-  <div class="course-grid" id="courseGrid"><div class="loading">Indlæser…</div></div>
-
-  <!-- LÆSEPLAN TABS -->
-  <div class="sh" style="--accent:var(--green)">Læseplan</div>
+  <!-- LÆSEPLAN — primary focus -->
+  <div class="sh first" style="--accent:var(--green);margin-top:0">Læseplan</div>
   <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem">
     <div class="lp-tabs" id="lp-tabs" style="margin-bottom:0"></div>
     <button class="lp-toggle" id="ir2-toggle" onclick="toggleIR2()" title="Vis/skjul IR2 (afsluttet fag)">IR2</button>
   </div>
   <div id="lp-content"><div class="loading">Henter data…</div></div>
+
+  <!-- COURSE PANELS — secondary, below -->
+  <div class="sh" style="--accent:var(--blue)">Kurser</div>
+  <div class="course-grid" id="courseGrid"><div class="loading">Indlæser…</div></div>
 
   <!-- LINKS -->
   <div class="sh" style="--accent:var(--violet)">Links</div>
@@ -52,19 +52,19 @@ const API_HEADERS = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KE
 // LÆSEPLAN CONSTANTS
 // ═══════════════════════════════════════
 const LP_COURSES = {
-  IP3:     { bg: "#6ea8ff", light: "rgba(110,168,255,.14)", text: "#6ea8ff" },
-  Økonomi: { bg: "#ffb86b", light: "rgba(255,184,107,.14)", text: "#ffb86b" },
-  Metode:  { bg: "#6ee895", light: "rgba(110,232,149,.14)", text: "#6ee895" },
-  IR2:     { bg: "#818cf8", light: "rgba(129,140,248,.14)", text: "#818cf8" },
+  IP3:     { bg: "#1f4d8a", light: "rgba(31,77,138,.10)",  text: "#1f4d8a" },
+  Økonomi: { bg: "#a86b15", light: "rgba(168,107,21,.10)", text: "#a86b15" },
+  Metode:  { bg: "#1a6b35", light: "rgba(26,107,53,.10)",  text: "#1a6b35" },
+  IR2:     { bg: "#5e3a8a", light: "rgba(94,58,138,.10)",  text: "#5e3a8a" },
 };
 const ACTIVE_COURSES = ["IP3", "Økonomi", "Metode"];
 const DEPTH = ["unread","read","noted","restructured","compared","tested"];
 const DEPTH_DA = { unread:"Ulæst", read:"Læst", noted:"Noteret", restructured:"Omstruktureret", compared:"Sammenlignet", tested:"Testet" };
-const DEPTH_CLR = { unread:"#65625b", read:"#6ea8ff", noted:"#b594ff", restructured:"#ffb86b", compared:"#6ee895", tested:"#ff7a7a" };
-const PRIO_STYLE = { høj:{bg:"rgba(255,122,122,.16)",c:"#ff7a7a"}, mellem:{bg:"rgba(255,184,107,.16)",c:"#ffb86b"}, lav:{bg:"rgba(110,232,149,.16)",c:"#6ee895"} };
+const DEPTH_CLR = { unread:"#9c9684", read:"#1f4d8a", noted:"#5e3a8a", restructured:"#a86b15", compared:"#1a6b35", tested:"#a43325" };
+const PRIO_STYLE = { høj:{bg:"rgba(164,51,37,.10)",c:"#a43325"}, mellem:{bg:"rgba(168,107,21,.10)",c:"#a86b15"}, lav:{bg:"rgba(26,107,53,.10)",c:"#1a6b35"} };
 const STATUS_DA = { ikke_startet:"Ikke startet", i_gang:"I gang", læst:"Læst" };
 const WEEK_DATES = { 6:"2/2–8/2",7:"9/2–15/2",8:"16/2–22/2",9:"23/2–1/3",10:"2/3–8/3",11:"9/3–15/3",12:"16/3–22/3",13:"23/3–29/3",14:"30/3–5/4",15:"6/4–12/4",16:"13/4–19/4",17:"20/4–26/4",18:"27/4–3/5",19:"4/5–10/5",20:"11/5–17/5",21:"18/5–24/5" };
-const EVT_STYLE = { deadline:{bg:"rgba(255,122,122,.14)",c:"#ff7a7a",l:"Deadline"}, exam:{bg:"rgba(255,184,107,.14)",c:"#ffb86b",l:"Eksamen"}, holiday:{bg:"rgba(110,232,149,.14)",c:"#6ee895",l:"Ferie"}, info:{bg:"rgba(110,168,255,.14)",c:"#6ea8ff",l:"Info"} };
+const EVT_STYLE = { deadline:{bg:"rgba(164,51,37,.10)",c:"#a43325",l:"Deadline"}, exam:{bg:"rgba(168,107,21,.10)",c:"#a86b15",l:"Eksamen"}, holiday:{bg:"rgba(26,107,53,.10)",c:"#1a6b35",l:"Ferie"}, info:{bg:"rgba(31,77,138,.10)",c:"#1f4d8a",l:"Info"} };
 
 // ═══════════════════════════════════════
 // STATE
@@ -159,7 +159,7 @@ function renderDashboard(el) {
     const cs = s.bc[c], cc = LP_COURSES[c];
     h += `<div class="lp-prog-wrap">
       <div class="lp-prog-label" style="width:96px">
-        <span class="badge" style="background:${cc.bg};color:#0a0a0d">${c}</span>
+        <span class="badge" style="background:${cc.bg};color:#fdfbf5">${c}</span>
         <span style="font-size:.6875rem;color:var(--t3)">${cs.done}/${cs.total}</span>
       </div>
       <div class="lp-pbar-outer"><div class="lp-pbar" style="width:${Math.max(cs.pct,1)}%;background:${cc.bg};color:${cc.bg}"></div></div>
@@ -208,13 +208,13 @@ function readingHTML(r) {
   const ps = PRIO_STYLE[r.priority] || PRIO_STYLE.mellem;
   return `<div class="reading${done?' done':''}" id="r-${r.id}">
     <button class="check${done?' checked':''}" style="${done?`background:${cc.bg};border:none`:''}" onclick="toggleStatus(${r.id})">
-      ${done ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0a0a0d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
+      ${done ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fdfbf5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
     </button>
     <div style="flex:1;min-width:0">
       <div class="reading-title">${esc(r.title)}</div>
       <div class="reading-meta">${esc(r.author)}${r.pages>0?` · ${r.pages} s.`:''}</div>
       <div class="reading-tags">
-        <span class="badge" style="background:${cc.bg};color:#0a0a0d">${r.course}</span>
+        <span class="badge" style="background:${cc.bg};color:#fdfbf5">${r.course}</span>
         <span class="badge" style="background:${ps.bg};color:${ps.c}">${r.priority}</span>
         <button class="depth-btn" style="background:${DEPTH_CLR[r.depth]}" onclick="cycleDepth(${r.id})">${DEPTH_DA[r.depth]}</button>
         ${r.notes ? `<span style="font-size:.625rem;color:var(--t3);font-style:italic">${esc(r.notes)}</span>` : ''}
@@ -356,9 +356,9 @@ window.cycleDepth = async function(id) {
 // COURSE PANELS (existing academics content)
 // ═══════════════════════════════════════
 const CC = {
-  IP3:{color:'#6ea8ff',full:'International Politics 3',exam:'4 jun kl. 12',format:'Fri hjemmeopgave',approach:'Comparative theory mapping — realism vs. liberalism vs. constructivism. Raw sources first.',sched:[['Man','08–10 FL'],['Tor','13–15 FL'],['Fre','08–10 Hold']]},
-  'Økonomi':{color:'#ffb86b',full:'Macroeconomics',exam:'9 jun kl. 9–13',format:'4-timers skriftlig',approach:'Model-based graphical reasoning. IS-LM, AS-AD, Mundell-Fleming, Phillips curve.',sched:[['Tor','08–10 FL'],['Tor','15–17 Café'],['Fre','10–12 Hold']],alert:'Skriveøvelse 22 apr — BLOCKING'},
-  Metode:{color:'#6ee895',full:'Qualitative Methods',exam:'26 maj kl. 12',format:'Fri hjemmeopgave',approach:'Does not read pensum. Agent delivers summaries before + after lectures.',sched:[['Man','13–15 FL'],['Tor','10–12 Hold']]}
+  IP3:{color:'#1f4d8a',full:'International Politics 3',exam:'4 jun kl. 12',format:'Fri hjemmeopgave',approach:'Comparative theory mapping — realism vs. liberalism vs. constructivism. Raw sources first.',sched:[['Man','08–10 FL'],['Tor','13–15 FL'],['Fre','08–10 Hold']]},
+  'Økonomi':{color:'#a86b15',full:'Macroeconomics',exam:'9 jun kl. 9–13',format:'4-timers skriftlig',approach:'Model-based graphical reasoning. IS-LM, AS-AD, Mundell-Fleming, Phillips curve.',sched:[['Tor','08–10 FL'],['Tor','15–17 Café'],['Fre','10–12 Hold']]},
+  Metode:{color:'#1a6b35',full:'Qualitative Methods',exam:'26 maj kl. 12',format:'Fri hjemmeopgave',approach:'Does not read pensum. Agent delivers summaries before + after lectures.',sched:[['Man','13–15 FL'],['Tor','10–12 Hold']]}
 };
 
 function loadCoursePanels() {

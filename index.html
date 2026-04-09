@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0a0a0d">
+<meta name="theme-color" content="#f4f1e8">
 <title>System — Cockpit</title>
-<link rel="stylesheet" href="shared.css?v=2">
+<link rel="stylesheet" href="shared.css?v=3">
 </head>
 <body>
 <header>
@@ -19,14 +19,17 @@
   </nav>
 </header>
 
-<div class="main">
+<div class="main main--wide">
+
+  <!-- TICKER -->
+  <div class="ticker" id="ticker"></div>
 
   <!-- HERO -->
-  <section class="hero">
-    <div class="hero-eyebrow" id="heroEyebrow">Indlæser…</div>
-    <h1 class="hero-title">Goddag, <em>Jakob.</em></h1>
-    <div class="hero-meta" id="heroMeta"></div>
-  </section>
+  <div class="cockpit-hero">
+    <div class="cockpit-hero-eyebrow" id="heroEyebrow">—</div>
+    <h1 class="cockpit-hero-title">Goddag, <em>Jakob.</em></h1>
+    <div class="cockpit-hero-sub" id="heroSub">Forår 2026 · 4. semester · Statskundskab KU</div>
+  </div>
 
   <!-- ALERT -->
   <div class="alert" id="alertBox" style="display:none">
@@ -35,66 +38,99 @@
     <span class="alert-days" id="alertDays"></span>
   </div>
 
-  <!-- TODAY BLOCK -->
-  <div class="today">
-    <div class="today-hd">
-      <div class="today-title" id="todayTitle">I dag</div>
-      <div class="today-date" id="todayDate"></div>
+  <!-- QUADRANT GRID -->
+  <div class="quad-grid">
+
+    <!-- ── Q1: I DAG ─────────────────────────────────── -->
+    <div class="quad">
+      <div class="quad-hd">
+        <span class="quad-num">01</span>
+        <span class="quad-title">I dag</span>
+        <span class="quad-meta" id="q1Meta">—</span>
+      </div>
+      <div class="quad-bd">
+        <div class="q-section">
+          <div class="q-section-label">Forelæsninger</div>
+          <div id="q1Lectures"><div class="q-empty-line">—</div></div>
+        </div>
+        <div class="q-section">
+          <div class="q-section-label">Træning</div>
+          <div id="q1Training"><div class="q-empty-line">—</div></div>
+        </div>
+      </div>
     </div>
-    <div class="today-grid" id="todayGrid">
-      <div class="today-cell"><div class="today-label">Skema</div><div class="today-value" id="cellSchedule">—</div><div class="today-sub" id="cellScheduleSub"></div></div>
-      <div class="today-cell"><div class="today-label" style="--accent:var(--red)">Næste deadline</div><div class="today-value" id="cellDeadline">—</div><div class="today-sub" id="cellDeadlineSub"></div></div>
-      <div class="today-cell"><div class="today-label" style="--accent:var(--green)">Recovery</div><div class="today-value" id="cellRecovery">—</div><div class="today-sub" id="cellRecoverySub"></div></div>
-      <div class="today-cell"><div class="today-label" style="--accent:var(--violet)">Træning</div><div class="today-value" id="cellTraining">—</div><div class="today-sub" id="cellTrainingSub"></div></div>
+
+    <!-- ── Q2: READINESS ─────────────────────────────── -->
+    <div class="quad">
+      <div class="quad-hd">
+        <span class="quad-num">02</span>
+        <span class="quad-title">Readiness</span>
+        <span class="quad-meta" id="q2Meta">—</span>
+      </div>
+      <div class="quad-bd">
+        <div class="q-zone">
+          <div class="q-zone-word" id="q2Zone">—</div>
+          <div class="q-zone-rec" id="q2Rec">Indlæser recovery-data…</div>
+        </div>
+        <div class="q-metrics" id="q2Metrics">
+          <div class="q-metric"><div class="q-metric-label">HRV</div><div class="q-metric-value">—</div><div class="q-metric-target">≥ 57 ms</div></div>
+          <div class="q-metric"><div class="q-metric-label">RHR</div><div class="q-metric-value">—</div><div class="q-metric-target">≤ 62 bpm</div></div>
+          <div class="q-metric"><div class="q-metric-label">Søvn</div><div class="q-metric-value">—</div><div class="q-metric-target">≥ 8 t</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Q3: FORUDE ────────────────────────────────── -->
+    <div class="quad">
+      <div class="quad-hd">
+        <span class="quad-num">03</span>
+        <span class="quad-title">Forude</span>
+        <span class="quad-meta" id="q3Meta">—</span>
+      </div>
+      <div class="quad-bd">
+        <div class="q-exam-list" id="q3List"><div class="q-empty">Indlæser…</div></div>
+      </div>
+    </div>
+
+    <!-- ── Q4: CYKLUS ────────────────────────────────── -->
+    <div class="quad">
+      <div class="quad-hd">
+        <span class="quad-num">04</span>
+        <span class="quad-title">Cyklus</span>
+        <span class="quad-meta" id="q4Meta">—</span>
+      </div>
+      <div class="quad-bd">
+        <div class="q-cycle-list" id="q4List"></div>
+        <div class="q-compliance">
+          <div class="q-compliance-meta">
+            <span id="q4Text">0/5 · 0%</span>
+            <span id="q4Days">—</span>
+          </div>
+          <div class="q-compliance-bar"><div class="q-compliance-fill" id="q4Fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /quad-grid -->
+
+  <!-- SIGNALS (intelligence) -->
+  <div class="signals">
+    <div class="signals-hd">
+      <span class="quad-num">05</span>
+      <span class="quad-title">Signaler</span>
+      <span class="quad-meta" id="sigMeta">Claude-genereret</span>
+    </div>
+    <div class="signals-bd" id="signalsBody">
+      <div class="signals-empty">Ingen signaler endnu — generer på næste data-upload</div>
     </div>
   </div>
 
-  <!-- EXAM COUNTDOWN -->
-  <div class="sh" style="--accent:var(--red)">Tid til eksamen</div>
-  <div class="exam-bars" id="examBars"></div>
-
-  <!-- COURSE STRIP -->
-  <div class="sh" style="--accent:var(--blue)">Kurser <span id="course-sub"></span></div>
+  <!-- DRILL-DOWN: course strip -->
+  <div class="sh">Kurser <span id="course-sub"></span></div>
   <div class="course-strip" id="courseStrip"><div class="loading">Indlæser…</div></div>
 
-  <!-- DEADLINES + GOALS -->
-  <div class="grid2">
-    <div>
-      <div class="sh" style="--accent:var(--amber);margin-top:0">Deadlines</div>
-      <div class="dl-panel" id="dlPanel"><div class="loading">Indlæser…</div></div>
-    </div>
-    <div>
-      <div class="sh" style="--accent:var(--violet);margin-top:0">Mål</div>
-      <div class="dl-panel" id="goalsPanel"><div class="loading">Indlæser…</div></div>
-    </div>
-  </div>
+</div><!-- /main -->
 
-  <!-- WEEKLY SCHEDULE -->
-  <div class="sh" style="--accent:var(--green)">Ugeskema</div>
-  <div class="sched">
-    <div class="sd"><div class="sd-name">Man</div>
-      <div class="ss"><span class="t">08–10</span><span class="c" style="color:var(--blue)">IP3</span> Forelæsning</div>
-      <div class="ss"><span class="t">13–15</span><span class="c" style="color:var(--green)">Metode</span> Forelæsning</div>
-    </div>
-    <div class="sd sh-hide"><div class="sd-name">Tir</div>
-      <div class="ss" style="color:var(--t3);font-size:.6875rem">Ingen undervisning</div>
-    </div>
-    <div class="sd sh-hide"><div class="sd-name">Ons</div>
-      <div class="ss" style="color:var(--t3);font-size:.6875rem">Ingen undervisning</div>
-    </div>
-    <div class="sd"><div class="sd-name">Tor</div>
-      <div class="ss"><span class="t">08–10</span><span class="c" style="color:var(--amber)">Økon</span> Forelæsning</div>
-      <div class="ss"><span class="t">10–12</span><span class="c" style="color:var(--green)">Metode</span> Hold</div>
-      <div class="ss"><span class="t">13–15</span><span class="c" style="color:var(--blue)">IP3</span> Forelæsning</div>
-      <div class="ss"><span class="t">15–17</span><span class="c" style="color:var(--amber)">Økon</span> Café</div>
-    </div>
-    <div class="sd"><div class="sd-name">Fre</div>
-      <div class="ss"><span class="t">08–10</span><span class="c" style="color:var(--blue)">IP3</span> Hold</div>
-      <div class="ss"><span class="t">10–12</span><span class="c" style="color:var(--amber)">Økon</span> Hold</div>
-    </div>
-  </div>
-
-</div>
 <footer>Personal AI System · Cockpit · Forår 2026</footer>
 
 <script>
@@ -102,190 +138,388 @@ const S='https://kgiepplwarutwmzvvezc.supabase.co/rest/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
 const H={'apikey':K,'Authorization':'Bearer '+K};
 
-// Course config
+// ── Course config ────────────────────────────────
 const CC={
-  IP3:{col:'#6ea8ff',exam:'4 jun',name:'IP3'},
-  Økonomi:{col:'#ffb86b',exam:'9 jun',name:'Økonomi'},
-  Metode:{col:'#6ee895',exam:'26 maj',name:'Metode'}
+  IP3:     {col:'var(--blue)',  name:'IP3',     short:'IP3'},
+  Økonomi: {col:'var(--amber)', name:'Økonomi', short:'ØK'},
+  Metode:  {col:'var(--green)', name:'Metode',  short:'MET'},
 };
 
-// Static weekday schedule (used by today-block)
+// ── Weekday schedule (mirrors academics.html sched) ──
 const SCHEDULE={
-  1:[{t:'08–10',c:'IP3',k:'Forelæsning',col:'var(--blue)'},{t:'13–15',c:'Metode',k:'Forelæsning',col:'var(--green)'}],
-  2:[],3:[],
-  4:[{t:'08–10',c:'Økonomi',k:'Forelæsning',col:'var(--amber)'},{t:'10–12',c:'Metode',k:'Hold',col:'var(--green)'},{t:'13–15',c:'IP3',k:'Forelæsning',col:'var(--blue)'},{t:'15–17',c:'Økonomi',k:'Café',col:'var(--amber)'}],
-  5:[{t:'08–10',c:'IP3',k:'Hold',col:'var(--blue)'},{t:'10–12',c:'Økonomi',k:'Hold',col:'var(--amber)'}],
-  6:[],0:[]
+  1:[  // Mon
+    {t:'08–10',c:'IP3',    k:'Forelæsning', col:'var(--blue)'},
+    {t:'13–15',c:'Metode', k:'Forelæsning', col:'var(--green)'}
+  ],
+  2:[], 3:[],
+  4:[  // Thu
+    {t:'08–10',c:'Økonomi',k:'Forelæsning', col:'var(--amber)'},
+    {t:'10–12',c:'Metode', k:'Hold',        col:'var(--green)'},
+    {t:'13–15',c:'IP3',    k:'Forelæsning', col:'var(--blue)'},
+    {t:'15–17',c:'Økonomi',k:'Café',        col:'var(--amber)'}
+  ],
+  5:[  // Fri
+    {t:'08–10',c:'IP3',    k:'Hold',        col:'var(--blue)'},
+    {t:'10–12',c:'Økonomi',k:'Hold',        col:'var(--amber)'}
+  ],
+  6:[], 0:[]
 };
 
-// Weekly training cycle (rough — synced with training.html)
-const TRAINING_CYCLE={1:'Push',2:'Hvile',3:'Pull',4:'HIIT roning',5:'Zone 2 løb',6:'Ben + Acc',0:'Hvile'};
+// ── Weekly training cycle (mirrors training.html WEEKLY_PLAN) ──
+const WEEKLY_PLAN=[
+  {id:'push',  name:'Push',        detail:'Bench, Incline DB, Laterals, Dips, Triceps',  day:'Man/Ons'},
+  {id:'pull',  name:'Pull',        detail:'Pull-ups, Rows, Face Pulls, Curls, Rear Delt',day:'Tir/Tor'},
+  {id:'legs',  name:'Ben + Acc',   detail:'Squat, RDL, Lunges, Calves, Abs',             day:'Fre/Lør'},
+  {id:'hiit',  name:'HIIT Roning', detail:'3-4 × 4 min @ HR 170+',                       day:'Tor'},
+  {id:'zone2', name:'Zone 2 Løb',  detail:'HR 130-150 · 25-35 min',                      day:'Fre'},
+];
+const DAY_TO_WORKOUT={1:'push', 3:'pull', 4:'hiit', 5:'zone2', 6:'legs'};
 
+// ── Exams (dates — deadlines fetched from Supabase events) ──
 const SEMESTER_START=new Date('2026-02-02');
 const EXAMS=[
-  {course:'Økonomi',label:'Skriveøvelse',date:'2026-04-22',col:'var(--amber)',urgent:true},
-  {course:'Metode', label:'Hjemmeopgave',date:'2026-05-26',col:'var(--green)'},
-  {course:'IP3',    label:'Hjemmeopgave',date:'2026-06-04',col:'var(--blue)'},
-  {course:'Økonomi',label:'Skriftlig eksamen',date:'2026-06-09',col:'var(--amber)'},
+  {course:'Metode',  label:'Hjemmeopgave',      date:'2026-05-26', kind:'exam'},
+  {course:'IP3',     label:'Hjemmeopgave',      date:'2026-06-04', kind:'exam'},
+  {course:'Økonomi', label:'Skriftlig eksamen', date:'2026-06-09', kind:'exam'},
 ];
 
 const DAYS_DA=['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
-const MONTHS_DA=['januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];
+const DAYS_DA_SHORT=['Søn','Man','Tir','Ons','Tor','Fre','Lør'];
+const MONTHS_DA=['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
 
-function fmtDate(d){return `${d.getDate()}. ${MONTHS_DA[d.getMonth()]} ${d.getFullYear()}`;}
+function fmtShort(d){return `${d.getDate()} ${MONTHS_DA[d.getMonth()]}`}
+function daysBetween(a,b){return Math.ceil((new Date(b)-new Date(a))/864e5)}
 
-// ── Hero ─────────────────────────────────────────
-(function renderHero(){
+// ═══════════════════════════════════════════════════
+// TRAINING CYCLE — localStorage (synced with training.html)
+// ═══════════════════════════════════════════════════
+function getCycleData(){
+  const today=new Date().toISOString().slice(0,10);
+  try{
+    const d=JSON.parse(localStorage.getItem('training_cycle')||'{}');
+    if(!d.id){
+      const fresh={id:1,started:today};
+      localStorage.setItem('training_cycle',JSON.stringify(fresh));
+      return fresh;
+    }
+    return d;
+  }catch{return{id:1,started:new Date().toISOString().slice(0,10)}}
+}
+function loadTicks(){
+  const cycle=getCycleData();
+  try{return JSON.parse(localStorage.getItem('ticks_cycle_'+cycle.id)||'{}')}
+  catch{return{}}
+}
+function saveTicks(ticks){
+  const cycle=getCycleData();
+  localStorage.setItem('ticks_cycle_'+cycle.id,JSON.stringify(ticks));
+}
+function toggleWorkout(id){
+  const ticks=loadTicks();
+  if(ticks[id]){ delete ticks[id]; }
+  else{ ticks[id]={mode:'full'}; }
+  saveTicks(ticks);
+  renderCycle();
+  renderToday();
+}
+
+// ═══════════════════════════════════════════════════
+// TICKER (top status bar)
+// ═══════════════════════════════════════════════════
+function renderTicker(){
   const now=new Date();
   const dayName=DAYS_DA[now.getDay()];
-  const semWeek=Math.floor((now-SEMESTER_START)/(7*864e5))+6; // semester starts uge 6
-  const upcoming=EXAMS.filter(e=>new Date(e.date)>=now);
-  const next=upcoming[0];
-  const daysToNext=next?Math.ceil((new Date(next.date)-now)/864e5):null;
+  const semWeek=Math.floor((now-SEMESTER_START)/(7*864e5))+6;
+  const up=EXAMS.filter(e=>new Date(e.date)>=now).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const nextExam=up[0];
+  const cycle=getCycleData();
+  const daysSince=Math.floor((Date.now()-new Date(cycle.started))/864e5);
+  const cycleDay=daysSince+1;
 
-  document.getElementById('heroEyebrow').innerHTML=
-    `${dayName} · Uge ${semWeek}${next?` · ${daysToNext} dage til ${next.course}`:''}`;
+  const items=[];
+  items.push(`<div class="ticker-item tk-alive"><span class="tk-dot"></span><b>${dayName}</b> ${fmtShort(now)}</div>`);
+  items.push(`<div class="ticker-item">Uge <b>${semWeek}</b></div>`);
+  if(nextExam){
+    const dd=daysBetween(now,nextExam.date);
+    items.push(`<div class="ticker-item tk-pri"><span class="tk-num">${dd}d</span>til <b>${nextExam.course}</b></div>`);
+  }
+  items.push(`<div class="ticker-item">Cyklus <b>${cycle.id}</b> · dag <b>${cycleDay}/14</b></div>`);
+  items.push(`<div class="ticker-item" id="tkZone">Readiness <b>—</b></div>`);
 
-  let meta=`<span><b>Forår 2026</b> · 4. semester</span>`;
-  meta+=`<span>Statskundskab · <b>KU</b></span>`;
-  if(next) meta+=`<span>Næste eksamen · <b>${next.course}</b> ${new Date(next.date).toLocaleDateString('da-DK',{day:'numeric',month:'short'})}</span>`;
-  document.getElementById('heroMeta').innerHTML=meta;
+  document.getElementById('ticker').innerHTML=items.join('');
+  document.getElementById('heroEyebrow').textContent=`${dayName.toUpperCase()} · ${fmtShort(now).toUpperCase()} · UGE ${semWeek}`;
+}
 
-  // Today date stamp
-  document.getElementById('todayDate').textContent=fmtDate(now).toUpperCase();
-  document.getElementById('todayTitle').textContent=dayName;
+// ═══════════════════════════════════════════════════
+// Q1: I DAG — lectures + today's workout
+// ═══════════════════════════════════════════════════
+function renderToday(){
+  const now=new Date();
+  document.getElementById('q1Meta').textContent=DAYS_DA_SHORT[now.getDay()].toUpperCase()+' '+fmtShort(now).toUpperCase();
 
-  // Today schedule cell
+  // Lectures
   const todays=SCHEDULE[now.getDay()]||[];
-  if(todays.length){
-    const first=todays[0];
-    document.getElementById('cellSchedule').textContent=`${first.c}`;
-    document.getElementById('cellSchedule').style.color=first.col;
-    document.getElementById('cellScheduleSub').innerHTML=
-      todays.map(s=>`<span style="color:${s.col}">${s.t}</span> ${s.k}`).join(' · ');
-  } else {
-    document.getElementById('cellSchedule').textContent='Fri dag';
-    document.getElementById('cellScheduleSub').textContent='Ingen undervisning i dag';
-  }
-
-  // Training cell
-  const tr=TRAINING_CYCLE[now.getDay()];
-  document.getElementById('cellTraining').textContent=tr;
-  document.getElementById('cellTrainingSub').textContent=tr==='Hvile'?'Restitution':'Se træningsside for detaljer';
-})();
-
-// ── Exam countdown bars ───────────────────────────
-(function(){
-  const now=new Date();
-  const up=EXAMS.filter(e=>new Date(e.date)>=now);
-  document.getElementById('examBars').innerHTML=up.map(e=>{
-    const d=new Date(e.date),left=Math.ceil((d-now)/864e5);
-    const totalDays=Math.ceil((d-SEMESTER_START)/864e5);
-    const pct=Math.min(99,Math.round((1-(left/totalDays))*100));
-    const c=left<=7?'var(--red)':left<=21?'var(--amber)':e.col;
-    return`<div class="exam-bar${e.urgent?' urgent':''}">
-      <div class="exam-bar-top">
-        <div><span class="exam-course" style="color:${e.col}">${e.course}</span><span class="exam-label">${e.label}</span></div>
-        <div class="exam-right"><span class="exam-days" style="color:${c}">${left}d</span><span class="exam-date">${d.toLocaleDateString('da-DK',{day:'numeric',month:'short'})}</span></div>
+  const nowMin=now.getHours()*60+now.getMinutes();
+  const lecHtml=todays.length?todays.map(l=>{
+    const [a,b]=l.t.split('–').map(x=>{const[h,m]=x.trim().split(':');return parseInt(h)*60+(parseInt(m)||0)});
+    let cls='';
+    if(nowMin>b) cls='past';
+    else if(nowMin>=a&&nowMin<=b) cls='now';
+    const mark=cls==='past'?'FÆRDIG':cls==='now'?'• NU':'';
+    return `<div class="q-lecture ${cls}">
+      <span class="q-lecture-time">${l.t}</span>
+      <div class="q-lecture-main">
+        <span class="q-lecture-course" style="color:${l.col}">${l.c}</span>
+        <span class="q-lecture-kind">${l.k}</span>
       </div>
-      <div class="exam-track"><div class="exam-fill" style="width:${pct}%;background:${c};color:${c}"></div></div>
+      <span class="q-lecture-mark">${mark}</span>
     </div>`;
-  }).join('');
-})();
+  }).join(''):'<div class="q-empty-line">Ingen undervisning</div>';
+  document.getElementById('q1Lectures').innerHTML=lecHtml;
 
-// ── Course cards ──────────────────────────────────
-fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(d=>{
-  const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,done:0};c[n].t++;if(r.status==='læst')c[n].done++});
-  document.getElementById('courseStrip').innerHTML=['Økonomi','IP3','Metode'].filter(n=>c[n]).map(n=>{
-    const v=c[n],cfg=CC[n],pct=Math.round(100*v.done/v.t);
-    return`<a href="academics.html" class="cc" style="--accent:${cfg.col}">
-      <div class="cc-body">
-        <div class="cc-head">
-          <span class="cc-name" style="color:${cfg.col}">${n}</span>
-          <span class="cc-badge" style="color:${cfg.col}">${cfg.exam}</span>
-        </div>
-        <div class="cc-bar-outer"><div class="cc-bar" style="width:${Math.max(pct,2)}%;background:${cfg.col};color:${cfg.col}"></div></div>
-        <div class="cc-stats"><span class="cc-done" style="color:${cfg.col}">${v.done}/${v.t} læst</span><span class="cc-pct">${pct}%</span></div>
+  // Today's workout
+  const woId=DAY_TO_WORKOUT[now.getDay()];
+  const wEl=document.getElementById('q1Training');
+  if(!woId){
+    wEl.innerHTML='<div class="q-workout rest"><div class="q-workout-check"></div><div class="q-workout-main"><div class="q-workout-name">Hviledag</div><div class="q-workout-detail">Restitution og mobility</div></div></div>';
+  }else{
+    const plan=WEEKLY_PLAN.find(w=>w.id===woId);
+    const ticks=loadTicks();
+    const t=ticks[woId];
+    const cls=t?'done-'+t.mode:'';
+    const check=t?'\u2713':'';
+    const mode=t?(t.mode==='full'?'FULD':t.mode==='short'?'KORT':'DONE'):'';
+    wEl.innerHTML=`<div class="q-workout ${cls}" onclick="toggleWorkout('${woId}')">
+      <div class="q-workout-check">${check}</div>
+      <div class="q-workout-main">
+        <div class="q-workout-name">${plan.name}</div>
+        <div class="q-workout-detail">${plan.detail}</div>
       </div>
-    </a>`;
-  }).join('');
-}).catch(()=>{document.getElementById('courseStrip').innerHTML='<div class="loading">Kunne ikke hente data</div>'});
+      <div class="q-workout-mode">${mode||'TRYK'}</div>
+    </div>`;
+  }
+}
 
-// ── Deadlines + alert + today-block deadline cell ─
-fetch(S+'/events?select=*&order=date.asc',{headers:H}).then(r=>r.json()).then(ev=>{
-  const now=new Date();
-  const up=ev.filter(e=>e.date&&new Date(e.date)>=new Date(now.toDateString()));
+// ═══════════════════════════════════════════════════
+// Q2: READINESS — zone + metrics
+// ═══════════════════════════════════════════════════
+async function renderReadiness(){
+  try{
+    const r=await fetch(S+'/recovery_logs?select=date,hrv,rhr,sleep_hours,recovery_zone&order=date.desc&limit=14',{headers:H});
+    const data=await r.json();
+    if(!data.length)throw new Error('no data');
+    const today=data[0];
+    const prev=data[1]||today;
+    const zone=(today.recovery_zone||'').toLowerCase();
+    const map={
+      green: {l:'Grøn', c:'var(--green)', rec:'<b>Push hårdt.</b> Alle signaler grønne — godt tidspunkt til ny PR.'},
+      yellow:{l:'Gul',  c:'var(--amber)', rec:'<b>Normal træning.</b> Hold intensitet, undgå nye maks-forsøg.'},
+      red:   {l:'Rød',  c:'var(--red)',   rec:'<b>Kun mobility og let bevægelse.</b> Lad kroppen restituere.'}
+    };
+    const m=map[zone]||{l:'—',c:'var(--t3)',rec:'Ukendt zone. Upload recovery-data.'};
+    const zEl=document.getElementById('q2Zone');
+    zEl.textContent=m.l.toUpperCase();
+    zEl.style.color=m.c;
+    document.getElementById('q2Rec').innerHTML=m.rec;
+    document.getElementById('q2Meta').textContent=today.date;
 
-  // Alert for urgent
-  const urg=up.find(e=>e.type==='deadline'||e.type==='exam');
-  if(urg){
-    const dd=Math.ceil((new Date(urg.date)-now)/864e5);
-    if(dd<=21){
-      document.getElementById('alertBox').style.display='flex';
-      document.getElementById('alertCourse').textContent=urg.course||'';
-      document.getElementById('alertText').textContent=urg.label;
-      document.getElementById('alertDays').textContent=dd>0?dd+'d':dd===0?'I dag':'Overskredet';
+    // Update ticker zone badge
+    const tz=document.getElementById('tkZone');
+    if(tz) tz.innerHTML=`Readiness <b style="color:${m.c}">${m.l}</b>`;
+
+    function delta(curr,prev,inverse=false){
+      if(!curr||!prev||curr===prev)return'<span class="delta flat">—</span>';
+      const up=curr>prev;
+      const good=inverse?!up:up;
+      const cls=good?'up':'down';
+      const sign=up?'▲':'▼';
+      const diff=Math.abs(curr-prev);
+      return `<span class="delta ${cls}">${sign}${diff.toFixed(diff<1?1:0)}</span>`;
     }
+    const hrvOk=today.hrv>=57, rhrOk=today.rhr<=62, sleepOk=today.sleep_hours>=8;
+    document.getElementById('q2Metrics').innerHTML=`
+      <div class="q-metric">
+        <div class="q-metric-label">HRV</div>
+        <div class="q-metric-value" style="color:${hrvOk?'var(--green)':'var(--t1)'}">${today.hrv||'—'} <span class="u">ms</span> ${delta(today.hrv,prev.hrv)}</div>
+        <div class="q-metric-target">≥ 57 ms</div>
+      </div>
+      <div class="q-metric">
+        <div class="q-metric-label">RHR</div>
+        <div class="q-metric-value" style="color:${rhrOk?'var(--green)':'var(--t1)'}">${today.rhr||'—'} <span class="u">bpm</span> ${delta(today.rhr,prev.rhr,true)}</div>
+        <div class="q-metric-target">≤ 62 bpm</div>
+      </div>
+      <div class="q-metric">
+        <div class="q-metric-label">Søvn</div>
+        <div class="q-metric-value" style="color:${sleepOk?'var(--green)':'var(--t1)'}">${today.sleep_hours?today.sleep_hours.toFixed(1):'—'} <span class="u">t</span> ${delta(today.sleep_hours,prev.sleep_hours)}</div>
+        <div class="q-metric-target">≥ 8 t</div>
+      </div>`;
+  }catch(e){
+    document.getElementById('q2Rec').textContent='Kunne ikke hente recovery-data.';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// Q3: FORUDE — exams + deadlines merged
+// ═══════════════════════════════════════════════════
+async function renderForude(){
+  const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
+
+  // Start with hardcoded exams
+  let items=EXAMS.map(e=>({...e, dd:daysBetween(now,e.date)})).filter(e=>e.dd>=0);
+
+  // Merge with Supabase events (deadlines + any extra exams)
+  try{
+    const r=await fetch(S+'/events?select=*&order=date.asc',{headers:H});
+    const ev=await r.json();
+    ev.forEach(e=>{
+      if(!e.date||e.date<todayStr)return;
+      if(e.type!=='deadline'&&e.type!=='exam')return;
+      // Skip if already in EXAMS (matching course + date)
+      if(items.find(x=>x.course===e.course&&x.date===e.date))return;
+      items.push({
+        course:e.course,
+        label:e.label,
+        date:e.date,
+        kind:e.type,
+        dd:daysBetween(now,e.date)
+      });
+    });
+  }catch{}
+
+  items.sort((a,b)=>a.dd-b.dd);
+  const top=items.slice(0,6);
+
+  document.getElementById('q3Meta').textContent=`${items.length} KOMMENDE`;
+  if(!top.length){
+    document.getElementById('q3List').innerHTML='<div class="q-empty">Ingen kommende deadlines</div>';
+    return;
   }
 
-  // Today-block deadline cell
-  if(up.length){
-    const next=up[0];
-    const dd=Math.ceil((new Date(next.date)-now)/864e5);
-    document.getElementById('cellDeadline').textContent=next.label;
-    const col=CC[next.course]?.col||'var(--gold)';
-    document.getElementById('cellDeadlineSub').innerHTML=`<span style="color:${col}">${next.course||''}</span> · ${dd} dage`;
-  } else {
-    document.getElementById('cellDeadline').textContent='Ingen';
-    document.getElementById('cellDeadlineSub').textContent='Næste 30 dage';
-  }
-
-  // Deadline panel
-  const p=document.getElementById('dlPanel');
-  p.innerHTML=up.length?up.slice(0,8).map(e=>{
-    const dt=new Date(e.date),ds=dt.toLocaleDateString('da-DK',{day:'numeric',month:'short'}),dd=Math.ceil((dt-now)/864e5);
-    const col=(CC[e.course]?.col)||'var(--t3)';
-    let tag='';
-    if(e.type==='exam')tag=`<span class="dl-tag" style="background:var(--amber-a);color:var(--amber)">Eksamen</span>`;
-    else if(dd<=14&&e.type==='deadline')tag=`<span class="dl-tag" style="background:var(--red-a);color:var(--red)">${dd}d</span>`;
-    return`<div class="dl">
-      <span class="dl-date" style="color:${dd<=7?'var(--red)':dd<=21?'var(--amber)':'var(--t1)'}">${ds}</span>
-      <span class="dl-c" style="color:${col}">${e.course||''}</span>
-      <span class="dl-name">${e.label}</span>${tag}
+  document.getElementById('q3List').innerHTML=top.map(e=>{
+    const col=CC[e.course]?.col||'var(--t3)';
+    const cls=e.dd<=7?'urgent':e.dd<=21?'soon':'';
+    const tag=e.kind==='exam'?'<span class="q-exam-tag exam">EKSAMEN</span>':'<span class="q-exam-tag dl">OPGAVE</span>';
+    const d=new Date(e.date);
+    return `<div class="q-exam-row ${cls}">
+      <div class="q-exam-days">${e.dd}<span class="u">d</span></div>
+      <div class="q-exam-info">
+        <div class="q-exam-label">${e.label}${tag}</div>
+        <div class="q-exam-course" style="color:${col}">${e.course||''}</div>
+      </div>
+      <div class="q-exam-date">${fmtShort(d)}</div>
     </div>`;
-  }).join(''):'<div class="loading">Ingen kommende</div>';
-}).catch(()=>{
-  document.getElementById('cellDeadline').textContent='—';
-  document.getElementById('cellDeadlineSub').textContent='Kunne ikke hente';
-});
+  }).join('');
 
-// ── Goals ─────────────────────────────────────────
-fetch(S+'/goals?select=*&order=domain.asc',{headers:H}).then(r=>r.json()).then(goals=>{
-  const dc={school:'var(--blue)',training:'var(--green)',general:'var(--violet)'};
-  const active=goals.filter(g=>g.status==='active').slice(0,6);
-  document.getElementById('goalsPanel').innerHTML=active.length?active.map(g=>
-    `<div class="goal"><div class="goal-dot" style="background:${dc[g.domain]||'var(--t3)'};color:${dc[g.domain]||'var(--t3)'}"></div><div><div class="goal-title">${g.title}</div>${g.notes?`<div class="goal-note">${g.notes}</div>`:''}</div></div>`
-  ).join(''):'<div class="loading">Ingen aktive mål</div>';
-}).catch(()=>{
-  document.getElementById('goalsPanel').innerHTML='<div class="loading">Kunne ikke hente data</div>';
-});
+  // Alert for urgent (≤14 days)
+  const urgent=top[0];
+  if(urgent&&urgent.dd<=14){
+    document.getElementById('alertBox').style.display='flex';
+    document.getElementById('alertCourse').textContent=urgent.course||'';
+    document.getElementById('alertText').textContent=urgent.label;
+    document.getElementById('alertDays').textContent=urgent.dd>0?urgent.dd+' dage':urgent.dd===0?'I dag':'Overskredet';
+  }
+}
 
-// ── Recovery cell (today block) ───────────────────
-fetch(S+'/recovery_logs?select=date,hrv,rhr,sleep_hours,recovery_zone&order=date.desc&limit=1',{headers:H}).then(r=>r.json()).then(d=>{
-  if(!d.length){document.getElementById('cellRecovery').textContent='Ingen data';return;}
-  const r=d[0];
-  const zone=(r.recovery_zone||'').toLowerCase();
-  const map={green:{l:'Grøn',c:'var(--green)',msg:'Push hårdt'},yellow:{l:'Gul',c:'var(--amber)',msg:'Normal træning'},red:{l:'Rød',c:'var(--red)',msg:'Mobility / hvile'}};
-  const m=map[zone]||{l:'—',c:'var(--t2)',msg:'Ukendt zone'};
-  const cell=document.getElementById('cellRecovery');
-  cell.textContent=m.l;
-  cell.style.color=m.c;
-  document.getElementById('cellRecoverySub').innerHTML=
-    `${m.msg} · HRV <b style="color:var(--t1)">${r.hrv||'—'}</b> · søvn <b style="color:var(--t1)">${r.sleep_hours||'—'}h</b>`;
-}).catch(()=>{
-  document.getElementById('cellRecovery').textContent='—';
-  document.getElementById('cellRecoverySub').textContent='Kunne ikke hente';
-});
+// ═══════════════════════════════════════════════════
+// Q4: CYKLUS — training tick-off
+// ═══════════════════════════════════════════════════
+function renderCycle(){
+  const ticks=loadTicks();
+  const cycle=getCycleData();
+  const daysSince=Math.floor((Date.now()-new Date(cycle.started))/864e5);
+  document.getElementById('q4Meta').textContent=`CYKLUS ${cycle.id}`;
+  document.getElementById('q4Days').textContent=`Dag ${daysSince+1}/14`;
+
+  document.getElementById('q4List').innerHTML=WEEKLY_PLAN.map(w=>{
+    const t=ticks[w.id];
+    const cls=t?'done-'+t.mode:'';
+    const check=t?'\u2713':'';
+    return `<div class="q-cycle-row ${cls}" onclick="toggleWorkout('${w.id}')">
+      <div class="q-cycle-check">${check}</div>
+      <div class="q-cycle-name">${w.name}</div>
+      <div class="q-cycle-day">${w.day}</div>
+    </div>`;
+  }).join('');
+
+  const done=Object.keys(ticks).length;
+  const total=WEEKLY_PLAN.length;
+  const pct=Math.round(done/total*100);
+  document.getElementById('q4Text').textContent=`${done}/${total} · ${pct}%`;
+  const fill=document.getElementById('q4Fill');
+  fill.style.width=pct+'%';
+  fill.style.background=pct>=80?'var(--green)':pct>=40?'var(--amber)':'var(--red)';
+}
+
+// ═══════════════════════════════════════════════════
+// SIGNALS — Claude-generated insights (optional table)
+// ═══════════════════════════════════════════════════
+async function renderSignals(){
+  try{
+    const r=await fetch(S+'/insights?select=*&order=created_at.desc&limit=6',{headers:H});
+    if(!r.ok)throw new Error('no insights table');
+    const data=await r.json();
+    if(!data.length){
+      document.getElementById('signalsBody').innerHTML='<div class="signals-empty">Ingen signaler endnu — genereres automatisk ved næste data-upload</div>';
+      return;
+    }
+    const latest=data[0].created_at?new Date(data[0].created_at):null;
+    if(latest){
+      document.getElementById('sigMeta').textContent=`Opdateret ${fmtShort(latest)}`;
+    }
+    document.getElementById('signalsBody').innerHTML=data.map(s=>{
+      const kind=(s.kind||'insight').toLowerCase();
+      const d=s.date||s.created_at;
+      const dateStr=d?fmtShort(new Date(d)):'—';
+      return `<div class="signal-row">
+        <span class="signal-arrow">→</span>
+        <span class="signal-kind ${kind}">${s.title||kind}</span>
+        <div class="signal-text">${s.body||''}</div>
+        <span class="signal-date">${dateStr}</span>
+      </div>`;
+    }).join('');
+  }catch(e){
+    // Graceful fallback — table doesn't exist yet or fetch failed
+    document.getElementById('signalsBody').innerHTML='<div class="signals-empty">Ingen signaler endnu — tilføj <b>insights</b>-tabel i Supabase for at aktivere Claude-genereret analyse ved upload</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// DRILL-DOWN: course strip
+// ═══════════════════════════════════════════════════
+async function renderCourses(){
+  try{
+    const r=await fetch(S+'/readings?select=course,status',{headers:H});
+    const d=await r.json();
+    const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,done:0};c[n].t++;if(r.status==='læst')c[n].done++});
+    document.getElementById('courseStrip').innerHTML=['Økonomi','IP3','Metode'].filter(n=>c[n]).map(n=>{
+      const v=c[n],cfg=CC[n],pct=Math.round(100*v.done/v.t);
+      return `<a href="academics.html" class="cc" style="--accent:${cfg.col}">
+        <div class="cc-body">
+          <div class="cc-head">
+            <span class="cc-name" style="color:${cfg.col}">${n}</span>
+            <span class="cc-badge" style="color:${cfg.col};border-color:${cfg.col}">${pct}%</span>
+          </div>
+          <div class="cc-bar-outer"><div class="cc-bar" style="width:${Math.max(pct,2)}%;background:${cfg.col}"></div></div>
+          <div class="cc-stats"><span class="cc-done">${v.done}/${v.t} læst</span><span class="cc-pct">→</span></div>
+        </div>
+      </a>`;
+    }).join('');
+  }catch{
+    document.getElementById('courseStrip').innerHTML='<div class="loading">Kunne ikke hente data</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+renderTicker();
+renderToday();
+renderCycle();
+renderReadiness();
+renderForude();
+renderSignals();
+renderCourses();
 </script>
 </body>
 </html>

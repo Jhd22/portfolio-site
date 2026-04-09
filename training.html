@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4f1e8">
 <title>Træning Intelligence</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="shared.css?v=2">
+<link rel="stylesheet" href="shared.css?v=3">
 </head>
 <body>
 
@@ -58,7 +59,7 @@
     <div class="compliance-bar"><div class="compliance-fill" id="compliance-fill"></div></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.25rem">
       <div id="compliance-text" style="font-size:.55rem;color:var(--t3)"></div>
-      <button id="new-cycle-btn" onclick="advanceCycle()" style="display:none;font-size:.55rem;padding:.2rem .5rem;background:var(--green);color:#fff;border:none;border-radius:4px;cursor:pointer">Ny cyklus</button>
+      <button id="new-cycle-btn" onclick="advanceCycle()" style="display:none;font-size:.55rem;padding:.2rem .5rem;background:var(--green);color:#fdfbf5;border:none;border-radius:4px;cursor:pointer">Ny cyklus</button>
     </div>
     <div class="c" style="margin-top:.75rem">
       <h3>Volumen denne uge vs. landmarks</h3>
@@ -673,7 +674,7 @@ function renderStyrke() {
     <div class="st"><div class="l">Pull-ups</div><div class="v" style="color:var(--green)">BW×10</div><div class="n">reps</div></div>
     <div class="st"><div class="l">Workouts</div><div class="v">${WORKOUTS.length}</div><div class="n">logget</div></div>`;
 
-  drawChart('chart-bench', benchData.map(w => ({d:w.d, v:w.bench})), '#b594ff', ' kg', {target:100, min:50, max:105});
+  drawChart('chart-bench', benchData.map(w => ({d:w.d, v:w.bench})), '#5e3a8a', ' kg', {target:100, min:50, max:105});
 
   const lbmMin = Math.min(...LBM.map(d=>d.v)), lbmMax = Math.max(...LBM.map(d=>d.v));
   document.getElementById('body-stats').innerHTML = `
@@ -681,8 +682,8 @@ function renderStyrke() {
     <div class="st"><div class="l">LBM range</div><div class="v">${lbmMin}–${lbmMax}</div><div class="n">kg</div></div>
     <div class="st"><div class="l">Vægt</div><div class="v">${latestWeight}</div><div class="n">kg</div></div>`;
 
-  drawChart('chart-lbm', LBM, '#6ea8ff', ' kg');
-  drawChart('chart-weight', WEIGHTS, '#6ee895', ' kg');
+  drawChart('chart-lbm', LBM, '#1f4d8a', ' kg');
+  drawChart('chart-weight', WEIGHTS, '#1a6b35', ' kg');
 }
 
 // ═══════════════════════════════════════════════
@@ -701,7 +702,7 @@ function renderLob() {
     <div class="st"><div class="l">Spænd</div><div class="v">${vo2Min}–${vo2Max}</div><div class="n">ml/kg/min</div></div>
     <div class="st"><div class="l">Målinger</div><div class="v">${VO2DATA.length}</div></div>`;
 
-  drawChart('chart-vo2', VO2DATA, '#ffb86b', '', {target:48, min:38, max:50});
+  drawChart('chart-vo2', VO2DATA, '#a86b15', '', {target:48, min:38, max:50});
 
   const runEl = document.getElementById('run-volume-stats');
   if (runEl) runEl.innerHTML = `
@@ -721,7 +722,7 @@ function renderCykling() {
     <div class="st"><div class="l">Gns/md</div><div class="v">${Math.round(totalKm/validMonths.length)}</div><div class="n">km</div></div>
     <div class="st"><div class="l">Bedste md</div><div class="v">${Math.round(Math.max(...CYCLING_M.map(d=>d.total||0)))}</div><div class="n">km</div></div>`;
 
-  drawBarChart('chart-cycling', CYCLING_M, '#5fd0d6');
+  drawBarChart('chart-cycling', CYCLING_M, '#1a6878');
 }
 
 // ═══════════════════════════════════════════════
@@ -739,12 +740,14 @@ async function loadRecovery() {
     const greenDays = data.filter(d => d.recovery_zone === 'green').length;
     const redDays = data.filter(d => d.recovery_zone === 'red').length;
 
-    document.getElementById('status-title').textContent = `${data.length} dage tracket`;
+    const zoneMap = {green:{l:'GRØN',c:'var(--green)',rec:'Push hårdt — ny PR er realistisk'},yellow:{l:'GUL',c:'var(--amber)',rec:'Normal træning, undgå maks-forsøg'},red:{l:'RØD',c:'var(--red)',rec:'Mobility/hvile — lyt til kroppen'}};
+    const zm = zoneMap[today.recovery_zone] || {l:'—',c:'var(--t2)',rec:'Upload recovery-data for at se status'};
+    document.getElementById('status-title').innerHTML = `<span style="color:${zm.c}">${zm.l}</span> · <span style="font-size:.85em;color:var(--t2);font-weight:300">${zm.rec}</span>`;
     document.getElementById('stats-grid').innerHTML = `
-      <div class="st"><div class="l">HRV gns</div><div class="v">${avgHRV}</div><div class="n">ms · threshold 57</div></div>
-      <div class="st"><div class="l">Grønne dage</div><div class="v" style="color:var(--green)">${greenDays}</div><div class="n">af ${data.length}</div></div>
-      <div class="st"><div class="l">Røde dage</div><div class="v" style="color:var(--red)">${redDays}</div></div>
-      <div class="st"><div class="l">I dag</div><div class="v" style="color:var(${today.recovery_zone==='green'?'--green':today.recovery_zone==='red'?'--red':'--amber'})">${today.recovery_zone?.toUpperCase()||'—'}</div></div>`;
+      <div class="st"><div class="l">HRV i dag</div><div class="v" style="color:${today.hrv>=57?'var(--green)':'var(--t1)'}">${today.hrv||'—'}</div><div class="n">ms · mål ≥57</div></div>
+      <div class="st"><div class="l">RHR i dag</div><div class="v" style="color:${today.rhr<=62?'var(--green)':'var(--t1)'}">${today.rhr||'—'}</div><div class="n">bpm · mål ≤62</div></div>
+      <div class="st"><div class="l">Søvn i nat</div><div class="v" style="color:${today.sleep_hours>=8?'var(--green)':'var(--t1)'}">${today.sleep_hours?today.sleep_hours.toFixed(1):'—'}</div><div class="n">timer · mål ≥8</div></div>
+      <div class="st"><div class="l">Grøn %</div><div class="v" style="color:var(--green)">${Math.round(greenDays/data.length*100)}%</div><div class="n">${greenDays}/${data.length} dage</div></div>`;
 
     const avgRHR = (data.filter(d=>d.rhr>0).reduce((s,d)=>s+d.rhr,0)/data.filter(d=>d.rhr>0).length).toFixed(0);
     const avgSleep = (data.filter(d=>d.sleep_hours>0).reduce((s,d)=>s+d.sleep_hours,0)/data.filter(d=>d.sleep_hours>0).length).toFixed(1);
@@ -756,9 +759,9 @@ async function loadRecovery() {
       <div class="st"><div class="l">Grøn %</div><div class="v" style="color:var(--green)">${Math.round(greenDays/data.length*100)}%</div></div>`;
 
     const recent = data.slice(-90);
-    drawChart('chart-hrv', recent.filter(d=>d.hrv>0).map(d=>({d:d.date,v:Math.round(d.hrv*10)/10})), '#6ea8ff', ' ms', {threshold:57});
-    drawChart('chart-rhr', recent.filter(d=>d.rhr>0).map(d=>({d:d.date,v:d.rhr})), '#ff7a7a', ' bpm', {threshold:62});
-    drawChart('chart-sleep', recent.filter(d=>d.sleep_hours>0).map(d=>({d:d.date,v:Math.round(d.sleep_hours*10)/10})), '#b594ff', 'h', {threshold:8,min:4});
+    drawChart('chart-hrv', recent.filter(d=>d.hrv>0).map(d=>({d:d.date,v:Math.round(d.hrv*10)/10})), '#1f4d8a', ' ms', {threshold:57});
+    drawChart('chart-rhr', recent.filter(d=>d.rhr>0).map(d=>({d:d.date,v:d.rhr})), '#a43325', ' bpm', {threshold:62});
+    drawChart('chart-sleep', recent.filter(d=>d.sleep_hours>0).map(d=>({d:d.date,v:Math.round(d.sleep_hours*10)/10})), '#5e3a8a', 'h', {threshold:8,min:4});
 
     const zones = {green:0,yellow:0,red:0};
     data.forEach(d => { if (zones[d.recovery_zone] !== undefined) zones[d.recovery_zone]++; });
