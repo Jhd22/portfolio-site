@@ -1,229 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#fafaf9">
-<title>System — Home</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-:root{--bg:#fafaf9;--surface:#fff;--s2:#f5f5f4;--border:#e7e5e4;--b2:#d6d3d1;--t1:#1c1917;--t2:#57534e;--t3:#a8a29e;--t4:#d6d3d1;--blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#7c3aed;--cyan:#0891b2;--r:14px;--rs:10px;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);--shadow-md:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-
-/* Header */
-header{padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:rgba(250,250,249,.95);backdrop-filter:blur(20px)}
-.logo{font-size:.9375rem;font-weight:700;letter-spacing:-.02em}.logo span{color:var(--t3);font-weight:400}
-nav{display:flex;gap:.25rem}
-nav a{font-size:.8125rem;color:var(--t2);text-decoration:none;padding:.4rem .875rem;border-radius:8px;transition:all .15s;font-weight:500}
-nav a:hover{color:var(--t1);background:var(--s2)}nav a.active{color:var(--t1);background:var(--s2)}
-.nt{display:none;background:none;border:none;cursor:pointer;padding:.5rem}.nt svg{width:20px;height:20px;stroke:var(--t2);fill:none;stroke-width:1.5}
-@media(max-width:640px){header{padding:.875rem 1rem}.nt{display:block}nav{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);flex-direction:column;padding:.5rem;display:none;box-shadow:var(--shadow-md)}nav.open{display:flex}nav a{padding:.7rem .875rem}}
-
-/* Layout */
-.main{max-width:1100px;width:100%;margin:0 auto;padding:2.25rem 1.5rem 3.5rem}
-@media(max-width:640px){.main{padding:1.5rem 1rem 3rem}}
-.page-hd{margin-bottom:1.75rem;position:relative}
-.page-hd::after{content:'';display:block;width:100%;height:1px;background:linear-gradient(90deg,var(--blue),var(--purple),#db2777,transparent);opacity:.45;margin-top:1rem}
-.page-title{font-size:1.875rem;font-weight:700;letter-spacing:-.025em;line-height:1.15}
-.page-title em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.page-sub{font-size:.8125rem;color:var(--t2);margin-top:.375rem;font-family:'JetBrains Mono',monospace;font-weight:400}
-.sh{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.875rem;margin-top:2rem;display:flex;align-items:center;gap:.5rem}
-.sh:first-of-type{margin-top:0}
-.sh::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent,var(--t3));flex-shrink:0}
-.sh span{font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)}
-.loading{color:var(--t3);font-size:.75rem;padding:.5rem 0}
-footer{padding:2.5rem 1.5rem 2rem;text-align:center;font-size:.6875rem;color:var(--t3);letter-spacing:.04em;border-top:1px solid var(--border);margin-top:3rem}
-
-/* Alert */
-.alert{display:flex;align-items:center;gap:.75rem;padding:.875rem 1.125rem;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--rs);margin-bottom:1.5rem;font-size:.8125rem}
-.alert-dot{width:8px;height:8px;background:var(--red);border-radius:50%;flex-shrink:0;animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.alert strong{color:var(--red);font-weight:600}.alert-text{color:#991b1b}.alert-days{color:var(--red);font-weight:700;margin-left:auto;white-space:nowrap;font-family:'JetBrains Mono',monospace}
-
-/* Exam countdown bars */
-.exam-bars{display:flex;flex-direction:column;gap:.5rem;margin-bottom:2rem}
-.exam-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.875rem 1.125rem;box-shadow:var(--shadow);transition:all .2s}
-.exam-bar:hover{box-shadow:var(--shadow-md);border-color:var(--b2)}
-.exam-bar.urgent{border-color:#fecaca;background:linear-gradient(135deg,#fef9f9,#fff)}
-.exam-bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.625rem}
-.exam-course{font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.exam-label{font-size:.8125rem;color:var(--t2);margin-left:.625rem;font-weight:500}
-.exam-right{display:flex;align-items:baseline;gap:.625rem}
-.exam-days{font-family:'JetBrains Mono',monospace;font-size:1.125rem;font-weight:700}
-.exam-date{font-size:.6875rem;color:var(--t3);font-family:'JetBrains Mono',monospace}
-.exam-track{height:6px;background:var(--s2);border-radius:3px;overflow:hidden}
-.exam-fill{height:100%;border-radius:3px;transition:width .8s ease}
-
-/* Compact course cards */
-.course-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;margin-bottom:2rem}
-@media(max-width:700px){.course-strip{grid-template-columns:1fr}}
-.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;text-decoration:none;color:inherit;display:block;transition:all .2s;position:relative}
-.cc::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:var(--accent,var(--t3))}
-.cc:hover{box-shadow:var(--shadow-md);border-color:var(--b2);transform:translateY(-2px)}
-.cc-body{padding:1.125rem 1.25rem}
-.cc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem}
-.cc-name{font-size:1.0625rem;font-weight:700;letter-spacing:-.01em}
-.cc-badge{font-size:.5625rem;font-weight:600;padding:.2rem .625rem;border-radius:100px;white-space:nowrap}
-.cc-bar-outer{height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin-bottom:.5rem}
-.cc-bar{height:100%;border-radius:3px;transition:width .8s ease}
-.cc-stats{display:flex;justify-content:space-between;font-size:.6875rem}
-.cc-done{font-weight:600;font-variant-numeric:tabular-nums}
-.cc-pct{color:var(--t3);font-variant-numeric:tabular-nums}
-
-/* Two-column grid */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem}
-@media(max-width:700px){.grid2{grid-template-columns:1fr}}
-.dl-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-.dl{display:grid;grid-template-columns:56px 52px 1fr auto;align-items:center;gap:.625rem;padding:.625rem 1rem;border-bottom:1px solid var(--s2);font-size:.75rem}
-.dl:last-child{border-bottom:none}
-.dl-date{font-weight:600;font-variant-numeric:tabular-nums;font-size:.6875rem}
-.dl-c{font-size:.5625rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.dl-name{color:var(--t2);font-size:.75rem}
-.dl-tag{font-size:.5625rem;padding:.15rem .5rem;border-radius:100px;font-weight:600;white-space:nowrap}
-.goal{padding:.625rem 1rem;border-bottom:1px solid var(--s2);display:flex;align-items:flex-start;gap:.625rem;font-size:.75rem}
-.goal:last-child{border-bottom:none}
-.goal-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.goal-title{font-weight:500;line-height:1.4}
-.goal-note{font-size:.6875rem;color:var(--t3);margin-top:.1rem}
-
-/* Weekly schedule */
-.sched{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-@media(max-width:640px){.sched{grid-template-columns:repeat(3,1fr)}.sh-hide{display:none}}
-.sd{padding:.875rem .75rem;border-right:1px solid var(--s2)}.sd:last-child{border-right:none}
-.sd-name{font-size:.5625rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.5rem}
-.ss{font-size:.6875rem;color:var(--t2);padding:.25rem 0;border-top:1px solid var(--s2)}.ss:first-of-type{border-top:none}
-.ss .t{color:var(--t3);font-size:.625rem}.ss .c{font-weight:600}
-</style>
+<meta name="theme-color" content="#0a0a0d">
+<title>System — Cockpit</title>
+<link rel="stylesheet" href="shared.css">
 </head>
 <body>
 <header>
-  <div class="logo">System <span>/ Home</span></div>
+  <div class="logo">System <span>/ cockpit</span></div>
   <button class="nt" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg></button>
-  <nav><a href="index.html" class="active">Home</a><a href="academics.html">Statskundskab</a><a href="training.html">Træning</a><a href="briefing.html">Briefing</a></nav>
+  <nav>
+    <a href="index.html" class="active">Cockpit</a>
+    <a href="academics.html">Statskundskab</a>
+    <a href="training.html">Træning</a>
+    <a href="briefing.html">Briefing</a>
+  </nav>
 </header>
+
 <div class="main">
 
-  <div class="page-hd">
-    <h1 class="page-title">Cockpit <em>Forår 2026</em></h1>
-    <div class="page-sub">4. semester · Statskundskab · Københavns Universitet</div>
-  </div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow" id="heroEyebrow">Indlæser…</div>
+    <h1 class="hero-title">Goddag, <em>Jakob.</em></h1>
+    <div class="hero-meta" id="heroMeta"></div>
+  </section>
 
+  <!-- ALERT -->
   <div class="alert" id="alertBox" style="display:none">
     <div class="alert-dot"></div>
-    <strong id="alertCourse"></strong>&nbsp;<span id="alertText" style="color:#991b1b"></span>
+    <strong id="alertCourse"></strong>&nbsp;<span class="alert-text" id="alertText"></span>
     <span class="alert-days" id="alertDays"></span>
   </div>
 
-  <div class="sh" style="--accent:var(--red);margin-top:0">Tid til eksamen</div>
-  <div class="exam-bars" id="examBars"></div>
-
-  <div class="sh" style="--accent:var(--blue)">Kurser <span id="course-sub"></span></div>
-  <div class="course-strip" id="courseStrip"><div class="loading">Indlæser…</div></div>
-
-  <div class="grid2">
-    <div>
-      <div class="sh" style="--accent:var(--amber);margin-top:0">Deadlines</div>
-      <div class="dl-panel" id="dlPanel"><div class="loading" style="padding:.75rem 1rem">Indlæser…</div></div>
+  <!-- TODAY BLOCK -->
+  <div class="today">
+    <div class="today-hd">
+      <div class="today-title" id="todayTitle">I dag</div>
+      <div class="today-date" id="todayDate"></div>
     </div>
-    <div>
-      <div class="sh" style="--accent:var(--purple);margin-top:0">Mål</div>
-      <div class="dl-panel" id="goalsPanel"><div class="loading" style="padding:.75rem 1rem">Indlæser…</div></div>
+    <div class="today-grid" id="todayGrid">
+      <div class="today-cell"><div class="today-label">Skema</div><div class="today-value" id="cellSchedule">—</div><div class="today-sub" id="cellScheduleSub"></div></div>
+      <div class="today-cell"><div class="today-label" style="--accent:var(--red)">Næste deadline</div><div class="today-value" id="cellDeadline">—</div><div class="today-sub" id="cellDeadlineSub"></div></div>
+      <div class="today-cell"><div class="today-label" style="--accent:var(--green)">Recovery</div><div class="today-value" id="cellRecovery">—</div><div class="today-sub" id="cellRecoverySub"></div></div>
+      <div class="today-cell"><div class="today-label" style="--accent:var(--violet)">Træning</div><div class="today-value" id="cellTraining">—</div><div class="today-sub" id="cellTrainingSub"></div></div>
     </div>
   </div>
 
+  <!-- EXAM COUNTDOWN -->
+  <div class="sh" style="--accent:var(--red)">Tid til eksamen</div>
+  <div class="exam-bars" id="examBars"></div>
+
+  <!-- COURSE STRIP -->
+  <div class="sh" style="--accent:var(--blue)">Kurser <span id="course-sub"></span></div>
+  <div class="course-strip" id="courseStrip"><div class="loading">Indlæser…</div></div>
+
+  <!-- DEADLINES + GOALS -->
+  <div class="grid2">
+    <div>
+      <div class="sh" style="--accent:var(--amber);margin-top:0">Deadlines</div>
+      <div class="dl-panel" id="dlPanel"><div class="loading">Indlæser…</div></div>
+    </div>
+    <div>
+      <div class="sh" style="--accent:var(--violet);margin-top:0">Mål</div>
+      <div class="dl-panel" id="goalsPanel"><div class="loading">Indlæser…</div></div>
+    </div>
+  </div>
+
+  <!-- WEEKLY SCHEDULE -->
   <div class="sh" style="--accent:var(--green)">Ugeskema</div>
   <div class="sched">
-    <div class="sd"><div class="sd-name">Man</div><div class="ss"><span class="t">08–10</span> <span class="c" style="color:var(--blue)">IP3</span> FL</div><div class="ss"><span class="t">13–15</span> <span class="c" style="color:var(--green)">Metode</span> FL</div></div>
-    <div class="sd sh-hide"><div class="sd-name">Tir</div><div class="ss" style="color:var(--t3);font-size:.625rem">Ingen undervisning</div></div>
-    <div class="sd"><div class="sd-name">Tor</div><div class="ss"><span class="t">08–10</span> <span class="c" style="color:var(--amber)">Økon</span> FL</div><div class="ss"><span class="t">10–12</span> <span class="c" style="color:var(--green)">Metode</span> Hold</div><div class="ss"><span class="t">13–15</span> <span class="c" style="color:var(--blue)">IP3</span> FL</div><div class="ss"><span class="t">15–17</span> <span class="c" style="color:var(--amber)">Økon</span> Café</div></div>
-    <div class="sd"><div class="sd-name">Fre</div><div class="ss"><span class="t">08–10</span> <span class="c" style="color:var(--blue)">IP3</span> Hold</div><div class="ss"><span class="t">10–12</span> <span class="c" style="color:var(--amber)">Økon</span> Hold</div></div>
-    <div class="sd sh-hide"><div class="sd-name">Ons</div><div class="ss" style="color:var(--t3);font-size:.625rem">Ingen undervisning</div></div>
+    <div class="sd"><div class="sd-name">Man</div>
+      <div class="ss"><span class="t">08–10</span><span class="c" style="color:var(--blue)">IP3</span> Forelæsning</div>
+      <div class="ss"><span class="t">13–15</span><span class="c" style="color:var(--green)">Metode</span> Forelæsning</div>
+    </div>
+    <div class="sd sh-hide"><div class="sd-name">Tir</div>
+      <div class="ss" style="color:var(--t3);font-size:.6875rem">Ingen undervisning</div>
+    </div>
+    <div class="sd sh-hide"><div class="sd-name">Ons</div>
+      <div class="ss" style="color:var(--t3);font-size:.6875rem">Ingen undervisning</div>
+    </div>
+    <div class="sd"><div class="sd-name">Tor</div>
+      <div class="ss"><span class="t">08–10</span><span class="c" style="color:var(--amber)">Økon</span> Forelæsning</div>
+      <div class="ss"><span class="t">10–12</span><span class="c" style="color:var(--green)">Metode</span> Hold</div>
+      <div class="ss"><span class="t">13–15</span><span class="c" style="color:var(--blue)">IP3</span> Forelæsning</div>
+      <div class="ss"><span class="t">15–17</span><span class="c" style="color:var(--amber)">Økon</span> Café</div>
+    </div>
+    <div class="sd"><div class="sd-name">Fre</div>
+      <div class="ss"><span class="t">08–10</span><span class="c" style="color:var(--blue)">IP3</span> Hold</div>
+      <div class="ss"><span class="t">10–12</span><span class="c" style="color:var(--amber)">Økon</span> Hold</div>
+    </div>
   </div>
 
 </div>
 <footer>Personal AI System · Cockpit · Forår 2026</footer>
+
 <script>
 const S='https://kgiepplwarutwmzvvezc.supabase.co/rest/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtnaWVwcGx3YXJ1dHdtenZ2ZXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MTc4MDksImV4cCI6MjA5MDM5MzgwOX0.8DFz0fGFJn5qocz4jwfPbnXcoy-1WHgSojDBS8enKec';
 const H={'apikey':K,'Authorization':'Bearer '+K};
-const CC={IP3:{col:'#2563eb',exam:'4 Jun'},Økonomi:{col:'#d97706',exam:'9 Jun'},Metode:{col:'#16a34a',exam:'26 maj'}};
 
-// ── Exam countdown bars ───────────────────────
+// Course config
+const CC={
+  IP3:{col:'#6ea8ff',exam:'4 jun',name:'IP3'},
+  Økonomi:{col:'#ffb86b',exam:'9 jun',name:'Økonomi'},
+  Metode:{col:'#6ee895',exam:'26 maj',name:'Metode'}
+};
+
+// Static weekday schedule (used by today-block)
+const SCHEDULE={
+  1:[{t:'08–10',c:'IP3',k:'Forelæsning',col:'var(--blue)'},{t:'13–15',c:'Metode',k:'Forelæsning',col:'var(--green)'}],
+  2:[],3:[],
+  4:[{t:'08–10',c:'Økonomi',k:'Forelæsning',col:'var(--amber)'},{t:'10–12',c:'Metode',k:'Hold',col:'var(--green)'},{t:'13–15',c:'IP3',k:'Forelæsning',col:'var(--blue)'},{t:'15–17',c:'Økonomi',k:'Café',col:'var(--amber)'}],
+  5:[{t:'08–10',c:'IP3',k:'Hold',col:'var(--blue)'},{t:'10–12',c:'Økonomi',k:'Hold',col:'var(--amber)'}],
+  6:[],0:[]
+};
+
+// Weekly training cycle (rough — synced with training.html)
+const TRAINING_CYCLE={1:'Push',2:'Hvile',3:'Pull',4:'HIIT roning',5:'Zone 2 løb',6:'Ben + Acc',0:'Hvile'};
+
+const SEMESTER_START=new Date('2026-02-02');
+const EXAMS=[
+  {course:'Økonomi',label:'Skriveøvelse',date:'2026-04-22',col:'var(--amber)',urgent:true},
+  {course:'Metode', label:'Hjemmeopgave',date:'2026-05-26',col:'var(--green)'},
+  {course:'IP3',    label:'Hjemmeopgave',date:'2026-06-04',col:'var(--blue)'},
+  {course:'Økonomi',label:'Skriftlig eksamen',date:'2026-06-09',col:'var(--amber)'},
+];
+
+const DAYS_DA=['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
+const MONTHS_DA=['januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];
+
+function fmtDate(d){return `${d.getDate()}. ${MONTHS_DA[d.getMonth()]} ${d.getFullYear()}`;}
+
+// ── Hero ─────────────────────────────────────────
+(function renderHero(){
+  const now=new Date();
+  const dayName=DAYS_DA[now.getDay()];
+  const semWeek=Math.floor((now-SEMESTER_START)/(7*864e5))+6; // semester starts uge 6
+  const upcoming=EXAMS.filter(e=>new Date(e.date)>=now);
+  const next=upcoming[0];
+  const daysToNext=next?Math.ceil((new Date(next.date)-now)/864e5):null;
+
+  document.getElementById('heroEyebrow').innerHTML=
+    `${dayName} · Uge ${semWeek}${next?` · ${daysToNext} dage til ${next.course}`:''}`;
+
+  let meta=`<span><b>Forår 2026</b> · 4. semester</span>`;
+  meta+=`<span>Statskundskab · <b>KU</b></span>`;
+  if(next) meta+=`<span>Næste eksamen · <b>${next.course}</b> ${new Date(next.date).toLocaleDateString('da-DK',{day:'numeric',month:'short'})}</span>`;
+  document.getElementById('heroMeta').innerHTML=meta;
+
+  // Today date stamp
+  document.getElementById('todayDate').textContent=fmtDate(now).toUpperCase();
+  document.getElementById('todayTitle').textContent=dayName;
+
+  // Today schedule cell
+  const todays=SCHEDULE[now.getDay()]||[];
+  if(todays.length){
+    const first=todays[0];
+    document.getElementById('cellSchedule').textContent=`${first.c}`;
+    document.getElementById('cellSchedule').style.color=first.col;
+    document.getElementById('cellScheduleSub').innerHTML=
+      todays.map(s=>`<span style="color:${s.col}">${s.t}</span> ${s.k}`).join(' · ');
+  } else {
+    document.getElementById('cellSchedule').textContent='Fri dag';
+    document.getElementById('cellScheduleSub').textContent='Ingen undervisning i dag';
+  }
+
+  // Training cell
+  const tr=TRAINING_CYCLE[now.getDay()];
+  document.getElementById('cellTraining').textContent=tr;
+  document.getElementById('cellTrainingSub').textContent=tr==='Hvile'?'Restitution':'Se træningsside for detaljer';
+})();
+
+// ── Exam countdown bars ───────────────────────────
 (function(){
-  const START=new Date('2026-02-02'),now=new Date();
-  const EXAMS=[
-    {course:'Økonomi',label:'Skriveøvelse',date:'2026-04-22',col:'var(--amber)',urgent:true},
-    {course:'Metode', label:'Hjemmeopgave',date:'2026-05-26',col:'var(--green)'},
-    {course:'IP3',   label:'Hjemmeopgave',date:'2026-06-04',col:'var(--blue)'},
-    {course:'Økonomi',label:'Skriftlig eksamen',date:'2026-06-09',col:'var(--amber)'},
-  ];
+  const now=new Date();
   const up=EXAMS.filter(e=>new Date(e.date)>=now);
   document.getElementById('examBars').innerHTML=up.map(e=>{
     const d=new Date(e.date),left=Math.ceil((d-now)/864e5);
-    const pct=Math.min(99,Math.round((1-(left/Math.ceil((d-START)/864e5)))*100));
+    const totalDays=Math.ceil((d-SEMESTER_START)/864e5);
+    const pct=Math.min(99,Math.round((1-(left/totalDays))*100));
     const c=left<=7?'var(--red)':left<=21?'var(--amber)':e.col;
     return`<div class="exam-bar${e.urgent?' urgent':''}">
       <div class="exam-bar-top">
         <div><span class="exam-course" style="color:${e.col}">${e.course}</span><span class="exam-label">${e.label}</span></div>
         <div class="exam-right"><span class="exam-days" style="color:${c}">${left}d</span><span class="exam-date">${d.toLocaleDateString('da-DK',{day:'numeric',month:'short'})}</span></div>
       </div>
-      <div class="exam-track"><div class="exam-fill" style="width:${pct}%;background:${c}"></div></div>
+      <div class="exam-track"><div class="exam-fill" style="width:${pct}%;background:${c};color:${c}"></div></div>
     </div>`;
   }).join('');
 })();
 
-// ── Course cards + alert ──────────────────────
+// ── Course cards ──────────────────────────────────
 fetch(S+'/readings?select=course,status',{headers:H}).then(r=>r.json()).then(d=>{
-  const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,done:0,ip:0};c[n].t++;if(r.status==='læst')c[n].done++;else if(r.status==='i_gang')c[n].ip++});
+  const c={};d.forEach(r=>{const n=r.course;if(!c[n])c[n]={t:0,done:0};c[n].t++;if(r.status==='læst')c[n].done++});
   document.getElementById('courseStrip').innerHTML=['Økonomi','IP3','Metode'].filter(n=>c[n]).map(n=>{
     const v=c[n],cfg=CC[n],pct=Math.round(100*v.done/v.t);
     return`<a href="academics.html" class="cc" style="--accent:${cfg.col}">
       <div class="cc-body">
         <div class="cc-head">
           <span class="cc-name" style="color:${cfg.col}">${n}</span>
-          <span class="cc-badge" style="background:${cfg.col}15;color:${cfg.col}">${cfg.exam}</span>
+          <span class="cc-badge" style="color:${cfg.col}">${cfg.exam}</span>
         </div>
-        <div class="cc-bar-outer"><div class="cc-bar" style="width:${Math.max(pct,2)}%;background:${cfg.col}"></div></div>
+        <div class="cc-bar-outer"><div class="cc-bar" style="width:${Math.max(pct,2)}%;background:${cfg.col};color:${cfg.col}"></div></div>
         <div class="cc-stats"><span class="cc-done" style="color:${cfg.col}">${v.done}/${v.t} læst</span><span class="cc-pct">${pct}%</span></div>
       </div>
     </a>`;
   }).join('');
 }).catch(()=>{document.getElementById('courseStrip').innerHTML='<div class="loading">Kunne ikke hente data</div>'});
 
-// ── Events + alert ────────────────────────────
+// ── Deadlines + alert + today-block deadline cell ─
 fetch(S+'/events?select=*&order=date.asc',{headers:H}).then(r=>r.json()).then(ev=>{
-  const now=new Date(),up=ev.filter(e=>e.date&&new Date(e.date)>=new Date(now.toDateString()));
+  const now=new Date();
+  const up=ev.filter(e=>e.date&&new Date(e.date)>=new Date(now.toDateString()));
+
+  // Alert for urgent
   const urg=up.find(e=>e.type==='deadline'||e.type==='exam');
   if(urg){
     const dd=Math.ceil((new Date(urg.date)-now)/864e5);
-    document.getElementById('alertBox').style.display='flex';
-    document.getElementById('alertCourse').textContent=urg.course||'';
-    document.getElementById('alertText').textContent=urg.label;
-    document.getElementById('alertDays').textContent=dd>0?dd+'d':dd===0?'I dag':'Overskredet';
+    if(dd<=21){
+      document.getElementById('alertBox').style.display='flex';
+      document.getElementById('alertCourse').textContent=urg.course||'';
+      document.getElementById('alertText').textContent=urg.label;
+      document.getElementById('alertDays').textContent=dd>0?dd+'d':dd===0?'I dag':'Overskredet';
+    }
   }
+
+  // Today-block deadline cell
+  if(up.length){
+    const next=up[0];
+    const dd=Math.ceil((new Date(next.date)-now)/864e5);
+    document.getElementById('cellDeadline').textContent=next.label;
+    const col=CC[next.course]?.col||'var(--gold)';
+    document.getElementById('cellDeadlineSub').innerHTML=`<span style="color:${col}">${next.course||''}</span> · ${dd} dage`;
+  } else {
+    document.getElementById('cellDeadline').textContent='Ingen';
+    document.getElementById('cellDeadlineSub').textContent='Næste 30 dage';
+  }
+
+  // Deadline panel
   const p=document.getElementById('dlPanel');
-  p.innerHTML=up.length?up.map(e=>{
+  p.innerHTML=up.length?up.slice(0,8).map(e=>{
     const dt=new Date(e.date),ds=dt.toLocaleDateString('da-DK',{day:'numeric',month:'short'}),dd=Math.ceil((dt-now)/864e5);
     const col=(CC[e.course]?.col)||'var(--t3)';
     let tag='';
-    if(e.type==='exam')tag=`<span class="dl-tag" style="background:#fef3c7;color:var(--amber)">Eksamen</span>`;
-    else if(dd<=14&&e.type==='deadline')tag=`<span class="dl-tag" style="background:#fef2f2;color:var(--red)">${dd}d</span>`;
+    if(e.type==='exam')tag=`<span class="dl-tag" style="background:var(--amber-a);color:var(--amber)">Eksamen</span>`;
+    else if(dd<=14&&e.type==='deadline')tag=`<span class="dl-tag" style="background:var(--red-a);color:var(--red)">${dd}d</span>`;
     return`<div class="dl">
       <span class="dl-date" style="color:${dd<=7?'var(--red)':dd<=21?'var(--amber)':'var(--t1)'}">${ds}</span>
       <span class="dl-c" style="color:${col}">${e.course||''}</span>
       <span class="dl-name">${e.label}</span>${tag}
     </div>`;
-  }).join(''):'<div class="loading" style="padding:.75rem 1rem">Ingen kommende</div>';
-}).catch(()=>{});
+  }).join(''):'<div class="loading">Ingen kommende</div>';
+}).catch(()=>{
+  document.getElementById('cellDeadline').textContent='—';
+  document.getElementById('cellDeadlineSub').textContent='Kunne ikke hente';
+});
 
-// ── Goals ─────────────────────────────────────
+// ── Goals ─────────────────────────────────────────
 fetch(S+'/goals?select=*&order=domain.asc',{headers:H}).then(r=>r.json()).then(goals=>{
-  const dc={school:'var(--blue)',training:'var(--green)',general:'var(--purple)'};
-  document.getElementById('goalsPanel').innerHTML=goals.filter(g=>g.status==='active').slice(0,6).map(g=>
-    `<div class="goal"><div class="goal-dot" style="background:${dc[g.domain]||'var(--t3)'}"></div><div><div class="goal-title">${g.title}</div>${g.notes?`<div class="goal-note">${g.notes}</div>`:''}</div></div>`
-  ).join('');
-}).catch(()=>{});
+  const dc={school:'var(--blue)',training:'var(--green)',general:'var(--violet)'};
+  const active=goals.filter(g=>g.status==='active').slice(0,6);
+  document.getElementById('goalsPanel').innerHTML=active.length?active.map(g=>
+    `<div class="goal"><div class="goal-dot" style="background:${dc[g.domain]||'var(--t3)'};color:${dc[g.domain]||'var(--t3)'}"></div><div><div class="goal-title">${g.title}</div>${g.notes?`<div class="goal-note">${g.notes}</div>`:''}</div></div>`
+  ).join(''):'<div class="loading">Ingen aktive mål</div>';
+}).catch(()=>{
+  document.getElementById('goalsPanel').innerHTML='<div class="loading">Kunne ikke hente data</div>';
+});
+
+// ── Recovery cell (today block) ───────────────────
+fetch(S+'/recovery_logs?select=date,hrv,rhr,sleep_hours,recovery_zone&order=date.desc&limit=1',{headers:H}).then(r=>r.json()).then(d=>{
+  if(!d.length){document.getElementById('cellRecovery').textContent='Ingen data';return;}
+  const r=d[0];
+  const zone=(r.recovery_zone||'').toLowerCase();
+  const map={green:{l:'Grøn',c:'var(--green)',msg:'Push hårdt'},yellow:{l:'Gul',c:'var(--amber)',msg:'Normal træning'},red:{l:'Rød',c:'var(--red)',msg:'Mobility / hvile'}};
+  const m=map[zone]||{l:'—',c:'var(--t2)',msg:'Ukendt zone'};
+  const cell=document.getElementById('cellRecovery');
+  cell.textContent=m.l;
+  cell.style.color=m.c;
+  document.getElementById('cellRecoverySub').innerHTML=
+    `${m.msg} · HRV <b style="color:var(--t1)">${r.hrv||'—'}</b> · søvn <b style="color:var(--t1)">${r.sleep_hours||'—'}h</b>`;
+}).catch(()=>{
+  document.getElementById('cellRecovery').textContent='—';
+  document.getElementById('cellRecoverySub').textContent='Kunne ikke hente';
+});
 </script>
 </body>
 </html>
