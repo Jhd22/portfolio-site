@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#f4f1e8">
 <title>System — Cockpit</title>
-<link rel="stylesheet" href="shared.css?v=3">
+<link rel="stylesheet" href="shared.css?v=4">
 </head>
 <body>
 <header>
@@ -60,23 +60,15 @@
       </div>
     </div>
 
-    <!-- ── Q2: READINESS ─────────────────────────────── -->
+    <!-- ── Q2: LÆSNING ─────────────────────────────── -->
     <div class="quad">
       <div class="quad-hd">
         <span class="quad-num">02</span>
-        <span class="quad-title">Readiness</span>
-        <span class="quad-meta" id="q2Meta">—</span>
+        <span class="quad-title">Læsning</span>
+        <span class="quad-meta" id="q2Meta">UGE —</span>
       </div>
       <div class="quad-bd">
-        <div class="q-zone">
-          <div class="q-zone-word" id="q2Zone">—</div>
-          <div class="q-zone-rec" id="q2Rec">Indlæser recovery-data…</div>
-        </div>
-        <div class="q-metrics" id="q2Metrics">
-          <div class="q-metric"><div class="q-metric-label">HRV</div><div class="q-metric-value">—</div><div class="q-metric-target">≥ 57 ms</div></div>
-          <div class="q-metric"><div class="q-metric-label">RHR</div><div class="q-metric-value">—</div><div class="q-metric-target">≤ 62 bpm</div></div>
-          <div class="q-metric"><div class="q-metric-label">Søvn</div><div class="q-metric-value">—</div><div class="q-metric-target">≥ 8 t</div></div>
-        </div>
+        <div id="q2Body"><div class="q-empty">Indlæser…</div></div>
       </div>
     </div>
 
@@ -244,7 +236,7 @@ function renderTicker(){
     items.push(`<div class="ticker-item tk-pri"><span class="tk-num">${dd}d</span>til <b>${nextExam.course}</b></div>`);
   }
   items.push(`<div class="ticker-item">Cyklus <b>${cycle.id}</b> · dag <b>${cycleDay}/14</b></div>`);
-  items.push(`<div class="ticker-item" id="tkZone">Readiness <b>—</b></div>`);
+  items.push(`<div class="ticker-item" id="tkRead">Ulæste <b id="tkReadCount">—</b></div>`);
 
   document.getElementById('ticker').innerHTML=items.join('');
   document.getElementById('heroEyebrow').textContent=`${dayName.toUpperCase()} · ${fmtShort(now).toUpperCase()} · UGE ${semWeek}`;
@@ -301,60 +293,70 @@ function renderToday(){
 }
 
 // ═══════════════════════════════════════════════════
-// Q2: READINESS — zone + metrics
+// Q2: LÆSNING — this week's reading progress
 // ═══════════════════════════════════════════════════
-async function renderReadiness(){
+async function renderLaesning(){
   try{
-    const r=await fetch(S+'/recovery_logs?select=date,hrv,rhr,sleep_hours,recovery_zone&order=date.desc&limit=14',{headers:H});
+    const r=await fetch(S+'/readings?select=course,week,status',{headers:H});
     const data=await r.json();
-    if(!data.length)throw new Error('no data');
-    const today=data[0];
-    const prev=data[1]||today;
-    const zone=(today.recovery_zone||'').toLowerCase();
-    const map={
-      green: {l:'Grøn', c:'var(--green)', rec:'<b>Push hårdt.</b> Alle signaler grønne — godt tidspunkt til ny PR.'},
-      yellow:{l:'Gul',  c:'var(--amber)', rec:'<b>Normal træning.</b> Hold intensitet, undgå nye maks-forsøg.'},
-      red:   {l:'Rød',  c:'var(--red)',   rec:'<b>Kun mobility og let bevægelse.</b> Lad kroppen restituere.'}
-    };
-    const m=map[zone]||{l:'—',c:'var(--t3)',rec:'Ukendt zone. Upload recovery-data.'};
-    const zEl=document.getElementById('q2Zone');
-    zEl.textContent=m.l.toUpperCase();
-    zEl.style.color=m.c;
-    document.getElementById('q2Rec').innerHTML=m.rec;
-    document.getElementById('q2Meta').textContent=today.date;
+    const now=new Date();
+    const semWeek=Math.floor((now-SEMESTER_START)/(7*864e5))+6;
+    document.getElementById('q2Meta').textContent=`UGE ${semWeek}`;
 
-    // Update ticker zone badge
-    const tz=document.getElementById('tkZone');
-    if(tz) tz.innerHTML=`Readiness <b style="color:${m.c}">${m.l}</b>`;
+    const thisWeek=data.filter(x=>x.week===semWeek);
+    const byCourse={};
+    thisWeek.forEach(x=>{
+      if(!byCourse[x.course])byCourse[x.course]={t:0,done:0};
+      byCourse[x.course].t++;
+      if(x.status==='læst')byCourse[x.course].done++;
+    });
 
-    function delta(curr,prev,inverse=false){
-      if(!curr||!prev||curr===prev)return'<span class="delta flat">—</span>';
-      const up=curr>prev;
-      const good=inverse?!up:up;
-      const cls=good?'up':'down';
-      const sign=up?'▲':'▼';
-      const diff=Math.abs(curr-prev);
-      return `<span class="delta ${cls}">${sign}${diff.toFixed(diff<1?1:0)}</span>`;
+    // Next week preview
+    const nextWeek=data.filter(x=>x.week===semWeek+1);
+    const nextCount=nextWeek.length;
+
+    // Ticker: total unread this semester week window (this + next)
+    const unread=thisWeek.filter(x=>x.status!=='læst').length;
+    const tkCount=document.getElementById('tkReadCount');
+    if(tkCount){
+      tkCount.textContent=unread;
+      tkCount.style.color=unread===0?'var(--green)':unread>10?'var(--red)':'var(--t1)';
     }
-    const hrvOk=today.hrv>=57, rhrOk=today.rhr<=62, sleepOk=today.sleep_hours>=8;
-    document.getElementById('q2Metrics').innerHTML=`
-      <div class="q-metric">
-        <div class="q-metric-label">HRV</div>
-        <div class="q-metric-value" style="color:${hrvOk?'var(--green)':'var(--t1)'}">${today.hrv||'—'} <span class="u">ms</span> ${delta(today.hrv,prev.hrv)}</div>
-        <div class="q-metric-target">≥ 57 ms</div>
-      </div>
-      <div class="q-metric">
-        <div class="q-metric-label">RHR</div>
-        <div class="q-metric-value" style="color:${rhrOk?'var(--green)':'var(--t1)'}">${today.rhr||'—'} <span class="u">bpm</span> ${delta(today.rhr,prev.rhr,true)}</div>
-        <div class="q-metric-target">≤ 62 bpm</div>
-      </div>
-      <div class="q-metric">
-        <div class="q-metric-label">Søvn</div>
-        <div class="q-metric-value" style="color:${sleepOk?'var(--green)':'var(--t1)'}">${today.sleep_hours?today.sleep_hours.toFixed(1):'—'} <span class="u">t</span> ${delta(today.sleep_hours,prev.sleep_hours)}</div>
-        <div class="q-metric-target">≥ 8 t</div>
+
+    if(!thisWeek.length){
+      document.getElementById('q2Body').innerHTML=`<div class="q-empty">Ingen læsning planlagt for uge ${semWeek}</div>`;
+      return;
+    }
+
+    const rows=['Økonomi','IP3','Metode'].filter(c=>byCourse[c]).map(course=>{
+      const v=byCourse[course];
+      const col=CC[course]?.col||'var(--t3)';
+      const pct=Math.round(100*v.done/v.t);
+      const remaining=v.t-v.done;
+      return `<div class="q-read-row">
+        <div class="q-read-line">
+          <span class="q-read-course" style="color:${col}">${course}</span>
+          <span class="q-read-count">${v.done}/${v.t}${remaining>0?` · <b>${remaining}</b> ulæste`:' · <b style="color:var(--green)">done</b>'}</span>
+        </div>
+        <div class="q-read-bar-outer"><div class="q-read-bar" style="width:${Math.max(pct,2)}%;background:${col}"></div></div>
+      </div>`;
+    }).join('');
+
+    const totalT=thisWeek.length;
+    const totalD=thisWeek.filter(x=>x.status==='læst').length;
+    const totalPct=Math.round(100*totalD/totalT);
+
+    document.getElementById('q2Body').innerHTML=`
+      <div class="q-read-list">${rows}</div>
+      <div class="q-read-total">
+        <div class="q-read-total-row">
+          <span class="q-read-total-label">I denne uge</span>
+          <span class="q-read-total-val" style="color:${totalPct===100?'var(--green)':'var(--t1)'}">${totalD}/${totalT} · ${totalPct}%</span>
+        </div>
+        ${nextCount?`<div class="q-read-total-row"><span class="q-read-total-label">Næste uge</span><span class="q-read-total-val">${nextCount} planlagt</span></div>`:''}
       </div>`;
   }catch(e){
-    document.getElementById('q2Rec').textContent='Kunne ikke hente recovery-data.';
+    document.getElementById('q2Body').innerHTML='<div class="q-empty">Kunne ikke hente læsedata</div>';
   }
 }
 
@@ -516,7 +518,7 @@ async function renderCourses(){
 renderTicker();
 renderToday();
 renderCycle();
-renderReadiness();
+renderLaesning();
 renderForude();
 renderSignals();
 renderCourses();

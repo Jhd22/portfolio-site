@@ -1305,6 +1305,42 @@ svg text{font-family:'JetBrains Mono',monospace;fill:var(--t3)}
   letter-spacing:.02em;
 }
 
+/* ─── Quad 2: LÆSNING — weekly reading progress ─────────────────── */
+.q-read-list{display:flex;flex-direction:column;gap:1rem;flex:1}
+.q-read-row{display:flex;flex-direction:column;gap:.4rem}
+.q-read-line{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:.75rem;
+}
+.q-read-course{
+  font-size:.6875rem;font-weight:500;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.q-read-count{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6875rem;color:var(--t2);
+  font-variant-numeric:tabular-nums;
+}
+.q-read-count b{color:var(--t1);font-weight:500}
+.q-read-bar-outer{
+  height:3px;background:var(--surface-3);
+  border-radius:2px;overflow:hidden;
+}
+.q-read-bar{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.q-read-total{
+  margin-top:auto;padding-top:1rem;
+  border-top:1px solid var(--hairline);
+  display:flex;flex-direction:column;gap:.4rem;
+}
+.q-read-total-row{
+  display:flex;justify-content:space-between;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.625rem;letter-spacing:.04em;
+  color:var(--t3);
+}
+.q-read-total-label{text-transform:uppercase;letter-spacing:.1em}
+.q-read-total-val{color:var(--t1);font-weight:500;font-variant-numeric:tabular-nums}
+
 /* ─── Quad 3: FORUDE — countdowns ───────────────────────────────── */
 .q-exam-list{display:flex;flex-direction:column;gap:0}
 .q-exam-row{
