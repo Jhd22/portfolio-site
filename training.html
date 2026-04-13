@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f4f1e8">
 <title>Træning Intelligence</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="shared.css?v=4">
+<link rel="stylesheet" href="shared.css?v=5">
 </head>
 <body>
 
@@ -134,21 +134,40 @@
 <!-- ═══════════════════════════════════════════════ -->
 <div class="tab-pane" id="tab-styrke">
 
-  <!-- Lift stats -->
+  <!-- Session calendar -->
   <div class="sc">
-    <div class="sl"><span class="d" style="background:var(--violet)"></span>AKTUELLE LIFTS</div>
-    <div class="sts" id="lift-stats"></div>
-    <div class="goal-bar">
-      <div class="goal-label"><strong>Bench Press → 100 kg</strong><span id="bench-goal-pct"></span></div>
-      <div class="goal-track"><div class="goal-fill-violet" id="bench-goal-fill"></div></div>
+    <div class="sl"><span class="d" style="background:var(--violet)"></span>SESSIONS · SENESTE 6 MÅNEDER</div>
+    <div class="sts" id="session-stats"></div>
+    <div id="session-calendar" class="session-cal"></div>
+    <div class="session-legend">
+      <span class="sleg"><span class="sleg-dot" style="background:var(--violet)"></span>Push</span>
+      <span class="sleg"><span class="sleg-dot" style="background:var(--blue)"></span>Pull</span>
+      <span class="sleg"><span class="sleg-dot" style="background:var(--amber)"></span>Ben</span>
+      <span class="sleg"><span class="sleg-dot" style="background:var(--t3)"></span>Ingen</span>
     </div>
   </div>
 
-  <!-- Bench chart -->
+  <!-- Per-exercise progression -->
   <div class="sc">
-    <div class="sl"><span class="d" style="background:var(--violet)"></span>BENCH PROGRESSION</div>
-    <h2>e1RM over tid</h2>
-    <div class="cw"><div class="cl">Bench Press estimeret 1RM (kg) — stiplet = 100 kg mål</div><div class="chart-container" id="chart-bench"></div></div>
+    <div class="sl"><span class="d" style="background:var(--green)"></span>ØVELSESPROGRESSION</div>
+    <h2 id="ex-heading">Progression per øvelse</h2>
+    <p class="ex-sub" id="ex-sub">Upload Hevy CSV for at se alle øvelser. Viser aktuelt kun bench fra eksisterende data.</p>
+    <div class="ex-grid" id="exercise-grid"></div>
+  </div>
+
+  <!-- Active exercise detail (shown on click) -->
+  <div class="sc" id="exercise-detail" style="display:none">
+    <div class="sl"><span class="d" style="background:var(--violet)"></span><span id="detail-exercise-name">ØVELSE</span></div>
+    <div class="sts" id="detail-stats"></div>
+    <div class="cw"><div class="cl" id="detail-chart-label">e1RM over tid</div><div class="chart-container" id="chart-exercise-detail"></div></div>
+    <div id="detail-sets-table"></div>
+  </div>
+
+  <!-- Volume over time -->
+  <div class="sc">
+    <div class="sl"><span class="d" style="background:var(--cyan)"></span>VOLUMEN OVER TID</div>
+    <h2>Total sessionsvolumen (kg)</h2>
+    <div class="cw"><div class="cl">Total volume per session — push (violet) / pull (blå) / ben (amber)</div><div class="chart-container" id="chart-volume-time"></div></div>
   </div>
 
   <!-- Body composition -->
@@ -160,8 +179,6 @@
       <div class="cw"><div class="cl">Fedtfri masse (kg) — lean body mass</div><div class="chart-container" id="chart-lbm"></div></div>
       <div class="cw"><div class="cl">Kropsvægt (kg)</div><div class="chart-container" id="chart-weight"></div></div>
     </div>
-    <div class="f g"><h4>Styrke og muskelmasse: r = +0.61</h4><p>Op til ~6 løbeture/md er "gratis" for muskelmassen med 10+ styrke-sessioner. Mere løb end det = LBM falder (r = −0.71).</p></div>
-    <div class="f w"><h4>September = guldmåned</h4><p>Bedste resultater kom måneden EFTER den hårdeste måned. Supercompensation er reel — <strong>hvile virker</strong>.</p></div>
   </div>
 
   <!-- Key findings -->
@@ -656,26 +673,319 @@ function renderSubtab(id) {
 // ═══════════════════════════════════════════════
 // RENDER STYRKE
 // ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// HEVY CSV PARSER + EXERCISE DATA
+// ═══════════════════════════════════════════════
+function getHevySets() {
+  try { return JSON.parse(localStorage.getItem('hevy_sets') || '[]'); } catch { return []; }
+}
+
+function parseHevyCSV(csv) {
+  const lines = csv.trim().split('\n');
+  if (lines.length < 2) return [];
+  const hdr = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+  const idx = (name) => {
+    const variants = {
+      title: ['title', 'workout_name'],
+      exercise: ['exercise_title', 'exercise_name', 'exercise'],
+      weight: ['weight_kg', 'weight (kg)', 'weight'],
+      reps: ['reps', 'repetitions'],
+      set_type: ['set_type', 'set type'],
+      date: ['start_time', 'date', 'workout_date'],
+      duration: ['duration_seconds', 'duration (seconds)', 'duration'],
+      rpe: ['rpe']
+    };
+    for (const v of (variants[name] || [name])) {
+      const i = hdr.indexOf(v);
+      if (i !== -1) return i;
+    }
+    return -1;
+  };
+  const ci = { title: idx('title'), exercise: idx('exercise'), weight: idx('weight'),
+               reps: idx('reps'), set_type: idx('set_type'), date: idx('date'),
+               duration: idx('duration'), rpe: idx('rpe') };
+
+  const sets = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].match(/("(?:[^"]|"")*"|[^,]*)/g)?.map(c => c.trim().replace(/^"|"$/g, '').replace(/""/g, '"')) || [];
+    if (!cols.length) continue;
+    const dateRaw = ci.date >= 0 ? cols[ci.date] : '';
+    const d = dateRaw.slice(0, 10);
+    if (!d || !/^\d{4}-\d{2}-\d{2}/.test(d)) continue;
+    const exercise = ci.exercise >= 0 ? cols[ci.exercise] : '';
+    if (!exercise) continue;
+    const w = parseFloat(cols[ci.weight]) || 0;
+    const r = parseInt(cols[ci.reps]) || 0;
+    const setType = ci.set_type >= 0 ? cols[ci.set_type] : 'normal';
+    const rpe = ci.rpe >= 0 ? parseFloat(cols[ci.rpe]) || null : null;
+    const e1rm = w > 0 && r > 0 ? Math.round(w * (1 + r / 30) * 10) / 10 : 0;
+    sets.push({ d, exercise, w, r, setType, rpe, e1rm, title: ci.title >= 0 ? cols[ci.title] : '' });
+  }
+  return sets;
+}
+
+function buildExerciseProgression(sets) {
+  const byEx = {};
+  sets.forEach(s => {
+    if (s.setType === 'warmup' || s.w === 0) return;
+    if (!byEx[s.exercise]) byEx[s.exercise] = [];
+    byEx[s.exercise].push(s);
+  });
+  const result = {};
+  for (const [name, exSets] of Object.entries(byEx)) {
+    const byDate = {};
+    exSets.forEach(s => {
+      if (!byDate[s.d] || s.e1rm > byDate[s.d].e1rm) byDate[s.d] = s;
+    });
+    const points = Object.entries(byDate)
+      .sort(([a],[b]) => a.localeCompare(b))
+      .map(([d, s]) => ({ d, v: s.e1rm, w: s.w, r: s.r }));
+    if (points.length >= 2) {
+      result[name] = { points, sessions: points.length, latest: points[points.length - 1],
+        best: points.reduce((a, b) => a.v > b.v ? a : b),
+        allSets: exSets.sort((a, b) => a.d.localeCompare(b.d)) };
+    }
+  }
+  return result;
+}
+
+function getExerciseData() {
+  const hevy = getHevySets();
+  const prog = hevy.length ? buildExerciseProgression(hevy) : {};
+  const benchFromWorkouts = WORKOUTS.filter(w => w.bench != null).map(w => ({ d: w.d, v: w.bench, w: w.bench, r: 1 }));
+  if (benchFromWorkouts.length && !prog['Bench Press (Barbell)']) {
+    prog['Bench Press'] = { points: benchFromWorkouts, sessions: benchFromWorkouts.length,
+      latest: benchFromWorkouts[benchFromWorkouts.length - 1],
+      best: benchFromWorkouts.reduce((a, b) => a.v > b.v ? a : b), allSets: [] };
+  }
+  return prog;
+}
+
+// ═══════════════════════════════════════════════
+// SESSION CALENDAR
+// ═══════════════════════════════════════════════
+function renderSessionCalendar() {
+  const cal = document.getElementById('session-calendar');
+  const now = new Date();
+  const sixMonthsAgo = new Date(now);
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  sixMonthsAgo.setDate(sixMonthsAgo.getDate() - sixMonthsAgo.getDay() + 1);
+
+  const workoutMap = {};
+  WORKOUTS.forEach(w => { workoutMap[w.d] = w.t; });
+  const hevySets = getHevySets();
+  const hevyDates = {};
+  hevySets.forEach(s => {
+    if (!hevyDates[s.d]) {
+      const title = s.title.toLowerCase();
+      if (title.includes('push') || title.includes('chest') || title.includes('tri')) hevyDates[s.d] = 'push';
+      else if (title.includes('pull') || title.includes('back') || title.includes('bicep')) hevyDates[s.d] = 'pull';
+      else if (title.includes('leg') || title.includes('ben') || title.includes('squat')) hevyDates[s.d] = 'legs';
+      else hevyDates[s.d] = 'push';
+    }
+  });
+  Object.assign(workoutMap, hevyDates);
+
+  const typeColor = { push: 'var(--violet)', pull: 'var(--blue)', legs: 'var(--amber)' };
+  const weeks = [];
+  const cursor = new Date(sixMonthsAgo);
+  while (cursor <= now) {
+    const week = [];
+    for (let i = 0; i < 7; i++) {
+      const ds = cursor.toISOString().slice(0, 10);
+      const inRange = cursor <= now;
+      week.push({ d: ds, t: workoutMap[ds] || null, future: cursor > now });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    weeks.push(week);
+  }
+
+  const dayLabels = ['M','T','O','T','F','L','S'];
+  let html = '<div class="scal-wrap">';
+  html += '<div class="scal-days">' + dayLabels.map(d => `<div class="scal-daylbl">${d}</div>`).join('') + '</div>';
+  html += '<div class="scal-grid">';
+  weeks.forEach(week => {
+    week.forEach(day => {
+      const c = day.t ? typeColor[day.t] : '';
+      const cls = day.future ? 'scal-cell scal-future' : day.t ? 'scal-cell scal-active' : 'scal-cell';
+      const title = day.d + (day.t ? ' · ' + day.t : '');
+      html += `<div class="${cls}" style="${c ? 'background:'+c : ''}" title="${title}"></div>`;
+    });
+  });
+  html += '</div></div>';
+
+  const monthLabels = [];
+  const mc = new Date(sixMonthsAgo);
+  let lastMonth = -1;
+  let weekIdx = 0;
+  while (mc <= now) {
+    const m = mc.getMonth();
+    if (m !== lastMonth) {
+      monthLabels.push({ m: mc.toLocaleString('da', { month: 'short' }), pos: weekIdx });
+      lastMonth = m;
+    }
+    mc.setDate(mc.getDate() + 7);
+    weekIdx++;
+  }
+  html += '<div class="scal-months">' + monthLabels.map(ml => `<span style="grid-column:${ml.pos + 1}">${ml.m}</span>`).join('') + '</div>';
+
+  cal.innerHTML = html;
+
+  const recent90 = WORKOUTS.filter(w => {
+    const dd = new Date(w.d);
+    const ago = new Date(); ago.setDate(ago.getDate() - 90);
+    return dd >= ago;
+  });
+  const pushN = recent90.filter(w => w.t === 'push').length;
+  const pullN = recent90.filter(w => w.t === 'pull').length;
+  const legsN = recent90.filter(w => w.t === 'legs').length;
+  const total = recent90.length;
+  const perWeek = (total / 13).toFixed(1);
+
+  document.getElementById('session-stats').innerHTML = `
+    <div class="st"><div class="l">90d sessions</div><div class="v">${total}</div><div class="n">${perWeek}/uge</div></div>
+    <div class="st"><div class="l">Push</div><div class="v" style="color:var(--violet)">${pushN}</div></div>
+    <div class="st"><div class="l">Pull</div><div class="v" style="color:var(--blue)">${pullN}</div></div>
+    <div class="st"><div class="l">Ben</div><div class="v" style="color:var(--amber)">${legsN}</div></div>
+    <div class="st"><div class="l">Total logget</div><div class="v">${WORKOUTS.length}</div></div>`;
+}
+
+// ═══════════════════════════════════════════════
+// PER-EXERCISE PROGRESSION CARDS
+// ═══════════════════════════════════════════════
+function drawMiniChart(pts, color) {
+  if (pts.length < 2) return '';
+  const W = 120, H = 40, pad = 2;
+  const vals = pts.map(p => p.v);
+  const mn = Math.min(...vals), mx = Math.max(...vals);
+  const range = mx - mn || 1;
+  const toX = i => pad + i * (W - 2 * pad) / (pts.length - 1);
+  const toY = v => H - pad - (v - mn) / range * (H - 2 * pad);
+  const coords = pts.map((p, i) => `${toX(i).toFixed(1)},${toY(p.v).toFixed(1)}`);
+  return `<svg viewBox="0 0 ${W} ${H}" class="mini-chart">
+    <polyline points="${coords.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${toX(pts.length-1).toFixed(1)}" cy="${toY(vals[vals.length-1]).toFixed(1)}" r="2.5" fill="${color}"/>
+  </svg>`;
+}
+
+function renderExerciseGrid() {
+  const prog = getExerciseData();
+  const grid = document.getElementById('exercise-grid');
+  const names = Object.keys(prog).sort((a, b) => prog[b].sessions - prog[a].sessions);
+
+  if (!names.length) {
+    grid.innerHTML = '<div style="color:var(--t3);font-size:.75rem;padding:1rem">Ingen øvelsesdata endnu. Upload Hevy CSV for at se progression.</div>';
+    return;
+  }
+
+  document.getElementById('ex-sub').textContent = `${names.length} øvelser tracket · klik for detaljer`;
+
+  const typeColor = (name) => {
+    const n = name.toLowerCase();
+    if (n.includes('bench') || n.includes('incline') || n.includes('dip') || n.includes('lateral') || n.includes('tricep') || n.includes('overhead') || n.includes('press') && !n.includes('leg')) return 'var(--violet)';
+    if (n.includes('pull') || n.includes('row') || n.includes('curl') || n.includes('face') || n.includes('rear') || n.includes('bicep')) return 'var(--blue)';
+    if (n.includes('squat') || n.includes('rdl') || n.includes('deadlift') || n.includes('lunge') || n.includes('calf') || n.includes('leg')) return 'var(--amber)';
+    return 'var(--green)';
+  };
+
+  grid.innerHTML = names.map(name => {
+    const ex = prog[name];
+    const col = typeColor(name);
+    const latest = ex.latest.v.toFixed(1);
+    const best = ex.best.v.toFixed(1);
+    const first = ex.points[0].v;
+    const delta = ex.latest.v - first;
+    const deltaStr = delta >= 0 ? `+${delta.toFixed(1)}` : delta.toFixed(1);
+    const trendColor = delta >= 0 ? 'var(--green)' : 'var(--red)';
+    const shortName = name.replace(/\s*\(.*?\)\s*/g, '').replace('Barbell ', '').replace('Dumbbell ', 'DB ');
+    return `<div class="ex-card" onclick="showExerciseDetail('${name.replace(/'/g, "\\'")}')">
+      <div class="ex-card-hd" style="border-color:${col}">
+        <span class="ex-card-name">${shortName}</span>
+        <span class="ex-card-sessions">${ex.sessions}×</span>
+      </div>
+      ${drawMiniChart(ex.points, col)}
+      <div class="ex-card-nums">
+        <span class="ex-card-val">${latest} <small>kg</small></span>
+        <span class="ex-card-delta" style="color:${trendColor}">${deltaStr}</span>
+      </div>
+      <div class="ex-card-best">PR ${best} kg</div>
+    </div>`;
+  }).join('');
+}
+
+function showExerciseDetail(name) {
+  const prog = getExerciseData();
+  const ex = prog[name];
+  if (!ex) return;
+  const detail = document.getElementById('exercise-detail');
+  detail.style.display = '';
+  document.getElementById('detail-exercise-name').textContent = name.toUpperCase();
+  const latest = ex.latest;
+  const best = ex.best;
+  const first = ex.points[0];
+  const totalDelta = (latest.v - first.v).toFixed(1);
+  document.getElementById('detail-stats').innerHTML = `
+    <div class="st"><div class="l">Aktuel e1RM</div><div class="v" style="color:var(--violet)">${latest.v.toFixed(1)}</div><div class="n">kg</div></div>
+    <div class="st"><div class="l">PR</div><div class="v" style="color:var(--green)">${best.v.toFixed(1)}</div><div class="n">kg · ${best.d}</div></div>
+    <div class="st"><div class="l">Ændring</div><div class="v">${totalDelta >= 0 ? '+' : ''}${totalDelta}</div><div class="n">kg total</div></div>
+    <div class="st"><div class="l">Sessions</div><div class="v">${ex.sessions}</div></div>`;
+
+  document.getElementById('detail-chart-label').textContent = `${name} — e1RM over tid (kg)`;
+  drawChart('chart-exercise-detail', ex.points, '#5e3a8a', ' kg');
+
+  if (ex.allSets.length) {
+    const recentSets = ex.allSets.slice(-30);
+    let tbl = '<table style="margin-top:.75rem;width:100%"><tr><th>Dato</th><th>Vægt</th><th>Reps</th><th>e1RM</th><th>RPE</th></tr>';
+    recentSets.forEach(s => {
+      tbl += `<tr><td>${s.d.slice(5)}</td><td>${s.w} kg</td><td>${s.r}</td><td>${s.e1rm.toFixed(1)}</td><td>${s.rpe || '—'}</td></tr>`;
+    });
+    tbl += '</table>';
+    document.getElementById('detail-sets-table').innerHTML = tbl;
+  } else {
+    document.getElementById('detail-sets-table').innerHTML = '';
+  }
+
+  detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ═══════════════════════════════════════════════
+// VOLUME OVER TIME CHART
+// ═══════════════════════════════════════════════
+function renderVolumeTimeline() {
+  const container = document.getElementById('chart-volume-time');
+  if (!WORKOUTS.length) { container.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--t3);font-size:.6rem">Ingen data</div>'; return; }
+
+  const typeColor = { push: '#5e3a8a', pull: '#1f4d8a', legs: '#a86b15' };
+  const W = 800, HH = 180, pad = 48, bot = 155, top = 15;
+  const maxVol = Math.max(...WORKOUTS.map(w => w.vol));
+  const toX = i => pad + i * (W - pad - 10) / (WORKOUTS.length - 1 || 1);
+  const toY = v => bot - (v / maxVol) * (bot - top);
+
+  let dots = '';
+  WORKOUTS.forEach((w, i) => {
+    const x = toX(i), y = toY(w.vol);
+    const c = typeColor[w.t] || '#9c9684';
+    dots += `<circle cx="${x}" cy="${y}" r="4" fill="${c}" opacity=".7"><title>${w.d} · ${w.t} · ${w.vol} kg</title></circle>`;
+  });
+
+  container.innerHTML = `<svg viewBox="0 0 ${W} ${HH+16}" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%">
+    <line x1="${pad}" y1="${top}" x2="${pad}" y2="${bot}" stroke="var(--bd)" stroke-width=".5"/>
+    <line x1="${pad}" y1="${bot}" x2="${W-10}" y2="${bot}" stroke="var(--bd)" stroke-width=".5"/>
+    <text x="${pad-5}" y="${bot+4}" fill="var(--t3)" font-size="7" text-anchor="end">0</text>
+    <text x="${pad-5}" y="${top+5}" fill="var(--t3)" font-size="7" text-anchor="end">${maxVol}</text>
+    <text x="${pad}" y="${HH+12}" fill="var(--t3)" font-size="6.5">${WORKOUTS[0].d.slice(5)}</text>
+    <text x="${W-10}" y="${HH+12}" fill="var(--t3)" font-size="6.5" text-anchor="end">${WORKOUTS[WORKOUTS.length-1].d.slice(5)}</text>
+    ${dots}
+  </svg>`;
+}
+
 function renderStyrke() {
-  const benchData = WORKOUTS.filter(w => w.bench != null);
-  const latestBench = benchData.length ? benchData[benchData.length-1].bench : 0;
+  renderSessionCalendar();
+  renderExerciseGrid();
+  renderVolumeTimeline();
+
   const latestLBM = LBM.length ? LBM[LBM.length-1].v : '—';
   const latestWeight = WEIGHTS.length ? WEIGHTS[WEIGHTS.length-1].v : '—';
-
-  const GOAL = 100, START = 58.5;
-  const pct = Math.min(100, ((latestBench - START) / (GOAL - START) * 100));
-  document.getElementById('bench-goal-fill').style.width = pct.toFixed(1) + '%';
-  document.getElementById('bench-goal-pct').textContent = `${latestBench} kg · ${pct.toFixed(0)}% mod 100 kg`;
-
-  document.getElementById('lift-stats').innerHTML = `
-    <div class="st"><div class="l">Bench e1RM</div><div class="v" style="color:var(--violet)">${latestBench}</div><div class="n">kg → 100</div></div>
-    <div class="st"><div class="l">Squat e1RM</div><div class="v" style="color:var(--blue)">85</div><div class="n">kg</div></div>
-    <div class="st"><div class="l">RDL e1RM</div><div class="v" style="color:var(--amber)">117</div><div class="n">kg</div></div>
-    <div class="st"><div class="l">Pull-ups</div><div class="v" style="color:var(--green)">BW×10</div><div class="n">reps</div></div>
-    <div class="st"><div class="l">Workouts</div><div class="v">${WORKOUTS.length}</div><div class="n">logget</div></div>`;
-
-  drawChart('chart-bench', benchData.map(w => ({d:w.d, v:w.bench})), '#5e3a8a', ' kg', {target:100, min:50, max:105});
-
   const lbmMin = Math.min(...LBM.map(d=>d.v)), lbmMax = Math.max(...LBM.map(d=>d.v));
   document.getElementById('body-stats').innerHTML = `
     <div class="st"><div class="l">LBM nu</div><div class="v" style="color:var(--blue)">${latestLBM}</div><div class="n">kg fedtfri</div></div>
@@ -801,8 +1111,22 @@ function uploadAW() {
 
 function uploadHevy() {
   const el = document.getElementById('status-hevy');
-  el.textContent = 'Hevy data opdateres ved at paste CSV til Claude chat — beder om at rebuilde embedded WORKOUTS array i denne fil.';
-  el.className = 'upload-status';
+  const csv = document.getElementById('inp-hevy').value.trim();
+  if (!csv) { el.textContent = 'Paste Hevy CSV-data i feltet ovenfor.'; el.className = 'upload-status'; return; }
+  try {
+    const sets = parseHevyCSV(csv);
+    if (!sets.length) { el.textContent = 'Kunne ikke parse CSV — tjek format (Hevy export).'; el.className = 'upload-status'; return; }
+    localStorage.setItem('hevy_sets', JSON.stringify(sets));
+    const exercises = Object.keys(buildExerciseProgression(sets));
+    el.textContent = `Parsed ${sets.length} sæt · ${exercises.length} øvelser gemt i localStorage.`;
+    el.className = 'upload-status';
+    el.style.color = 'var(--green)';
+    rendered['styrke'] = false;
+    if (document.querySelector('.tab-btn[data-tab="styrke"].active')) { rendered['styrke'] = true; renderStyrke(); }
+  } catch (err) {
+    el.textContent = 'Fejl ved parsing: ' + err.message;
+    el.className = 'upload-status';
+  }
 }
 
 // ═══════════════════════════════════════════════
